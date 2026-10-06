@@ -1,6 +1,6 @@
 {
   "name": "comis-machine-inspection-center",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "ระบบตรวจสอบเครื่องจักรออนไลน์แบบศูนย์กลาง (Centralized Online Machine Inspection System - 100% Free Edition)",
   "main": "server.js",
   "scripts": {

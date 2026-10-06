@@ -1,4 +1,5 @@
 ## FREE
-- Last completed task: Converting all 11 Master Forms to Standalone Canvas Print HTML (Completed Phase 1 to Phase 4)
-- Completed by: Antigravity, Codex CLI & LM Studio Workers
-- Completed at: 2026-10-06T22:38:00+07:00
+- Last completed task: Data Center Hub accounts, admin department/position assignment, shared defaults
+- Completed by: Codex
+- Completed date: 2026-10-06 (Asia/Bangkok)
+- Validation: 13 API/system tests and Edge Hub browser flow passed on temporary databases

@@ -2,7 +2,7 @@
 // ESC Machine Inspection Center — Offline Service Worker (v2.13.0)
 // Eastern Sugar & Cane Group
 // ============================================================================
-const CACHE_NAME = 'esc-comis-cache-v301-source-forms';
+const CACHE_NAME = 'esc-comis-cache-v302-hub-accounts';
 const PRECACHE_ASSETS = [
   './',
   './index.html',

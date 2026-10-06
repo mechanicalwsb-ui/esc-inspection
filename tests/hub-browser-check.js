@@ -1,0 +1,46 @@
+const { chromium } = require('playwright');
+const { spawn } = require('node:child_process');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+(async () => {
+  const folder = fs.mkdtempSync(path.join(os.tmpdir(), 'hub-browser-'));
+  const proc = spawn(process.execPath, ['--no-warnings', path.resolve('server.js')], {windowsHide:true, env:{...process.env,PORT:'0',COMIS_HOST:'127.0.0.1',COMIS_DB_PATH:path.join(folder,'test.db'),COMIS_BACKUP_DIR:path.join(folder,'backups')},stdio:['ignore','pipe','pipe']});
+  let output = '', browser;
+  proc.stdout.on('data', x => output += x); proc.stderr.on('data', x => output += x);
+  try {
+    for (let i=0;i<100&&!/URL: http:\/\/localhost:(\d+)/.test(output);i++) await new Promise(r=>setTimeout(r,50));
+    const port = output.match(/URL: http:\/\/localhost:(\d+)/)?.[1]; assert.ok(port,output);
+    const base = 'http://127.0.0.1:'+port;
+    browser = await chromium.launch({headless:true,executablePath:process.env.COMIS_BROWSER_PATH || 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
+    const context = await browser.newContext();
+    const setup = await context.request.post(base+'/api/auth/setup',{data:{password:'Browser-admin-password!'}}); assert.equal(setup.status(),200);
+    const page = await context.newPage(); const errors=[]; page.on('pageerror', e=>errors.push(e.message));
+    await page.goto(base+'/inspection-forms/data-center.html');
+    await page.locator('#hubUsers').waitFor({state:'visible'}); await page.locator('#hubUsers').click();
+    await page.locator('#hubAddUser').click();
+    const form = page.locator('#hubEditForm');
+    await form.locator('[name=emp_code]').fill('BROWSER-HUB'); await form.locator('[name=full_name]').fill('ทดสอบบัญชี Hub');
+    await form.locator('[name=department_id]').selectOption('5'); await form.locator('[name=position]').fill('ช่างประจำกะ');
+    await form.locator('button').click(); await page.locator('#hubEditDialog').waitFor({state:'hidden'});
+    const row = page.locator('#hubUserRows tr').filter({hasText:'BROWSER-HUB'}); await row.waitFor();
+    await row.locator('[data-edit]').click(); await form.locator('[name=position]').fill('หัวหน้ากะ'); await form.locator('[name=department_id]').selectOption('6');
+    await form.locator('button').click(); await page.locator('#hubEditDialog').waitFor({state:'hidden'}); assert.match(await row.innerText(),/หัวหน้ากะ/);
+    await row.locator('[data-password]').click(); await page.locator('#hubResetForm [name=password]').fill('Browser-temp-password!'); await page.locator('#hubResetForm button').click(); await page.locator('#hubResetDialog').waitFor({state:'hidden'});
+    await page.locator('#hubUsersDialog [data-dismiss]').click();
+    await page.locator('#btnMenuSettings').click(); await page.locator('#cfgYear').fill('2569/70'); await page.locator('#globalSettingsForm button[type=submit]').click(); await page.locator('#settingsDialog').waitFor({state:'hidden'});
+    await page.locator('#hubLogout').click(); await page.locator('#hubLogin').waitFor({state:'visible'}); assert.equal(await page.locator('#hubUsers').isVisible(),false);
+    await page.locator('#hubLogin').click(); await page.locator('#hubLoginForm [name=emp_code]').fill('BROWSER-HUB'); await page.locator('#hubLoginForm [name=password]').fill('Browser-temp-password!'); await page.locator('#hubLoginForm button').click();
+    await page.locator('#hubPasswordDialog').waitFor({state:'visible'}); await page.locator('#hubPasswordForm [name=current_password]').fill('Browser-temp-password!'); await page.locator('#hubPasswordForm [name=password]').fill('Browser-final-password!'); await page.locator('#hubPasswordForm button').click(); await page.locator('#hubPasswordDialog').waitFor({state:'hidden'});
+    await page.waitForFunction(()=>document.getElementById('hubIdentity').textContent.includes('หัวหน้ากะ'));
+    assert.equal(await page.locator('#btnMenuSettings').isVisible(),false); assert.equal(await page.locator('#hubUsers').isVisible(),false);
+    await page.setViewportSize({width:390,height:844});
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    assert.deepEqual(errors,[]);
+    await page.screenshot({path:path.join(folder,'hub-mobile.png'),fullPage:true});
+    const offline = await context.newPage(); await offline.goto(require('node:url').pathToFileURL(path.resolve('เอกสารตรวจเครื่องจักร/data-center.html')).href);
+    assert.equal(await offline.locator('#hubUsers').isVisible(),false); assert.match(await offline.locator('#hubIdentity').innerText(),/โหมดคลังแบบฟอร์มอิสระ/);
+    console.log('PASS Hub browser: admin create/edit, password reset/change, shared settings, user restrictions, mobile and standalone. Screenshot: '+path.join(folder,'hub-mobile.png'));
+  } finally { await browser?.close(); proc.kill(); await new Promise(r=>proc.once('exit',r)); }
+})().catch(e=>{console.error(e);process.exitCode=1;});

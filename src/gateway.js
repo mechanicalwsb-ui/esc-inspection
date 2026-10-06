@@ -27,6 +27,10 @@ function validate(db, url, method, b, user) {
     for (const f of names[url.split('/')[2]]) need(f);
   }
   if (b.department_id) Domain.assert(find('departments', b.department_id), 'ไม่พบแผนกที่ระบุ');
+  if (/^\/api\/users(?:\/\d+)?$/.test(url) && ['POST', 'PUT'].includes(method)) {
+    if (b.position !== undefined) Domain.assert(typeof b.position === 'string' && b.position.length <= 160, 'ตำแหน่งงานต้องเป็นข้อความไม่เกิน 160 ตัวอักษร');
+    if (b.role !== undefined) Domain.assert(['super_admin', 'dept_admin', 'inspector', 'viewer'].includes(b.role), 'สิทธิ์ผู้ใช้ไม่ถูกต้อง');
+  }
   if (b.assigned_dept_id) Domain.assert(find('departments', b.assigned_dept_id), 'ไม่พบแผนกรับงาน');
   if (b.machine_id) Domain.assert(find('machines', b.machine_id), 'ไม่พบเครื่องจักร');
   for (const f of ['running_hours', 'downtime_hours', 'estimated_minutes', 'install_year']) if (b[f] !== undefined) Domain.assert(Number.isFinite(Number(b[f])) && Number(b[f]) >= 0, `${f} ต้องเป็นตัวเลขที่ไม่ติดลบ`);
@@ -179,4 +183,4 @@ function sanitize(result, user) {
   }
   return { ...result, data };
 }
-module.exports = { createGateway, revisions, sanitize, validate };
+module.exports = { createGateway, revision, revisions, sanitize, validate };

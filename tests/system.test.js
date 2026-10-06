@@ -24,6 +24,33 @@ before(async()=>{
 });
 after(async()=>{if(proc && proc.exitCode===null){proc.kill();await new Promise(resolve=>proc.once('exit',resolve));} /* Retain fixture for inspection; never touches data/comis.db. */});
 function inspection(value=60){return {machine_id:machine.id,form_id:form.id,machine_state_at_check:'running',answers:[{field_id:'temperature',value,status:'normal'}],inspector_name:'Impersonated user',inspector_code:'FAKE'};}
+
+test('Hub admin assigns department and position; users cannot change assignments or defaults', async () => {
+  const created = await call('/api/users', 'POST', {emp_code:'HUB-TEST',full_name:'Hub test',position:'ช่าง',department_id:5,role:'inspector'});
+  assert.equal(created.status,201);
+  const u = created.json.data.users.find(u=>u.emp_code==='HUB-TEST');
+  await call('/api/auth/password','POST',{user_id:u.id,password:'Hub-temporary-password!'});
+  const login = await call('/api/auth/login','POST',{emp_code:u.emp_code,password:'Hub-temporary-password!'},null);
+  const changed = await call('/api/auth/password','POST',{current_password:'Hub-temporary-password!',password:'Hub-final-password!'},login.cookie);
+  const assignment = {...u,position:'หัวหน้ากะ',department_id:6,role:'dept_admin'};
+  assert.equal((await call('/api/users/'+u.id,'PUT',assignment,changed.cookie,{'If-Match':'0'})).status,403);
+  const saved = await call('/api/users/'+u.id,'PUT',assignment,adminCookie,{'If-Match':'0'});
+  assert.equal(saved.status,200,JSON.stringify(saved.json));
+  const status = await call('/api/auth/status','GET',undefined,changed.cookie);
+  assert.equal(status.json.user.position,'หัวหน้ากะ'); assert.equal(status.json.user.department_id,6); assert.equal(status.json.user.role,'dept_admin');
+  assert.equal((await call('/api/users/'+u.id,'PUT',{...assignment,role:'super_admin'},changed.cookie,{'If-Match':'1'})).status,403);
+  assert.equal((await call('/api/users/'+u.id,'PUT',assignment,adminCookie,{'If-Match':'0'})).status,409);
+  const defaults = {year:'2569/70',shift:'กะ 1',dept:'วิศวกรรมจักรกล',section:'ลูกหีบ',factory:'ESC',printDpi:'260',autoLock:'yes'};
+  assert.equal((await call('/api/hub-settings','PUT',defaults,changed.cookie,{'If-Match':'0'})).status,403);
+  assert.equal((await call('/api/hub-settings','PUT',defaults,adminCookie,{'If-Match':'0'})).status,200);
+  const shared = await call('/api/hub-settings','GET',undefined,changed.cookie);
+  assert.deepEqual(shared.json.settings,defaults); assert.equal(shared.json.revision,1);
+  assert.equal((await call('/api/hub-settings','PUT',defaults,adminCookie,{'If-Match':'0'})).status,409);
+  assert.equal((await call('/api/hub-settings','GET',undefined,null)).status,401);
+  const page = await fetch(base+'/inspection-forms/data-center.html'); assert.equal(page.status,200); assert.match(await page.text(),/hub-users\.js/);
+  assert.equal((await fetch(base+'/inspection-forms/missing.js')).status,404);
+  assert.equal((await fetch(base+'/inspection-forms/%2e%2e%2fserver.js')).status,403);
+});
 test('Authentication, role enforcement and trusted audit actor',async()=>{
   assert.equal((await call('/api/bootstrap','GET',undefined,null)).status,401);
   const u=await call('/api/users','POST',{emp_code:'TEST-VIEWER',full_name:'Viewer',role:'viewer',department_id:5});assert.equal(u.status,201);const user=u.json.data.users.find(u=>u.emp_code==='TEST-VIEWER');

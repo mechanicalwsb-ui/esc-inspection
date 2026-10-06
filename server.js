@@ -697,6 +697,26 @@ async function handleRequest(req, res) {
       return sendJson(res, 200, { ok: true, data: getFullBootstrapData() });
     }
 
+    // Shared Hub defaults are writable only by super_admin via the API gateway.
+    if (pathname === '/api/hub-settings' && req.method === 'GET') {
+      const row = db.prepare("SELECT value FROM system_settings WHERE key='hub_defaults'").get();
+      return sendJson(res, 200, { ok: true, settings: JSON.parse(row?.value || '{}'), revision: Gateway.revision(db, pathname) });
+    }
+    if (pathname === '/api/hub-settings' && req.method === 'PUT') {
+      const body = await parseBody(req);
+      if (Number(req.headers['if-match']) !== Gateway.revision(db, pathname) || req.headers['if-match'] === undefined) {
+        return sendJson(res, 409, { ok: false, error: 'การตั้งค่าถูกแก้ไขแล้ว กรุณาเปิดหน้าการตั้งค่าใหม่' });
+      }
+      const settings = {};
+      for (const key of ['year', 'shift', 'dept', 'section', 'factory', 'printDpi', 'autoLock']) {
+        if (typeof body[key] !== 'string' || body[key].length > 300) return sendJson(res, 422, { ok: false, error: 'ค่าการตั้งค่าไม่ถูกต้อง: ' + key });
+        settings[key] = body[key].trim();
+      }
+      db.prepare("INSERT INTO system_settings (key,value) VALUES ('hub_defaults',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(JSON.stringify(settings));
+      logAudit('Admin', 'UPDATE', 'HUB_SETTINGS', 'การตั้งค่าคลังแบบฟอร์ม');
+      return sendJson(res, 200, { ok: true });
+    }
+
     // --- 6. USERS CRUD ---
     if (pathname === '/api/users' && req.method === 'POST') {
       const body = await parseBody(req);
@@ -1081,6 +1101,15 @@ async function handleRequest(req, res) {
     // STATIC FILES (FRONTEND SPA)
     // ====================================================
     if (pathname.startsWith('/api/')) return sendJson(res, 404, { ok: false, error: 'ไม่พบ API นี้' });
+    if (pathname.startsWith('/inspection-forms/')) {
+      const root = path.join(__dirname, 'เอกสารตรวจเครื่องจักร');
+      const relative = decodeURIComponent(pathname.slice('/inspection-forms/'.length));
+      const target = path.resolve(root, relative);
+      if (!target.startsWith(root + path.sep) || !/\.(html|js|png|jpg|ttf|woff2?)$/i.test(target)) { res.writeHead(403); return res.end('Forbidden'); }
+      if (!fs.existsSync(target) || !fs.statSync(target).isFile()) { res.writeHead(404); return res.end('Not found'); }
+      res.writeHead(200, { 'Content-Type': MIME_TYPES[path.extname(target).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store' });
+      return fs.createReadStream(target).pipe(res);
+    }
     let filePath = pathname === '/' ? path.join(PUBLIC_DIR, 'index.html') : path.join(PUBLIC_DIR, pathname);
     if (!filePath.startsWith(PUBLIC_DIR)) {
       res.writeHead(403);

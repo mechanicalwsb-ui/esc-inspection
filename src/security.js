@@ -43,5 +43,5 @@ function allowed(role, url, method) {
   if (url === '/api/defects' && method === 'POST') return true;
   return role === 'dept_admin' && (/^\/api\/inspections\/\d+\/approve$/.test(url) || /^\/api\/defects\/\d+$/.test(url)) && method === 'PUT';
 }
-function publicUser(user) { if (!user) return null; const { id, emp_code, full_name, role, department_id, must_change } = user; return { id, emp_code, full_name, role, department_id, must_change: Boolean(must_change) }; }
+function publicUser(user) { if (!user) return null; const { id, emp_code, full_name, role, department_id, position, must_change } = user; return { id, emp_code, full_name, role, department_id, position, must_change: Boolean(must_change) }; }
 module.exports = { initialize, setPassword, verify, issue, current, logout, allowed, publicUser };

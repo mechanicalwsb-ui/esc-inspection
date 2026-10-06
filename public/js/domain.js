@@ -1,6 +1,6 @@
 /* Shared rules used by SQLite, standalone storage and the offline queue. */
 (function (root) {
-  const version = '3.0.1';
+  const version = '3.0.2';
   const dateParts = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()).reduce((o, p) => (o[p.type] = p.value, o), {});
   function day() { const p = dateParts(); return `${p.year}-${p.month}-${p.day}`; }
   function timestamp() { return new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(new Date()); }
