@@ -1,0 +1,2515 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#064e3b">
+<title>ESC Machine Inspection Hub — ศูนย์คลังแบบฟอร์มดิจิทัล</title>
+<style>
+@font-face{font-family:Sarabun;src:url('fonts/Sarabun-Regular.ttf')}
+@font-face{font-family:Sarabun;src:url('fonts/Sarabun-Bold.ttf');font-weight:700}
+:root{
+  --forest:#064e3b;
+  --forest-dark:#033b2d;
+  --green:#10b981;
+  --green-light:#34d399;
+  --ink:#0f172a;
+  --slate:#334155;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --soft:#f8fafc;
+  --soft-green:#ecfdf5;
+  --white:#fff;
+  --danger:#ef4444;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  background:#f1f5f9;
+  color:var(--ink);
+  font:16px/1.6 Sarabun,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.shell{width:min(1240px,calc(100% - 36px));margin:auto}
+
+/* Header & Main Nav */
+.header{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(130deg,#022c22 0%,var(--forest) 55%,#047857 100%);
+  color:#fff;
+  box-shadow:0 12px 30px -15px #022c2288;
+}
+.header:after{
+  content:"";
+  position:absolute;
+  right:-140px;
+  top:-220px;
+  width:520px;
+  height:520px;
+  border:70px solid #ffffff08;
+  border-radius:50%;
+  pointer-events:none;
+}
+.top-bar{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:14px 0;
+  border-bottom:1px solid #ffffff18;
+}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff}
+.mark{
+  width:44px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:linear-gradient(145deg,var(--green-light),var(--green));
+  box-shadow:0 6px 18px #00000030;
+  color:var(--forest-dark);
+  font-weight:800;
+  font-size:18px;
+}
+.brand-text b{display:block;font-size:18px;line-height:1.2;letter-spacing:-.01em}
+.brand-text span{display:block;font-size:11px;color:#a7f3d0}
+
+/* Portal Menu Bar */
+.menu-bar{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 0;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.menu-bar::-webkit-scrollbar{display:none}
+.menu-btn{
+  height:42px;
+  padding:0 14px;
+  border:1px solid #ffffff24;
+  border-radius:11px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#ffffff15;
+  color:#fff;
+  font-size:13px;
+  font-weight:700;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:.2s;
+  backdrop-filter:blur(6px);
+}
+.menu-btn:hover{background:#ffffff2b;border-color:#a7f3d055;transform:translateY(-1px)}
+.menu-btn.active{background:#fff;color:var(--forest);border-color:#fff;box-shadow:0 4px 14px #00000028}
+.menu-btn svg{width:18px;height:18px;flex-shrink:0}
+.menu-btn .badge{
+  padding:2px 7px;
+  border-radius:99px;
+  background:#10b981;
+  color:#fff;
+  font-size:11px;
+  font-weight:700;
+}
+.menu-btn.active .badge{background:var(--forest);color:#a7f3d0}
+.menu-spacer{flex:1}
+
+/* Hero Section */
+.hero{
+  position:relative;
+  z-index:1;
+  padding:42px 0 54px;
+  text-align:center;
+}
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:12px;
+  padding:4px 12px;
+  border:1px solid #a7f3d033;
+  border-radius:99px;
+  background:#ffffff12;
+  color:#a7f3d0;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.05em;
+}
+.hero h1{
+  max-width:880px;
+  margin:0 auto 10px;
+  font-size:clamp(26px,4.5vw,44px);
+  line-height:1.24;
+  letter-spacing:-.03em;
+}
+.hero p{
+  max-width:760px;
+  margin:auto;
+  color:#d1fae5;
+  font-size:clamp(14px,1.8vw,16px);
+}
+
+/* Launcher / Search & View Controls */
+main{padding-bottom:80px}
+.launcher{
+  position:relative;
+  z-index:3;
+  margin-top:-32px;
+  padding:16px 20px;
+  border:1px solid #e2e8f0;
+  border-radius:18px;
+  background:#ffffff;
+  box-shadow:0 18px 40px -20px #0f172a33;
+}
+.launcher-top{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.search-box{
+  position:relative;
+  display:flex;
+  align-items:center;
+  flex:1;
+  min-width:260px;
+}
+.search-box>svg{
+  position:absolute;
+  left:16px;
+  width:20px;
+  height:20px;
+  color:#64748b;
+  pointer-events:none;
+}
+.search-box input{
+  width:100%;
+  height:48px;
+  padding:0 44px 0 46px;
+  border:1px solid #cbd5e1;
+  border-radius:12px;
+  background:#f8fafc;
+  color:var(--ink);
+  font-size:14px;
+  transition:.2s;
+}
+.search-box input:focus{
+  outline:0;
+  border-color:var(--green);
+  background:#fff;
+  box-shadow:0 0 0 3px #10b98125;
+}
+.clear{
+  position:absolute;
+  right:8px;
+  width:32px;
+  height:32px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#64748b;
+  font-size:20px;
+}
+.clear:hover{background:#e2e8f0}
+
+/* Filter Chips & View Mode Switcher */
+.launcher-bottom{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid #f1f5f9;
+  flex-wrap:wrap;
+}
+.chips{display:flex;gap:7px;overflow-x:auto}
+.chip{
+  height:36px;
+  padding:0 13px;
+  border:1px solid var(--line);
+  border-radius:99px;
+  background:#fff;
+  color:var(--slate);
+  font-size:12px;
+  font-weight:700;
+  white-space:nowrap;
+  transition:.2s;
+}
+.chip.active,.chip:hover{
+  border-color:#6ee7b7;
+  background:var(--soft-green);
+  color:#047857;
+}
+
+/* View Mode Switcher */
+.view-switchers{
+  display:inline-flex;
+  align-items:center;
+  padding:3px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#f8fafc;
+  gap:3px;
+}
+.view-btn{
+  height:32px;
+  padding:0 10px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#64748b;
+  font-size:12px;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  transition:.18s;
+}
+.view-btn:hover{color:var(--ink);background:#e2e8f066}
+.view-btn.active{
+  background:#fff;
+  color:var(--forest);
+  box-shadow:0 2px 6px #00000015;
+}
+.view-btn svg{width:15px;height:15px}
+
+/* Content Head */
+.content-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+  margin:32px 0 16px;
+}
+.content-head h2{margin:0;font-size:22px;color:var(--ink);font-weight:700}
+.content-head p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.count{
+  color:#047857;
+  font-size:13px;
+  font-weight:700;
+  background:var(--soft-green);
+  padding:4px 12px;
+  border-radius:99px;
+  border:1px solid #a7f3d0;
+}
+
+/* Forms Grid - Mode 1: Full Cards (การ์ดเต็ม) */
+.grid.mode-full{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:20px;
+}
+.mode-full .card{
+  position:relative;
+  overflow:hidden;
+  min-height:300px;
+  padding:24px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 8px 24px -12px #0f172a22;
+  display:flex;
+  flex-direction:column;
+  transition:.22s;
+}
+.mode-full .card:hover{
+  transform:translateY(-3px);
+  border-color:#a7f3d0;
+  box-shadow:0 14px 30px -12px #04785725;
+}
+.mode-full .card:before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto;
+  height:4px;
+  background:linear-gradient(90deg,var(--forest),var(--green));
+}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.machine-icon{
+  width:50px;
+  height:50px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  background:linear-gradient(145deg,#ecfdf5,#d1fae5);
+  color:#047857;
+}
+.machine-icon svg{width:26px;height:26px}
+.ready{
+  padding:4px 10px;
+  border-radius:99px;
+  background:#ecfdf5;
+  color:#047857;
+  font-size:11px;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.ready:before{
+  content:"";
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--green);
+}
+.code{
+  align-self:start;
+  margin-top:16px;
+  padding:3px 8px;
+  border-radius:6px;
+  background:#f1f5f9;
+  color:#475569;
+  font:700 11px/1.4 ui-monospace,Consolas,monospace;
+  letter-spacing:.03em;
+}
+.mode-full .card h3{
+  margin:10px 0 6px;
+  font-size:19px;
+  line-height:1.35;
+  color:var(--ink);
+}
+.dept{
+  margin:0 0 10px;
+  color:#059669;
+  font-size:13px;
+  font-weight:700;
+}
+.highlights{
+  margin:0 0 20px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+  flex:1;
+}
+.card-actions{display:flex;gap:8px;margin-top:auto}
+.card-actions .btn-open{flex:1}
+
+/* Mode 2: Compact Cards (การ์ดย่อ) */
+.grid.mode-compact{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+.mode-compact .card{
+  position:relative;
+  overflow:hidden;
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 4px 12px -6px #0f172a15;
+  display:flex;
+  flex-direction:column;
+  transition:.2s;
+}
+.mode-compact .card:hover{
+  transform:translateY(-2px);
+  border-color:#34d399;
+  box-shadow:0 8px 18px -6px #04785720;
+}
+.mode-compact .card:before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:4px;
+  background:linear-gradient(180deg,var(--forest),var(--green));
+}
+.mode-compact .card-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+.mode-compact .machine-icon{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+}
+.mode-compact .machine-icon svg{width:18px;height:18px}
+.mode-compact .code{margin-top:0}
+.mode-compact h3{
+  margin:4px 0 4px;
+  font-size:15px;
+  line-height:1.35;
+  color:var(--ink);
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.mode-compact .dept{
+  font-size:11px;
+  margin:0 0 10px;
+}
+.mode-compact .highlights{
+  font-size:12px;
+  margin:0 0 12px;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  color:#64748b;
+}
+.mode-compact .card-actions{margin-top:auto}
+.mode-compact .btn-open{height:38px;font-size:13px}
+
+/* Mode 3: List View (แถวรายการ / ตาราง) */
+.grid.mode-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.mode-list .card{
+  position:relative;
+  display:grid;
+  grid-template-columns:auto auto 1fr auto auto;
+  align-items:center;
+  gap:16px;
+  padding:14px 20px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 3px 8px -4px #0f172a15;
+  transition:.18s;
+}
+.mode-list .card:hover{
+  border-color:#34d399;
+  background:#fcfffd;
+  box-shadow:0 6px 14px -6px #04785718;
+}
+.mode-list .machine-icon{width:40px;height:40px;border-radius:10px}
+.mode-list .machine-icon svg{width:20px;height:20px}
+.mode-list .card-info{min-width:0}
+.mode-list h3{
+  margin:0 0 2px;
+  font-size:15px;
+  font-weight:700;
+  color:var(--ink);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.mode-list .meta-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:12px;
+}
+.mode-list .dept{margin:0;display:inline}
+.mode-list .highlights{margin:0;display:inline;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mode-list .card-actions{margin:0;display:flex;gap:6px}
+.mode-list .btn-open{height:36px;padding:0 14px;font-size:12px}
+
+/* Common Buttons */
+.btn{
+  height:44px;
+  padding:0 16px;
+  border:1px solid transparent;
+  border-radius:10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-weight:700;
+  text-decoration:none;
+  transition:.18s;
+}
+.btn-primary{
+  background:var(--forest);
+  color:#fff;
+}
+.btn-primary:hover{
+  background:#047857;
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px #04785730;
+}
+.btn-soft{
+  background:#f1f5f9;
+  color:var(--slate);
+  border-color:#cbd5e1;
+}
+.btn-soft:hover{background:#e2e8f0;color:var(--ink)}
+.btn-emerald{
+  background:#059669;
+  color:#fff;
+}
+.btn-emerald:hover{background:#047857}
+.btn-danger{
+  background:#fee2e2;
+  color:#b91c1c;
+  border-color:#fca5a5;
+}
+.btn-danger:hover{background:#fecaca}
+.icon-btn{
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fff;
+  color:#475569;
+}
+.icon-btn:hover{
+  border-color:#34d399;
+  color:var(--forest);
+  background:var(--soft-green);
+}
+.icon-btn svg{width:18px;height:18px}
+
+.empty{
+  grid-column:1/-1;
+  padding:60px 24px;
+  border:2px dashed #cbd5e1;
+  border-radius:18px;
+  background:#fff;
+  text-align:center;
+}
+.empty h3{margin:0 0 6px;color:var(--ink);font-size:18px}
+.empty p{margin:0;color:var(--muted);font-size:14px}
+
+/* Dialogs & Modals */
+dialog{
+  width:min(720px,calc(100% - 30px));
+  max-height:calc(100vh - 36px);
+  padding:0;
+  border:0;
+  border-radius:20px;
+  background:#fff;
+  color:var(--ink);
+  box-shadow:0 25px 60px -15px #022c2266;
+  overflow:hidden;
+}
+dialog.wide{width:min(960px,calc(100% - 30px))}
+dialog::backdrop{background:#02141099;backdrop-filter:blur(5px)}
+.dialog-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 24px;
+  background:#f8fafc;
+  border-bottom:1px solid var(--line);
+}
+.dialog-head h2{margin:0;font-size:19px;font-weight:700;color:var(--forest-dark);display:flex;align-items:center;gap:10px}
+.dialog-head h2 svg{width:22px;height:22px;color:var(--forest)}
+.dialog-head p{margin:2px 0 0;color:var(--muted);font-size:12px}
+.close{
+  width:36px;
+  height:36px;
+  border:0;
+  border-radius:10px;
+  background:#e2e8f0;
+  color:#475569;
+  font-size:22px;
+  line-height:1;
+  display:grid;
+  place-items:center;
+}
+.close:hover{background:#cbd5e1;color:var(--ink)}
+.dialog-body{
+  max-height:calc(100vh - 120px);
+  padding:22px 24px;
+  overflow-y:auto;
+}
+
+/* Signer Editor Table Styles */
+.signer-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+}
+.signer-quick-add{
+  display:grid;
+  grid-template-columns:1fr 1fr auto;
+  gap:10px;
+  padding:14px;
+  border-radius:12px;
+  background:#f8fafc;
+  border:1px solid var(--line);
+  margin-bottom:18px;
+}
+.signer-table-wrap{
+  overflow-x:auto;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  margin-bottom:16px;
+}
+.signer-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+  text-align:left;
+}
+.signer-table th{
+  padding:10px 14px;
+  background:#f1f5f9;
+  color:var(--slate);
+  font-weight:700;
+  border-bottom:1px solid var(--line);
+}
+.signer-table td{
+  padding:8px 14px;
+  border-bottom:1px solid #f1f5f9;
+  color:var(--ink);
+}
+.signer-table tr:hover td{background:#f8fafc}
+.signer-table input{
+  width:100%;
+  height:36px;
+  padding:0 10px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  font-size:13px;
+}
+.signer-table input:focus{
+  outline:0;
+  border-color:var(--green);
+  box-shadow:0 0 0 2px #10b98125;
+}
+
+/* Settings Form Styles */
+.settings-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px 18px;
+}
+.settings-group{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.settings-group.full{grid-column:1/-1}
+.settings-group label{
+  font-size:13px;
+  font-weight:700;
+  color:var(--slate);
+}
+.settings-group small{
+  color:var(--muted);
+  font-size:11px;
+}
+.settings-group input,.settings-group select{
+  height:44px;
+  padding:0 12px;
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  background:#fff;
+  font-size:14px;
+}
+.settings-group input:focus,.settings-group select:focus{
+  outline:0;
+  border-color:var(--green);
+  box-shadow:0 0 0 3px #10b98120;
+}
+.settings-hint-box{
+  margin-top:16px;
+  padding:14px 16px;
+  border-radius:12px;
+  background:var(--soft-green);
+  border:1px solid #a7f3d0;
+  color:#065f46;
+  font-size:12px;
+  line-height:1.5;
+}
+
+/* Dropzone & Admin Actions */
+.admin-list{display:grid;gap:10px}
+.admin-action{
+  width:100%;
+  min-height:64px;
+  padding:12px 16px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  color:var(--ink);
+  text-align:left;
+  transition:.18s;
+}
+.admin-action:hover{border-color:#6ee7b7;background:#f0fdf4}
+.admin-action svg{width:24px;height:24px;color:#059669;flex-shrink:0}
+.admin-action strong{display:block;font-size:14px}
+.admin-action small{color:var(--muted);font-size:12px}
+
+.dropzone{
+  position:relative;
+  margin-bottom:16px;
+  padding:22px 16px;
+  border:2px dashed #94a3b8;
+  border-radius:14px;
+  background:#f8fafc;
+  text-align:center;
+}
+.dropzone.drag{border-color:var(--green);background:var(--soft-green)}
+.dropzone svg{width:30px;height:30px;color:var(--forest)}
+.dropzone strong{display:block;margin:6px 0 2px}
+.dropzone span{color:var(--muted);font-size:12px}
+.dropzone input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.dropzone .selected{color:var(--forest);font-weight:700}
+
+/* Camera Stage */
+.camera-stage{
+  position:relative;
+  overflow:hidden;
+  aspect-ratio:4/3;
+  border-radius:16px;
+  background:#071b16;
+  display:grid;
+  place-items:center;
+}
+.camera-stage video{width:100%;height:100%;object-fit:cover}
+.camera-stage canvas{display:none}
+.scan-frame{
+  position:absolute;
+  width:64%;
+  aspect-ratio:1;
+  border:2px solid #6ee7b7;
+  border-radius:18px;
+  box-shadow:0 0 0 999px #00000055;
+}
+.scanner-status{
+  min-height:24px;
+  margin:12px 0 0;
+  color:#475569;
+  font-size:13px;
+  text-align:center;
+}
+.scanner-status.success{color:#047857;font-weight:700}
+.scanner-controls{display:flex;gap:8px;margin-top:12px}
+.scanner-controls .btn{flex:1}
+
+/* Toast */
+.toast{
+  position:fixed;
+  z-index:999;
+  left:50%;
+  bottom:24px;
+  max-width:calc(100% - 32px);
+  transform:translate(-50%,30px);
+  padding:12px 20px;
+  border-radius:12px;
+  background:#0f172a;
+  color:#fff;
+  box-shadow:0 15px 40px #0f172a55;
+  font-size:13px;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+}
+.toast.show{transform:translate(-50%,0);opacity:1}
+.toast.error{background:#991b1b}
+
+/* Dark Mode Support (ES Corporate Dark Palette) */
+html.dark-theme, body.dark-theme {
+  --ink: #f1f5f9;
+  --slate: #94a3b8;
+  --muted: #94a3b8;
+  --line: #1e3a2d;
+  --soft: #0b1712;
+  --soft-green: #143527;
+  --white: #11221b;
+}
+html.dark-theme body, body.dark-theme {
+  background: #09130f !important;
+  color: #f1f5f9 !important;
+}
+body.dark-theme .launcher,
+body.dark-theme .card,
+body.dark-theme dialog,
+body.dark-theme .dialog-head,
+body.dark-theme .signer-table,
+body.dark-theme .signer-table th,
+body.dark-theme .signer-table td,
+body.dark-theme .signer-quick-add,
+body.dark-theme .signer-table-wrap,
+body.dark-theme .dropzone,
+body.dark-theme .empty,
+body.dark-theme .admin-action,
+body.dark-theme .settings-group input,
+body.dark-theme .settings-group select,
+body.dark-theme .signer-table input,
+body.dark-theme .view-switchers,
+body.dark-theme #signerFilterSelect {
+  background: #11221b !important;
+  border-color: #1e3a2d !important;
+  color: #f1f5f9 !important;
+}
+body.dark-theme .search-box input {
+  background: #0d1a15 !important;
+  border-color: #1e3a2d !important;
+  color: #f1f5f9 !important;
+}
+body.dark-theme .search-box input:focus {
+  background: #11221b !important;
+  border-color: #10b981 !important;
+}
+body.dark-theme .search-box>svg,
+body.dark-theme .clear {
+  color: #94a3b8 !important;
+}
+body.dark-theme .content-head h2,
+body.dark-theme .empty h3,
+body.dark-theme .dialog-head h2 {
+  color: #f1f5f9 !important;
+}
+body.dark-theme .content-head p,
+body.dark-theme .empty p,
+body.dark-theme .dialog-head p {
+  color: #94a3b8 !important;
+}
+body.dark-theme .mode-full .card h3,
+body.dark-theme .mode-compact h3,
+body.dark-theme .mode-list .card h3 {
+  color: #f1f5f9 !important;
+}
+body.dark-theme .mode-list .card:hover {
+  background: #152b22 !important;
+}
+body.dark-theme .machine-icon {
+  background: linear-gradient(145deg, #143527, #1e4d39) !important;
+  color: #34d399 !important;
+}
+body.dark-theme .view-btn {
+  color: #94a3b8;
+}
+body.dark-theme .view-btn:hover {
+  background: #183327;
+  color: #fff;
+}
+body.dark-theme .view-btn.active {
+  background: #18382b !important;
+  color: #34d399 !important;
+}
+body.dark-theme .chip {
+  background: #11221b;
+  border-color: #1e3a2d;
+  color: #94a3b8;
+}
+body.dark-theme .chip.active, body.dark-theme .chip:hover {
+  background: #17382b;
+  border-color: #34d399;
+  color: #34d399;
+}
+body.dark-theme .code {
+  background: #182e24;
+  color: #a7f3d0;
+}
+body.dark-theme .btn-soft {
+  background: #162d22;
+  border-color: #244937;
+  color: #cbd5e1;
+}
+body.dark-theme .btn-soft:hover {
+  background: #1f3d2f;
+  color: #ffffff;
+}
+body.dark-theme .icon-btn {
+  background: #11221b;
+  border-color: #1e3a2d;
+  color: #94a3b8;
+}
+body.dark-theme .icon-btn:hover {
+  background: #163628;
+  color: #34d399;
+}
+body.dark-theme .settings-hint-box {
+  background: #123023;
+  border-color: #1f503a;
+  color: #a7f3d0;
+}
+body.dark-theme .dialog-head {
+  background: #0d1a15 !important;
+  border-bottom-color: #1e3a2d !important;
+}
+body.dark-theme .close {
+  background: #1a3327;
+  color: #94a3b8;
+}
+body.dark-theme .close:hover {
+  background: #254636;
+  color: #fff;
+}
+body.dark-theme .signer-table tr:hover td {
+  background: #152b22 !important;
+}
+body.dark-theme .count {
+  background: #133326;
+  color: #6ee7b7;
+  border-color: #1e4635;
+}
+body.dark-theme #activeScopeBanner {
+  background: #122c22 !important;
+  border-color: #1e5942 !important;
+  color: #a7f3d0 !important;
+}
+.scope-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.scope-badge.all { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+.scope-badge.milling { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.scope-badge.prod { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+.scope-badge.maint { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+.scope-badge.custom { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+body.dark-theme .scope-badge.all { background: #064e3b; color: #a7f3d0; border-color: #047857; }
+body.dark-theme .scope-badge.milling { background: #1e3a8a; color: #bfdbfe; border-color: #2563eb; }
+body.dark-theme .scope-badge.prod { background: #78350f; color: #fde68a; border-color: #d97706; }
+body.dark-theme .scope-badge.maint { background: #581c87; color: #e9d5ff; border-color: #7e22ce; }
+body.dark-theme .scope-badge.custom { background: #1e293b; color: #cbd5e1; border-color: #334155; }
+</style>
+<script>
+  try {
+    if (localStorage.getItem('ESC_THEME_MODE') === 'dark') {
+      document.documentElement.classList.add('dark-theme');
+    }
+  } catch(e){}
+</script>
+</head>
+<body>
+
+<!-- Main Top Header -->
+<header class="header">
+  <div class="shell">
+    <div class="top-bar">
+      <a href="data-center.html" class="brand">
+        <div class="mark">ESC</div>
+        <div class="brand-text">
+          <b>Machine Inspection Hub</b>
+          <span>ศูนย์คลังแบบฟอร์มดิจิทัล & ตรวจเช็คเครื่องจักร</span>
+        </div>
+      </a>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button type="button" class="menu-btn" id="btnThemeToggle" title="สลับโหมดสว่าง / โหมดมืด">
+          <span id="themeToggleIcon">🌙</span>
+          <span id="themeToggleText">โหมดมืด</span>
+        </button>
+        <span class="ready" style="background:#ffffff15;color:#d1fae5;border:1px solid #ffffff25">Offline Ready</span>
+      </div>
+    </div>
+
+    <!-- Command Menu Navigation -->
+    <nav class="menu-bar" aria-label="เมนูหลัก">
+      <button class="menu-btn active" id="btnMenuForms" title="คลังแบบฟอร์มตรวจ">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+        <span>คลังแบบฟอร์ม</span>
+        <span class="badge" id="menuFormsCount">13</span>
+      </button>
+
+      <button class="menu-btn" id="btnMenuSigners" title="จัดการรายชื่อผู้เซ็น">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>จัดการรายชื่อผู้เซ็น</span>
+        <span class="badge" id="menuSignersCount" style="background:#3b82f6">0</span>
+      </button>
+
+      <button class="menu-btn" id="btnMenuSettings" title="การตั้งค่ากลาง (ใช้กับทุกฟอร์ม)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>การตั้งค่าทุกฟอร์ม</span>
+      </button>
+
+      <button class="menu-btn" id="btnMenuScan" title="สแกน QR Code">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8V4h4M17 4h4v4M21 16v4h-4M7 20H3v-4M8 8h3v3H8zM13 8h3v3h-3zM8 13h3v3H8zM13 13h3v3h-3z"/></svg>
+        <span>สแกน QR</span>
+      </button>
+
+      <button class="menu-btn" id="btnMenuAdmin" title="จัดการคลัง & สำรอง JSON">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span>จัดการคลัง & สำรอง</span>
+      </button>
+
+      <div class="menu-spacer"></div>
+
+      <a href="../index.html" class="menu-btn" style="background:#ffffff20;border-color:#ffffff38" title="กลับสู่ระบบหลัก COMIS">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>ระบบหลัก COMIS</span>
+      </a>
+    </nav>
+
+    <!-- Hero Title -->
+    <section class="hero">
+      <span class="eyebrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ESC · DIGITAL MAINTENANCE HUB
+      </span>
+      <h1>ศูนย์รวมแบบฟอร์มตรวจเช็คเครื่องจักร</h1>
+      <p>เปิดตรวจ บันทึกข้อมูล คำนวณผลอัตโนมัติ และพิมพ์แบบฟอร์มมาตรฐาน ทำงานได้ทั้งแบบออนไลน์และออฟไลน์ 100%</p>
+    </section>
+  </div>
+</header>
+
+<!-- Main Workspace -->
+<main class="shell">
+  <!-- Launcher Bar: Search, Category Filters & View Switchers -->
+  <section class="launcher">
+    <div class="launcher-top">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="search" type="search" placeholder="ค้นหาชื่อแบบฟอร์ม, รหัสเอกสาร เช่น FM-ML01, หรือแผนก…" aria-label="ค้นหาแบบฟอร์ม">
+        <button id="clearSearch" class="clear hidden" aria-label="ล้างคำค้น">×</button>
+      </div>
+
+      <div class="signer-scope-filter-wrap" style="display:flex;align-items:center;gap:8px;min-width:270px;flex-shrink:0">
+        <label for="signerFilterSelect" style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--slate);white-space:nowrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>กรองตามผู้เซ็น:</span>
+        </label>
+        <select id="signerFilterSelect" style="height:48px;padding:0 12px;border:1px solid #cbd5e1;border-radius:12px;background:#f8fafc;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;flex:1" aria-label="เลือกขอบเขตผู้เซ็น">
+          <option value="ALL">👤 ทุกคน / ทุกแบบฟอร์ม</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Active Signer Scope Banner -->
+    <div id="activeScopeBanner" class="hidden" style="margin-top:12px;padding:10px 16px;border-radius:12px;background:#ecfdf5;border:1px solid #a7f3d0;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;color:#065f46">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-size:16px">🎯</span>
+        <span>กำลังแสดงเฉพาะแบบฟอร์มที่กำหนดสิทธิ์ให้: <strong id="activeScopeName">-</strong> (<span id="activeScopePos">-</span>)</span>
+        <span id="activeScopeCountBadge" class="count" style="font-size:11px;padding:2px 8px">0 ฟอร์ม</span>
+      </div>
+      <button type="button" id="btnClearSignerScope" class="btn btn-soft" style="height:30px;padding:0 10px;font-size:12px;border-radius:8px">แสดงทั้งหมด ✕</button>
+    </div>
+
+    <div class="launcher-bottom">
+      <!-- Filter Chips -->
+      <div class="chips">
+        <button class="chip active" data-filter="all">ทั้งหมด</button>
+        <button class="chip" data-filter="milling">ลูกหีบ (Milling)</button>
+        <button class="chip" data-filter="prod">ฝ่ายผลิต (Production)</button>
+        <button class="chip" data-filter="custom">แบบฟอร์มที่เพิ่มเอง</button>
+      </div>
+
+      <!-- Multiple Card View Switchers -->
+      <div class="view-switchers" role="group" aria-label="รูปแบบการแสดงผล">
+        <button class="view-btn active" id="viewModeFull" data-view="full" title="การ์ดเต็ม (แสดงรายละเอียดและไอคอนครบ)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+          <span>การ์ดเต็ม</span>
+        </button>
+        <button class="view-btn" id="viewModeCompact" data-view="compact" title="การ์ดย่อ (ขนาดกะทัดรัด ประหยัดพื้นที่)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="5" rx="1"/><rect x="10" y="3" width="5" height="5" rx="1"/><rect x="17" y="3" width="5" height="5" rx="1"/><rect x="3" y="10" width="5" height="5" rx="1"/><rect x="10" y="10" width="5" height="5" rx="1"/><rect x="17" y="10" width="5" height="5" rx="1"/><rect x="3" y="17" width="5" height="5" rx="1"/><rect x="10" y="17" width="5" height="5" rx="1"/><rect x="17" y="17" width="5" height="5" rx="1"/></svg>
+          <span>การ์ดย่อ</span>
+        </button>
+        <button class="view-btn" id="viewModeList" data-view="list" title="แถวรายการ (แสดงแบบตารางเรียงต่อกัน)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span>รายการ</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content Header -->
+  <div class="content-head">
+    <div>
+      <h2>แบบฟอร์มพร้อมใช้งาน</h2>
+      <p>เลือกแบบฟอร์มเพื่อบันทึกผลการตรวจเช็คหน้างาน</p>
+    </div>
+    <span class="count" id="resultCount">พบ 13 แบบฟอร์ม</span>
+  </div>
+
+  <!-- Forms Container (Render target for Full, Compact, List views) -->
+  <section class="grid mode-full" id="forms"></section>
+</main>
+
+<!-- Modal: จัดการรายชื่อผู้เซ็น (Signer Directory Modal) -->
+<dialog id="signerDialog" class="wide">
+  <div class="dialog-head">
+    <div>
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        จัดการรายชื่อผู้เซ็นกลาง (Signer Directory)
+      </h2>
+      <p>รายชื่อที่บันทึกที่นี่ จะถูกส่งไปให้เลือกเป็นผู้ตรวจสอบ/ผู้อนุมัติในทุกแบบฟอร์มโดยอัตโนมัติ</p>
+    </div>
+    <button class="close" data-close="signerDialog" aria-label="ปิด">×</button>
+  </div>
+  <div class="dialog-body">
+    <!-- Quick Add Form -->
+    <form id="signerAddForm" class="signer-quick-add" style="grid-template-columns: 1.2fr 1fr 1.2fr auto;">
+      <div>
+        <label style="font-size:12px;font-weight:700;color:var(--slate);display:block;margin-bottom:4px">ชื่อผู้เซ็น / ผู้ตรวจ</label>
+        <input id="newSignerName" placeholder="เช่น นายสมชาย ใจเพชร" required style="width:100%;height:38px;padding:0 10px;border:1px solid #cbd5e1;border-radius:8px">
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:700;color:var(--slate);display:block;margin-bottom:4px">ตำแหน่ง</label>
+        <input id="newSignerPosition" placeholder="เช่น วิศวกรเครื่องกล / ช่างประจำกะ" required style="width:100%;height:38px;padding:0 10px;border:1px solid #cbd5e1;border-radius:8px">
+      </div>
+      <div>
+        <label style="font-size:12px;font-weight:700;color:var(--slate);display:block;margin-bottom:4px">ขอบเขตแบบฟอร์มที่เห็น / มีสิทธิ์เซ็น</label>
+        <select id="newSignerScope" style="width:100%;height:38px;padding:0 8px;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;font-weight:600">
+          <option value="ALL">🌐 ทุกแบบฟอร์ม (ALL)</option>
+          <option value="milling">⚙️ แผนกลูกหีบ (Milling - 9 ฟอร์ม)</option>
+          <option value="prod">🏭 ฝ่ายผลิต (Production - 3 ฟอร์ม)</option>
+          <option value="maintenance">🔧 ซ่อมบำรุง / สายพาน (MR-01)</option>
+          <option value="FM-ML01-ML-02">เทอร์ไบน์ (FM-ML01-ML-02)</option>
+          <option value="FM-ML01-ML-09">ดั๊มพ์ 1-3 (FM-ML01-ML-09)</option>
+          <option value="FM-ML01-ML-10">สะพานดั๊มพ์ (FM-ML01-ML-10)</option>
+          <option value="FM-ML01-ML-11">High Speed Belt (FM-ML01-ML-11)</option>
+          <option value="FM-ML01-ML-12">DCS ลูกหีบ (FM-ML01-ML-12)</option>
+          <option value="FM-ML01-ML-13">เหล็กรางเท (FM-ML01-ML-13)</option>
+          <option value="FM-ML01-ML-18">รถบรรทุกอ้อย (FM-ML01-ML-18)</option>
+          <option value="FM-PD01-PD-01">หยุดหีบผลิต (FM-PD01-PD-01)</option>
+          <option value="FM-PD01-PD-02">เปลี่ยนกะงาน (FM-PD01-PD-02)</option>
+          <option value="FM-PD02-PD-02">วัสดุแตกหัก (FM-PD02-PD-02)</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:flex-end">
+        <button type="submit" class="btn btn-emerald" style="height:38px;width:100%">+ เพิ่มรายชื่อ</button>
+      </div>
+    </form>
+
+    <!-- Toolbar for Table -->
+    <div class="signer-toolbar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-weight:700;font-size:13px;color:var(--slate)">ตารางรายชื่อ</span>
+        <span class="count" id="signerTableCount">0 รายชื่อ</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button type="button" class="btn btn-soft" id="btnExportSignersCsv" style="height:34px;padding:0 10px;font-size:12px">ส่งออก CSV</button>
+        <button type="button" class="btn btn-soft" id="btnExportSignersJson" style="height:34px;padding:0 10px;font-size:12px">ส่งออก JSON</button>
+        <label class="btn btn-soft" style="height:34px;padding:0 10px;font-size:12px;cursor:pointer">
+          นำเข้าไฟล์
+          <input type="file" id="importSignersFile" accept=".csv,.json" hidden>
+        </label>
+        <button type="button" class="btn btn-soft" id="btnSeedSigners" style="height:34px;padding:0 10px;font-size:12px" title="ใส่รายชื่อตัวอย่างของโรงงาน">โหลดตัวอย่าง ESC</button>
+      </div>
+    </div>
+
+    <!-- Signers Table -->
+    <div class="signer-table-wrap">
+      <table class="signer-table" id="signerTable">
+        <thead>
+          <tr>
+            <th style="width:45px">ลำดับ</th>
+            <th>ชื่อผู้เซ็น</th>
+            <th>ตำแหน่ง</th>
+            <th style="min-width:140px">ขอบเขตแบบฟอร์ม (Scope)</th>
+            <th style="width:130px;text-align:center">การจัดการ</th>
+          </tr>
+        </thead>
+        <tbody id="signerTableBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin:0;font-size:12px;color:var(--muted)">
+      * รายชื่อจะถูกบันทึกลงในเบราว์เซอร์ของเครื่องนี้ (คีย์ <code>ESC_TURBINE_SIGNER_DIRECTORY_V1</code>) สามารถเปิดใช้งานออฟไลน์ได้ทันที
+    </p>
+  </div>
+</dialog>
+
+<!-- Modal: การตั้งค่ากลาง (Global Settings Modal) -->
+<dialog id="settingsDialog">
+  <div class="dialog-head">
+    <div>
+      <h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        การตั้งค่ากลางที่ใช้ได้กับทุกฟอร์ม
+      </h2>
+      <p>กำหนดค่าเริ่มต้นสำหรับปีการผลิต แผนก และการพิมพ์ เพื่อให้ทุกฟอร์มโหลดค่าตรงกัน</p>
+    </div>
+    <button class="close" data-close="settingsDialog" aria-label="ปิด">×</button>
+  </div>
+  <form id="globalSettingsForm" class="dialog-body">
+    <div class="settings-grid">
+      <div class="settings-group">
+        <label for="cfgYear">ปีการผลิตเริ่มต้น (Crop Year)</label>
+        <input id="cfgYear" placeholder="เช่น 2567/68 หรือ 2568/69" required>
+        <small>บันทึกลงในช่องปีการผลิตของทุกฟอร์มโดยอัตโนมัติ</small>
+      </div>
+
+      <div class="settings-group">
+        <label for="cfgShift">กะการทำงานเริ่มต้น</label>
+        <select id="cfgShift">
+          <option value="กะ 1">กะ 1 (08:00 - 16:00)</option>
+          <option value="กะ 2">กะ 2 (16:00 - 24:00)</option>
+          <option value="กะ 3">กะ 3 (00:00 - 08:00)</option>
+        </select>
+        <small>ค่าเริ่มต้นเวลาเปิดแบบฟอร์มประจำวัน</small>
+      </div>
+
+      <div class="settings-group">
+        <label for="cfgDept">ฝ่ายเริ่มต้น</label>
+        <input id="cfgDept" value="วิศวกรรมจักรกล">
+        <small>เช่น วิศวกรรมจักรกล หรือ ฝ่ายผลิต</small>
+      </div>
+
+      <div class="settings-group">
+        <label for="cfgSection">แผนกเริ่มต้น</label>
+        <input id="cfgSection" value="ลูกหีบ">
+        <small>เช่น ลูกหีบ, บอยเลอร์, ซ่อมบำรุง</small>
+      </div>
+
+      <div class="settings-group full">
+        <label for="cfgFactory">ชื่อบริษัท / โรงงาน</label>
+        <input id="cfgFactory" value="บริษัท น้ำตาลและอ้อยตะวันออก จำกัด (มหาชน)">
+        <small>แสดงบนหัวกระดาษเอกสารและรายงาน</small>
+      </div>
+
+      <div class="settings-group">
+        <label for="cfgPrintDpi">ความละเอียดพิมพ์ Canvas (DPI)</label>
+        <select id="cfgPrintDpi">
+          <option value="260">260 DPI (มาตรฐาน คมชัด รวดเร็ว)</option>
+          <option value="300">300 DPI (คุณภาพสูงสุด สำหรับพิมพ์เก็บประวัติ)</option>
+        </select>
+      </div>
+
+      <div class="settings-group">
+        <label for="cfgAutoLock">การล็อกเอกสารอัตโนมัติ</label>
+        <select id="cfgAutoLock">
+          <option value="yes">ล็อกทันทีเมื่อลงลายเซ็นครบถ้วน</option>
+          <option value="no">ไม่ล็อกอัตโนมัติ (แก้ไขได้ตลอดเวลา)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="settings-hint-box">
+      <strong>คำแนะนำ:</strong> ค่าที่บันทึกนี้จะถูกนำไปใช้เป็นค่าเริ่มต้นในฟอร์มของแผนก เช่น FM-ML01-ML-09, FM-ML01-ML-10, FM-ML01-ML-05 และฟอร์มอื่นๆ ทันทีเมื่อเปิดใช้งาน
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:22px">
+      <button type="button" class="btn btn-soft" id="btnResetSettings">คืนค่าเริ่มต้น</button>
+      <button type="submit" class="btn btn-emerald">บันทึกการตั้งค่ากลาง</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Modal: จัดการคลัง & สำรอง JSON (Admin & Backup Modal) -->
+<dialog id="adminDialog">
+  <div class="dialog-head">
+    <div>
+      <h2>จัดการคลังแบบฟอร์มและการสำรอง</h2>
+      <p>เครื่องมือสำหรับผู้ดูแลระบบและสำรองข้อมูลข้ามเครื่อง</p>
+    </div>
+    <button class="close" data-close="adminDialog">×</button>
+  </div>
+  <div class="dialog-body">
+    <div class="admin-list">
+      <button class="admin-action" id="addOpen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18"/></svg>
+        <span>
+          <strong>เพิ่มแบบฟอร์ม HTML เข้าคลัง</strong>
+          <small>นำเข้าไฟล์แบบฟอร์ม HTML ใหม่ ขนาดสูงสุด 20 MB จัดเก็บในเครื่อง</small>
+        </span>
+      </button>
+
+      <button class="admin-action" id="backup">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14"/></svg>
+        <span>
+          <strong>สำรองคลังแบบฟอร์ม (JSON)</strong>
+          <small>ดาวน์โหลดแบบฟอร์มและข้อมูลที่เพิ่มไว้เพื่อสำรองหรือย้ายเครื่อง</small>
+        </span>
+      </button>
+
+      <label class="admin-action" for="restore">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15V3m0 0 4 4m-4-4L8 7M5 19h14"/></svg>
+        <span>
+          <strong>กู้คืนคลังแบบฟอร์ม (JSON)</strong>
+          <small>นำเข้าข้อมูลสำรอง รายการรหัสเดิมจะถูกแทนที่</small>
+        </span>
+        <input id="restore" type="file" accept=".json" hidden>
+      </label>
+    </div>
+    <p style="margin:20px 0 6px;color:#64748b;font-size:12px;font-weight:700">สถานะพื้นที่จัดเก็บในเบราว์เซอร์</p>
+    <p style="margin:0;color:#64748b;font-size:13px" id="storageStatus">กำลังเชื่อมต่อคลังในเครื่อง…</p>
+  </div>
+</dialog>
+
+<!-- Modal: เพิ่มแบบฟอร์ม HTML ใหม่ -->
+<dialog id="addDialog">
+  <div class="dialog-head">
+    <div>
+      <h2>เพิ่มแบบฟอร์ม HTML ใหม่</h2>
+      <p>ไฟล์แบบฟอร์มจะถูกจัดเก็บใน IndexedDB ของเบราว์เซอร์นี้</p>
+    </div>
+    <button class="close" data-close="addDialog">×</button>
+  </div>
+  <form id="addForm" class="dialog-body">
+    <div class="dropzone" id="dropzone">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0 4 4m-4-4L8 8M5 20h14"/></svg>
+      <strong>ลากไฟล์มาวาง หรือแตะเพื่อเลือกไฟล์</strong>
+      <span>รองรับไฟล์ .html / .htm ขนาดไม่เกิน 20 MB</span>
+      <span id="fileName" class="selected"></span>
+      <input id="htmlFile" type="file" accept=".html,.htm,text/html" required>
+    </div>
+    <div class="settings-group" style="margin-bottom:12px">
+      <label>ชื่อแบบฟอร์ม</label>
+      <input id="title" required maxlength="180" placeholder="เช่น แบบบันทึกเครื่องจักรชุดใหม่">
+    </div>
+    <div class="settings-group" style="margin-bottom:12px">
+      <label>รหัสเอกสาร</label>
+      <input id="code" maxlength="80" placeholder="เช่น FM-ML01-ML-25">
+    </div>
+    <div class="settings-group" style="margin-bottom:16px">
+      <label>แผนก</label>
+      <input id="department" maxlength="100" value="ลูกหีบ">
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:10px">
+      <button class="btn btn-soft" data-close="addDialog" type="button">ยกเลิก</button>
+      <button class="btn btn-emerald" type="submit">เพิ่มเข้าคลัง</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Modal: สแกน QR แบบฟอร์ม -->
+<dialog id="scannerDialog">
+  <div class="dialog-head">
+    <div>
+      <h2>สแกน QR Code แบบฟอร์ม</h2>
+      <p>หันกล้องไปที่ป้าย QR Code บนเครื่องจักรหรือเอกสาร</p>
+    </div>
+    <button class="close" id="scannerClose">×</button>
+  </div>
+  <div class="dialog-body">
+    <div class="camera-stage">
+      <video id="scannerVideo" playsinline muted></video>
+      <canvas id="scannerCanvas"></canvas>
+      <div id="cameraPlaceholder" style="text-align:center;color:#a7f3d0">
+        <svg style="width:44px;height:44px;margin-bottom:8px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></svg>
+        <p style="margin:0;font-size:14px">กด “เปิดกล้อง” เพื่อเริ่มสแกน QR</p>
+      </div>
+      <div class="scan-frame hidden" id="scanFrame"></div>
+    </div>
+    <div class="scanner-status" id="scannerStatus">รองรับรหัสเอกสารและ URL แบบฟอร์มของ ESC</div>
+    <div class="scanner-controls">
+      <button class="btn btn-emerald" id="cameraStart">เปิดกล้อง</button>
+      <button class="btn btn-soft" id="cameraFlip" disabled>สลับกล้อง</button>
+      <button class="btn btn-danger hidden" id="cameraStop">หยุดกล้อง</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Toast notification -->
+<div class="toast" id="toast" role="status"></div>
+
+<script src="jsQR.js"></script>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+
+// Storage keys
+const SIGNER_DIRECTORY_KEY = 'ESC_TURBINE_SIGNER_DIRECTORY_V1';
+const YEAR_DEFAULT_KEY = 'ESC_DUMP_TRUCK_YEAR_DEFAULT_V1';
+const GLOBAL_SETTINGS_KEY = 'ESC_GLOBAL_SETTINGS_V1';
+const VIEW_MODE_KEY = 'ESC_DATACENTER_VIEW_MODE';
+const THEME_MODE_KEY = 'ESC_THEME_MODE';
+const ACTIVE_SIGNER_SCOPE_KEY = 'ESC_DATACENTER_ACTIVE_SIGNER_SCOPE';
+
+let activeSignerScope = localStorage.getItem(ACTIVE_SIGNER_SCOPE_KEY) || 'ALL';
+
+// Theme Mode Functions
+function initTheme() {
+  const current = localStorage.getItem(THEME_MODE_KEY) || 'light';
+  applyTheme(current);
+}
+
+function applyTheme(mode) {
+  const isDark = mode === 'dark';
+  document.body.classList.toggle('dark-theme', isDark);
+  document.documentElement.classList.toggle('dark-theme', isDark);
+  const btn = $('btnThemeToggle');
+  const icon = $('themeToggleIcon');
+  const text = $('themeToggleText');
+  if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+  if (text) text.textContent = isDark ? 'โหมดสว่าง' : 'โหมดมืด';
+  if (btn) btn.classList.toggle('active', isDark);
+  try { localStorage.setItem(THEME_MODE_KEY, mode); } catch (_) {}
+}
+
+function toggleTheme() {
+  const isDark = document.body.classList.contains('dark-theme') || document.documentElement.classList.contains('dark-theme');
+  const next = isDark ? 'light' : 'dark';
+  applyTheme(next);
+  toast(next === 'dark' ? '🌙 เปลี่ยนเป็นโหมดมืด (ES Forest Night) แล้ว' : '☀️ เปลี่ยนเป็นโหมดสว่าง (ES Daylight) แล้ว');
+}
+
+// Scope Options & Helpers
+const SCOPE_OPTIONS = [
+  { value: 'ALL', label: '🌐 ทุกแบบฟอร์ม (ALL)' },
+  { value: 'milling', label: '⚙️ แผนกลูกหีบ (Milling - 9 ฟอร์ม)' },
+  { value: 'prod', label: '🏭 ฝ่ายผลิต (Production - 3 ฟอร์ม)' },
+  { value: 'maintenance', label: '🔧 ซ่อมบำรุง / สายพาน (MR-01)' },
+  { value: 'FM-ML01-ML-02', label: 'เทอร์ไบน์ (FM-ML01-ML-02)' },
+  { value: 'FM-ML01-ML-09', label: 'ดั๊มพ์ 1-3 (FM-ML01-ML-09)' },
+  { value: 'FM-ML01-ML-10', label: 'สะพานดั๊มพ์ (FM-ML01-ML-10)' },
+  { value: 'FM-ML01-ML-11', label: 'High Speed Belt (FM-ML01-ML-11)' },
+  { value: 'FM-ML01-ML-12', label: 'DCS ลูกหีบ (FM-ML01-ML-12)' },
+  { value: 'FM-ML01-ML-13', label: 'เหล็กรางเท (FM-ML01-ML-13)' },
+  { value: 'FM-ML01-ML-18', label: 'รถบรรทุกอ้อย (FM-ML01-ML-18)' },
+  { value: 'FM-PD01-PD-01', label: 'หยุดหีบผลิต (FM-PD01-PD-01)' },
+  { value: 'FM-PD01-PD-02', label: 'เปลี่ยนกะงาน (FM-PD01-PD-02)' },
+  { value: 'FM-PD02-PD-02', label: 'วัสดุแตกหัก (FM-PD02-PD-02)' }
+];
+
+function getScopeLabel(scope) {
+  const s = Array.isArray(scope) ? (scope[0] || 'ALL') : (scope || 'ALL');
+  const match = SCOPE_OPTIONS.find(o => o.value === s);
+  return match ? match.label : s;
+}
+
+function getScopeBadge(scope) {
+  const s = Array.isArray(scope) ? (scope[0] || 'ALL') : (scope || 'ALL');
+  let cls = 'all';
+  if (s === 'milling') cls = 'milling';
+  else if (s === 'prod') cls = 'prod';
+  else if (s === 'maintenance') cls = 'maint';
+  else if (s !== 'ALL') cls = 'custom';
+  return `<span class="scope-badge ${cls}">${escapeHtml(getScopeLabel(s))}</span>`;
+}
+
+function isFormInScope(item, scope) {
+  if (!scope || !scope.length) return true;
+  const list = Array.isArray(scope) ? scope : [scope];
+  if (list.includes('ALL')) return true;
+  for (const s of list) {
+    if (s === 'ALL') return true;
+    if (s === 'milling' && (/ลูกหีบ|milling/i.test(item.department || '') || String(item.code || '').includes('ML'))) return true;
+    if (s === 'prod' && (/ผลิต|production/i.test(item.department || '') || String(item.code || '').includes('PD'))) return true;
+    if (s === 'maintenance' && (/ซ่อมบำรุง/i.test(item.department || '') || String(item.code || '').includes('MR'))) return true;
+    if (item.code === s || item.id === s) return true;
+  }
+  return false;
+}
+
+// All 10 Built-in ESC Forms
+const builtin = [
+  {
+    id: 'dump-routine',
+    title: 'แบบบันทึกเครื่องจักรดั๊มพ์ยกรถอ้อย (ดั๊มพ์ 1, 2, 3)',
+    code: 'FM-ML01-ML-09',
+    department: 'ลูกหีบ',
+    builtin: true,
+    url: 'FM-ML01-ML-09.html',
+    kind: 'belt',
+    highlights: '21 คอลัมน์ · ตรวจความสะอาด + อุณหภูมิ/แรงดัน 24 ชม. · พิมพ์ Canvas 260 DPI'
+  },
+  {
+    id: 'bridge-routine',
+    title: 'แบบบันทึกเครื่องจักรสะพานดั๊มพ์และสะพานเมน',
+    code: 'FM-ML01-ML-10',
+    department: 'ลูกหีบ',
+    builtin: true,
+    url: 'FM-ML01-ML-10.html',
+    kind: 'belt',
+    highlights: '43 คอลัมน์ · ตรวจระบบขับเคลื่อนสะพานดั๊มพ์และสะพานเมน 24 ชม.'
+  },
+  {
+    id: 'turbine-routine',
+    title: 'รายงานสภาพการทำงานของเครื่องเทอร์ไบน์ ชุดลูกหีบ',
+    code: 'FM-ML01-ML-02',
+    department: 'ลูกหีบ',
+    builtin: true,
+    url: 'FM-ML01-ML-02.html',
+    kind: 'turbine',
+    highlights: 'เทอร์ไบน์ขับลูกหีบ 1-5 และ Crusher · วัดแรงดันไอน้ำ อุณหภูมิ รอบความเร็ว'
+  },
+  {
+    id: 'hsb-bridge',
+    title: 'แบบบันทึกเครื่องจักร High speed belt และสะพานข้ามชุดลูกหีบ',
+    code: 'FM-ML01-ML-11',
+    department: 'ลูกหีบ',
+    builtin: true,
+    url: 'FM-ML01-ML-11.html',
+    kind: 'belt',
+    highlights: 'ตรวจระบบขับเคลื่อน High Speed Belt มอเตอร์ ลูกปืน และสายพานลำเลียง'
+  },
+  {
+    id: 'slow-crush',
+    title: 'แบบบันทึกการลดรอบลูกหีบ',
+    code: 'FM-ML01-ML-05',
+    department: 'ลูกหีบ',
+    builtin: true,
+    url: 'FM-ML01-ML-05.html',
+    kind: 'turbine',
+    highlights: '13 คอลัมน์ · 29 แถว · คำนวณความเร็วเฉลี่ยและปริมาณน้ำอ้อย/น้ำพรมอัตโนมัติ'
+  },
+  {
+    id: 'downtime-eng',
+    title: 'แบบบันทึกการหยุดหีบ (ฝ่ายวิศวกรรม)',
+    code: 'FM-ML01-ML-06',
+    department: 'ลูกหีบ',
+    builtin: true,
+    url: 'FM-ML01-ML-06.html',
+    kind: 'turbine',
+    highlights: '10 คอลัมน์ · 22 แถว · สรุป Downtime รวมและแผนกที่หยุดนานที่สุด'
+  },
+  {
+    id: 'downtime-prod',
+    title: 'บันทึกรายงานการหยุดหีบ (ฝ่ายผลิต)',
+    code: 'FM-PD01-PD-01',
+    department: 'ฝ่ายผลิต',
+    builtin: true,
+    url: 'FM-PD01-PD-01.html',
+    kind: 'turbine',
+    highlights: '10 คอลัมน์ · ขั้นตอนเวลา 7 สเต็ป · คำนวณเวลาหยุดหีบและปริมาณอ้อย'
+  },
+  {
+    id: 'tram-iron',
+    title: 'แบบบันทึกการเก็บน้ำหนักเหล็กรางเท',
+    code: 'FM-ML01-ML-13',
+    department: 'ลูกหีบ',
+    builtin: true,
+    url: 'FM-ML01-ML-13.html',
+    kind: 'belt',
+    highlights: '15 คอลัมน์ · 27 แถว · เชรดเดอร์ & High Speed Belt คำนวณเวลานาทีและน้ำหนักรวม กก.'
+  },
+  {
+    id: 'truck-inspect',
+    title: 'แบบบันทึกการตรวจสอบรถบรรทุกอ้อย',
+    code: 'FM-ML01-ML-18',
+    department: 'ลูกหีบ',
+    builtin: true,
+    url: 'FM-ML01-ML-18.html',
+    kind: 'file',
+    highlights: '12 คอลัมน์ · 38 แถว · 🗸 ผ่าน | ✗ ไม่ผ่าน | ☒ แก้ไขแล้ว · Safety Compliance %'
+  },
+  {
+    id: 'pest-control',
+    title: 'แบบฟอร์มการตรวจสอบสัตว์พาหะนำเชื้อ',
+    code: 'FM-MR10-MR-01',
+    department: 'ลูกหีบ',
+    builtin: true,
+    url: 'FM-MR10-MR-01.html',
+    kind: 'file',
+    highlights: '33 คอลัมน์ · 20 จุดวาง x 31 วัน · บันทึก R ปกติ / S ผิดปกติ + ตาราง Action Log'
+  },
+  {
+    id: 'shift-handover',
+    title: 'แบบฟอร์มการมอบหมาย ส่งต่องาน เครื่องจักรขัดข้อง และการเปลี่ยนกะงาน',
+    code: 'FM-PD01-PD-02',
+    department: 'ฝ่ายผลิต/ลูกหีบ',
+    builtin: true,
+    url: 'FM-PD01-PD-02.html',
+    kind: 'file',
+    highlights: 'บันทึกส่งมอบงาน 2 กะ (เช้า-เย็น) · สรุป Downtime 7 หมวดเครื่องจักร · พิมพ์ชุด 2 หน้า 260 DPI'
+  },
+  {
+    id: 'dcs-routine',
+    title: 'แบบบันทึกเครื่องจักรและอุปกรณ์ ในฝ่ายหีบอ้อยกะทำงาน (DCS)',
+    code: 'FM-ML01-ML-12',
+    department: 'ลูกหีบ',
+    builtin: true,
+    url: 'FM-ML01-ML-12.html',
+    kind: 'turbine',
+    highlights: 'บันทึกพารามิเตอร์ 24 ชม. ทุก 2 ชม. (12 ช่วงเวลา) · ตรวจสอบเกณฑ์อัตโนมัติ · พิมพ์ A3 Portrait 260 DPI'
+  },
+  {
+    id: 'brittle-materials',
+    title: 'บันทึกการตรวจสอบวัสดุที่สามารถแตกหักได้ แผนกลูกหีบ',
+    code: 'FM-PD02-PD-02',
+    department: 'ลูกหีบ',
+    builtin: true,
+    url: 'FM-PD02-PD-02.html',
+    kind: 'file',
+    highlights: 'สารบัญอุปกรณ์ 357 รายการ (17 หน้า) · หลอดไฟ/สปอตไลต์/เกจวัด · ตรวจเช็คประจำวัน 1-31 วัน'
+  }
+];
+
+let db = null;
+let customItems = [];
+let activeFilter = 'all';
+let currentViewMode = localStorage.getItem(VIEW_MODE_KEY) || 'full';
+let toastTimer = null;
+let stream = null;
+let scanLoop = null;
+let facingMode = 'environment';
+let lastScan = '';
+let signersList = [];
+
+// Icons SVG definitions
+const icons = {
+  turbine: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2"/><path d="M12 4c3 2 3 4 0 6M20 12c-2 3-4 3-6 0M12 20c-3-2-3-4 0-6M4 12c2-3 4-3 6 0"/></svg>',
+  belt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="15" r="3"/><circle cx="18" cy="15" r="3"/><path d="M6 12h12M6 18h12M4 8h16l-2-3H6z"/></svg>',
+  file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'
+};
+
+// Toast notification helper
+function toast(text, error = false) {
+  const t = $('toast');
+  t.textContent = text;
+  t.className = 'toast' + (error ? ' error' : '');
+  clearTimeout(toastTimer);
+  requestAnimationFrame(() => t.classList.add('show'));
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function requestPromise(r) {
+  return new Promise((ok, no) => {
+    r.onsuccess = () => ok(r.result);
+    r.onerror = () => no(r.error);
+  });
+}
+
+function dbTransaction(mode, work) {
+  return new Promise((ok, no) => {
+    const tx = db.transaction('forms', mode);
+    try { work(tx.objectStore('forms')); } catch (e) { tx.abort(); no(e); return; }
+    tx.oncomplete = ok;
+    tx.onerror = () => no(tx.error);
+    tx.onabort = () => no(tx.error || Error('บันทึกไม่สำเร็จ'));
+  });
+}
+
+// -------------------------------------------------------------
+// Signer Directory Management (syncs with ESC_TURBINE_SIGNER_DIRECTORY_V1)
+// -------------------------------------------------------------
+function loadSigners() {
+  try {
+    const saved = localStorage.getItem(SIGNER_DIRECTORY_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        signersList = parsed.filter(i => i && typeof i.name === 'string').map(s => ({
+          ...s,
+          formScope: Array.isArray(s.formScope) && s.formScope.length ? s.formScope : (typeof s.formScope === 'string' ? [s.formScope] : ['ALL'])
+        }));
+      }
+    }
+  } catch (e) {
+    console.error('Error loading signers', e);
+  }
+  updateSignerUI();
+}
+
+function saveSigners() {
+  try {
+    localStorage.setItem(SIGNER_DIRECTORY_KEY, JSON.stringify(signersList));
+    updateSignerUI();
+    return true;
+  } catch (e) {
+    toast('บันทึกรายชื่อไม่ได้: ' + e.message, true);
+    return false;
+  }
+}
+
+function populateSignerFilterSelect() {
+  const sel = $('signerFilterSelect');
+  if (!sel) return;
+  const currentVal = activeSignerScope;
+  sel.replaceChildren(new Option('👤 ทุกคน / ทุกแบบฟอร์ม', 'ALL'));
+  signersList.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.name;
+    opt.textContent = `${s.name} (${s.position || '-'}) — ${getScopeLabel(s.formScope)}`;
+    sel.append(opt);
+  });
+  sel.value = signersList.some(s => s.name === currentVal) ? currentVal : 'ALL';
+}
+
+function updateSignerUI() {
+  $('menuSignersCount').textContent = signersList.length;
+  $('signerTableCount').textContent = signersList.length + ' รายชื่อ';
+  renderSignerTable();
+  populateSignerFilterSelect();
+}
+
+function renderSignerTable() {
+  const tbody = $('signerTableBody');
+  tbody.replaceChildren();
+
+  if (!signersList.length) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td colspan="5" style="text-align:center;padding:26px;color:#64748b">ยังไม่มีรายชื่อผู้เซ็นในระบบ กด "+ เพิ่มรายชื่อ" ด้านบน หรือกด "โหลดตัวอย่าง ESC"</td>';
+    tbody.append(tr);
+    return;
+  }
+
+  signersList.forEach((signer, index) => {
+    const tr = document.createElement('tr');
+    tr.id = `signer-row-${index}`;
+    const scopeVal = Array.isArray(signer.formScope) && signer.formScope.length ? signer.formScope[0] : (typeof signer.formScope === 'string' ? signer.formScope : 'ALL');
+
+    if (signer._editing) {
+      const scopeOptionsHtml = SCOPE_OPTIONS.map(opt => `<option value="${opt.value}" ${opt.value === scopeVal ? 'selected' : ''}>${opt.label}</option>`).join('');
+      tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td><input id="edit-name-${index}" value="${escapeHtml(signer.name)}" placeholder="ชื่อผู้เซ็น"></td>
+        <td><input id="edit-pos-${index}" value="${escapeHtml(signer.position || '')}" placeholder="ตำแหน่ง"></td>
+        <td><select id="edit-scope-${index}" style="width:100%;height:36px;border:1px solid #cbd5e1;border-radius:8px;padding:0 6px;font-size:12px">${scopeOptionsHtml}</select></td>
+        <td style="text-align:center;white-space:nowrap">
+          <button type="button" class="btn btn-emerald" style="height:32px;padding:0 8px;font-size:12px;margin-right:4px" onclick="saveSignerRow(${index})">บันทึก</button>
+          <button type="button" class="btn btn-soft" style="height:32px;padding:0 8px;font-size:12px" onclick="cancelSignerRow(${index})">ยกเลิก</button>
+        </td>
+      `;
+    } else {
+      tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td><strong>${escapeHtml(signer.name)}</strong></td>
+        <td><span style="color:var(--slate)">${escapeHtml(signer.position || '-')}</span></td>
+        <td>${getScopeBadge(signer.formScope)}</td>
+        <td style="text-align:center;white-space:nowrap">
+          <button type="button" class="btn btn-soft" style="height:32px;padding:0 8px;font-size:12px;margin-right:4px" onclick="editSignerRow(${index})">แก้ไข</button>
+          <button type="button" class="btn btn-danger" style="height:32px;padding:0 8px;font-size:12px" onclick="deleteSignerRow(${index})">ลบ</button>
+        </td>
+      `;
+    }
+    tbody.append(tr);
+  });
+}
+
+function escapeHtml(str) {
+  return String(str || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+window.editSignerRow = function(index) {
+  signersList[index]._editing = true;
+  renderSignerTable();
+  const input = $(`edit-name-${index}`);
+  if (input) input.focus();
+};
+
+window.cancelSignerRow = function(index) {
+  delete signersList[index]._editing;
+  renderSignerTable();
+};
+
+window.saveSignerRow = function(index) {
+  const nameEl = $(`edit-name-${index}`);
+  const posEl = $(`edit-pos-${index}`);
+  const scopeEl = $(`edit-scope-${index}`);
+  if (!nameEl || !posEl) return;
+  const name = nameEl.value.trim();
+  const position = posEl.value.trim();
+  const formScope = [scopeEl ? scopeEl.value : 'ALL'];
+
+  if (!name) {
+    toast('กรุณาระบุชื่อผู้เซ็น', true);
+    return;
+  }
+  signersList[index] = { name, position, formScope };
+  saveSigners();
+  toast('แก้ไขรายชื่อและขอบเขตสิทธิ์แล้ว');
+  render();
+};
+
+window.deleteSignerRow = function(index) {
+  const signer = signersList[index];
+  if (!confirm(`ต้องการลบ "${signer.name}" ออกจากรายชื่อผู้เซ็น?`)) return;
+  signersList.splice(index, 1);
+  if (activeSignerScope === signer.name) {
+    activeSignerScope = 'ALL';
+    localStorage.setItem(ACTIVE_SIGNER_SCOPE_KEY, 'ALL');
+  }
+  saveSigners();
+  toast('ลบรายชื่อแล้ว');
+  render();
+};
+
+$('signerAddForm').onsubmit = function(e) {
+  e.preventDefault();
+  const name = $('newSignerName').value.trim();
+  const position = $('newSignerPosition').value.trim();
+  const scope = $('newSignerScope') ? $('newSignerScope').value : 'ALL';
+  if (!name) return;
+
+  if (signersList.some(s => s.name === name && s.position === position)) {
+    toast('มีรายชื่อและตำแหน่งนี้ในระบบแล้ว', true);
+    return;
+  }
+
+  signersList.push({ name, position, formScope: [scope] });
+  saveSigners();
+  $('signerAddForm').reset();
+  toast(`เพิ่มรายชื่อ ${name} (ขอบเขต: ${getScopeLabel([scope])}) สำเร็จ`);
+  render();
+};
+
+// Export/Import Signers
+$('btnExportSignersJson').onclick = () => {
+  const blob = new Blob([JSON.stringify(signersList, null, 2)], { type: 'application/json' });
+  saveBlob(blob, `ESC_Signer_Directory_${new Date().toISOString().slice(0, 10)}.json`);
+  toast('ส่งออกไฟล์รายชื่อ JSON แล้ว');
+};
+
+$('btnExportSignersCsv').onclick = () => {
+  const rows = [['ชื่อผู้เซ็น', 'ตำแหน่ง', 'ขอบเขตแบบฟอร์ม']];
+  signersList.forEach(s => rows.push([s.name, s.position || '', (s.formScope && s.formScope[0]) || 'ALL']));
+  const csv = '\ufeff' + rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  saveBlob(blob, `ESC_Signer_Directory_${new Date().toISOString().slice(0, 10)}.csv`);
+  toast('ส่งออกไฟล์รายชื่อ CSV แล้ว');
+};
+
+$('importSignersFile').onchange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    let imported = [];
+    if (file.name.endsWith('.json')) {
+      const parsed = JSON.parse(text);
+      if (Array.isArray(parsed)) {
+        imported = parsed.filter(x => x && typeof x.name === 'string').map(x => ({
+          name: x.name,
+          position: x.position || '',
+          formScope: Array.isArray(x.formScope) && x.formScope.length ? x.formScope : ['ALL']
+        }));
+      }
+    } else {
+      // Parse CSV
+      const lines = text.split(/\r?\n/).filter(l => l.trim());
+      for (let i = 1; i < lines.length; i++) {
+        const parts = lines[i].split(',').map(s => s.replace(/^"|"$/g, '').trim());
+        if (parts[0]) imported.push({ name: parts[0], position: parts[1] || '', formScope: [parts[2] || 'ALL'] });
+      }
+    }
+    if (!imported.length) throw new Error('ไม่พบข้อมูลรายชื่อในไฟล์');
+    
+    let addedCount = 0;
+    imported.forEach(item => {
+      if (!signersList.some(s => s.name === item.name && s.position === item.position)) {
+        signersList.push({ name: item.name, position: item.position || '', formScope: item.formScope || ['ALL'] });
+        addedCount++;
+      }
+    });
+    saveSigners();
+    render();
+    toast(`นำเข้ารายชื่อสำเร็จ ${addedCount} รายการ`);
+  } catch (err) {
+    toast('นำเข้าไม่สำเร็จ: ' + err.message, true);
+  } finally {
+    e.target.value = '';
+  }
+};
+
+$('btnSeedSigners').onclick = () => {
+  const sample = [
+    { name: 'นายเกรียงไกร ชูโชติ', position: 'ผู้จัดการโรงงาน', formScope: ['ALL'] },
+    { name: 'นายสมชาย ใจเพชร', position: 'วิศวกรเครื่องกล', formScope: ['ALL'] },
+    { name: 'นายอนุชา พงษ์สวัสดิ์', position: 'หัวหน้าแผนกลูกหีบ', formScope: ['milling'] },
+    { name: 'นายวีระพล สดใส', position: 'ช่างเทคนิคอาวุโส', formScope: ['milling'] },
+    { name: 'นายปิยะพงษ์ ทับทิม', position: 'หัวหน้ากะลูกหีบ', formScope: ['milling'] },
+    { name: 'นายประสิทธิ์ ศรีทอง', position: 'ช่างประจำกะลูกหีบ', formScope: ['FM-ML01-ML-02'] },
+    { name: 'นายสมศักดิ์ กลั่นกรอง', position: 'หัวหน้าฝ่ายผลิต', formScope: ['prod'] },
+    { name: 'นายธวัชชัย บำรุง', position: 'ช่างซ่อมบำรุงสายพาน', formScope: ['maintenance'] }
+  ];
+  let added = 0;
+  sample.forEach(s => {
+    if (!signersList.some(x => x.name === s.name)) {
+      signersList.push(s);
+      added++;
+    }
+  });
+  saveSigners();
+  render();
+  toast(`เพิ่มรายชื่อตัวอย่าง ${added} รายการแล้ว (พร้อมกำหนดสิทธิ์ฟอร์ม)`);
+};
+
+// -------------------------------------------------------------
+// Global Settings Management (Applies to all forms)
+// -------------------------------------------------------------
+function loadGlobalSettings() {
+  const yearDefault = localStorage.getItem(YEAR_DEFAULT_KEY) || '2567/68';
+  let settings = {};
+  try {
+    settings = JSON.parse(localStorage.getItem(GLOBAL_SETTINGS_KEY) || '{}');
+  } catch (_) {}
+
+  $('cfgYear').value = settings.year || yearDefault;
+  $('cfgShift').value = settings.shift || 'กะ 1';
+  $('cfgDept').value = settings.dept || 'วิศวกรรมจักรกล';
+  $('cfgSection').value = settings.section || 'ลูกหีบ';
+  $('cfgFactory').value = settings.factory || 'บริษัท น้ำตาลและอ้อยตะวันออก จำกัด (มหาชน)';
+  $('cfgPrintDpi').value = settings.printDpi || '260';
+  $('cfgAutoLock').value = settings.autoLock || 'yes';
+}
+
+$('globalSettingsForm').onsubmit = (e) => {
+  e.preventDefault();
+  const year = $('cfgYear').value.trim();
+  const settings = {
+    year: year,
+    shift: $('cfgShift').value,
+    dept: $('cfgDept').value.trim(),
+    section: $('cfgSection').value.trim(),
+    factory: $('cfgFactory').value.trim(),
+    printDpi: $('cfgPrintDpi').value,
+    autoLock: $('cfgAutoLock').value,
+    updatedAt: new Date().toISOString()
+  };
+
+  try {
+    // Propagate to legacy/known keys across forms
+    if (year) {
+      localStorage.setItem(YEAR_DEFAULT_KEY, year);
+      localStorage.setItem('ESC_GLOBAL_PRODUCTION_YEAR', year);
+    }
+    localStorage.setItem(GLOBAL_SETTINGS_KEY, JSON.stringify(settings));
+    $('settingsDialog').close();
+    toast('บันทึกการตั้งค่ากลางเรียบร้อย! มีผลกับทุกฟอร์ม');
+  } catch (err) {
+    toast('บันทึกไม่สำเร็จ: ' + err.message, true);
+  }
+};
+
+$('btnResetSettings').onclick = () => {
+  if (!confirm('ต้องการคืนค่าการตั้งค่าเริ่มต้นมาตรฐาน?')) return;
+  $('cfgYear').value = '2567/68';
+  $('cfgShift').value = 'กะ 1';
+  $('cfgDept').value = 'วิศวกรรมจักรกล';
+  $('cfgSection').value = 'ลูกหีบ';
+  $('cfgFactory').value = 'บริษัท น้ำตาลและอ้อยตะวันออก จำกัด (มหาชน)';
+  $('cfgPrintDpi').value = '260';
+  $('cfgAutoLock').value = 'yes';
+  toast('คืนค่าเริ่มต้นแล้ว กรุณากดบันทึก');
+};
+
+// -------------------------------------------------------------
+// View Mode Switcher: Full, Compact, List
+// -------------------------------------------------------------
+function setViewMode(mode) {
+  currentViewMode = mode;
+  localStorage.setItem(VIEW_MODE_KEY, mode);
+
+  document.querySelectorAll('.view-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === mode);
+  });
+
+  const container = $('forms');
+  container.className = `grid mode-${mode}`;
+  render();
+}
+
+document.querySelectorAll('.view-btn').forEach(btn => {
+  btn.onclick = () => setViewMode(btn.dataset.view);
+});
+
+// -------------------------------------------------------------
+// Database & Storage
+// -------------------------------------------------------------
+async function refreshDb() {
+  customItems = await requestPromise(db.transaction('forms').objectStore('forms').getAll());
+  render();
+  $('menuFormsCount').textContent = builtin.length + customItems.length;
+  $('storageStatus').textContent = `พร้อมใช้งานแบบออฟไลน์ · แบบฟอร์มระบบ ${builtin.length} รายการ · เพิ่มเอง ${customItems.length} รายการ`;
+}
+
+// -------------------------------------------------------------
+// Forms Rendering Engine
+// -------------------------------------------------------------
+function render() {
+  const term = $('search').value.trim().toLowerCase();
+  const allList = [...builtin, ...customItems];
+  
+  // Find active signer for scoping
+  let activeSigner = null;
+  if (activeSignerScope && activeSignerScope !== 'ALL') {
+    activeSigner = signersList.find(s => s.name === activeSignerScope);
+  }
+
+  const filtered = allList.filter(item => {
+    // 1. Signer scope permission filter
+    if (activeSigner && !isFormInScope(item, activeSigner.formScope)) {
+      return false;
+    }
+
+    // 2. Filter chip
+    if (activeFilter === 'custom' && item.builtin) return false;
+    if (activeFilter === 'milling' && !/ลูกหีบ|milling/i.test(item.department || '')) return false;
+    if (activeFilter === 'prod' && !/ผลิต|production/i.test(item.department || '')) return false;
+
+    // 3. Search term
+    const haystack = [item.title, item.code, item.department, item.filename, item.highlights].join(' ').toLowerCase();
+    return haystack.includes(term);
+  });
+
+  // Update scope banner
+  const banner = $('activeScopeBanner');
+  if (banner) {
+    if (activeSigner) {
+      banner.classList.remove('hidden');
+      $('activeScopeName').textContent = activeSigner.name;
+      $('activeScopePos').textContent = activeSigner.position || 'เจ้าหน้าที่';
+      $('activeScopeCountBadge').textContent = `เห็น ${filtered.length} จาก ${allList.length} ฟอร์ม`;
+    } else {
+      banner.classList.add('hidden');
+    }
+  }
+
+  $('resultCount').textContent = activeSigner
+    ? `พบ ${filtered.length} แบบฟอร์ม (สิทธิ์: ${activeSigner.name})`
+    : `พบ ${filtered.length} แบบฟอร์ม`;
+  $('clearSearch').classList.toggle('hidden', !term);
+
+  const container = $('forms');
+  container.replaceChildren();
+
+  if (!filtered.length) {
+    const emptyEl = document.createElement('div');
+    emptyEl.className = 'empty';
+    emptyEl.innerHTML = activeSigner
+      ? `<h3>ไม่พบแบบฟอร์มในสิทธิ์ของ "${escapeHtml(activeSigner.name)}"</h3><p>ผู้เซ็นนี้ถูกกำหนดสิทธิ์ไว้ที่ "${escapeHtml(getScopeLabel(activeSigner.formScope))}" หรือลองเลือกผู้เซ็นท่านอื่น</p>`
+      : '<h3>ไม่พบแบบฟอร์มที่ค้นหา</h3><p>ลองเปลี่ยนคำค้นหา หรือเลือกหมวดหมู่อื่นจากแถบด้านบน</p>';
+    container.append(emptyEl);
+    return;
+  }
+
+  filtered.forEach(item => {
+    if (currentViewMode === 'compact') {
+      container.append(createCompactCard(item));
+    } else if (currentViewMode === 'list') {
+      container.append(createListCard(item));
+    } else {
+      container.append(createFullCard(item));
+    }
+  });
+}
+
+// 1. Full Card
+function createFullCard(i) {
+  const c = document.createElement('article');
+  c.className = 'card';
+  c.innerHTML = `
+    <div class="card-top">
+      <div class="machine-icon">${icons[i.kind] || icons.file}</div>
+      <span class="ready">${i.builtin ? 'พร้อมใช้ · 24 ชม.' : 'แบบฟอร์มที่เพิ่ม'}</span>
+    </div>
+    <span class="code">${escapeHtml(i.code || 'ไม่ระบุรหัส')}</span>
+    <h3>${escapeHtml(i.title)}</h3>
+    <p class="dept">ฝ่าย${escapeHtml(i.department || 'ไม่ระบุ')}</p>
+    <p class="highlights">${escapeHtml(i.builtin ? i.highlights : (i.filename + ' · เพิ่มเมื่อ ' + new Date(i.createdAt).toLocaleDateString('th-TH')))}</p>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-open" onclick="openFormById('${i.id}')">เปิดแบบฟอร์มตรวจ</button>
+      ${!i.builtin ? `
+        <button class="icon-btn" title="ดาวน์โหลด HTML" aria-label="ดาวน์โหลด" onclick="downloadCustomForm('${i.id}')">${icons.download}</button>
+        <button class="icon-btn" title="นำออกจากคลัง" aria-label="นำออก" onclick="removeCustomForm('${i.id}')">${icons.trash}</button>
+      ` : ''}
+    </div>
+  `;
+  return c;
+}
+
+// 2. Compact Card
+function createCompactCard(i) {
+  const c = document.createElement('article');
+  c.className = 'card';
+  c.innerHTML = `
+    <div class="card-top">
+      <div class="machine-icon">${icons[i.kind] || icons.file}</div>
+      <span class="code">${escapeHtml(i.code || 'DOC')}</span>
+    </div>
+    <h3 title="${escapeHtml(i.title)}">${escapeHtml(i.title)}</h3>
+    <p class="dept">ฝ่าย${escapeHtml(i.department || 'ไม่ระบุ')}</p>
+    <p class="highlights">${escapeHtml(i.highlights || i.filename || '')}</p>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-open" onclick="openFormById('${i.id}')" style="width:100%">เปิดตรวจ</button>
+      ${!i.builtin ? `
+        <button class="icon-btn" title="ดาวน์โหลด" onclick="downloadCustomForm('${i.id}')">${icons.download}</button>
+      ` : ''}
+    </div>
+  `;
+  return c;
+}
+
+// 3. List Row
+function createListCard(i) {
+  const c = document.createElement('article');
+  c.className = 'card';
+  c.innerHTML = `
+    <div class="machine-icon">${icons[i.kind] || icons.file}</div>
+    <span class="code">${escapeHtml(i.code || 'DOC')}</span>
+    <div class="card-info">
+      <h3 title="${escapeHtml(i.title)}">${escapeHtml(i.title)}</h3>
+      <div class="meta-row">
+        <span class="dept">ฝ่าย${escapeHtml(i.department || 'ไม่ระบุ')}</span>
+        <span class="highlights">· ${escapeHtml(i.highlights || i.filename || '')}</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary btn-open" onclick="openFormById('${i.id}')">เปิดแบบฟอร์ม</button>
+      ${!i.builtin ? `
+        <button class="icon-btn" title="ดาวน์โหลด" onclick="downloadCustomForm('${i.id}')">${icons.download}</button>
+        <button class="icon-btn" title="นำออก" onclick="removeCustomForm('${i.id}')">${icons.trash}</button>
+      ` : ''}
+    </div>
+  `;
+  return c;
+}
+
+// Form Opening & File Management
+window.openFormById = function(id) {
+  const item = [...builtin, ...customItems].find(x => x.id === id);
+  if (!item) return;
+
+  if (item.builtin) {
+    location.href = item.url;
+    return;
+  }
+
+  const doc = new DOMParser().parseFromString(item.html, 'text/html');
+  if (!doc.querySelector('base')) {
+    const b = doc.createElement('base');
+    b.href = location.href;
+    doc.head.prepend(b);
+  }
+  const u = URL.createObjectURL(new Blob(['<!doctype html>' + doc.documentElement.outerHTML], { type: 'text/html' }));
+  window.open(u, '_blank', 'noopener');
+  setTimeout(() => URL.revokeObjectURL(u), 600000);
+};
+
+window.downloadCustomForm = function(id) {
+  const item = customItems.find(x => x.id === id);
+  if (!item) return;
+  saveBlob(new Blob([item.html], { type: 'text/html;charset=utf-8' }), item.filename);
+};
+
+window.removeCustomForm = async function(id) {
+  const item = customItems.find(x => x.id === id);
+  if (!item) return;
+  if (!confirm(`นำ “${item.title}” ออกจากคลัง?`)) return;
+  try {
+    await dbTransaction('readwrite', s => s.delete(item.id));
+    await refreshDb();
+    toast('นำแบบฟอร์มออกแล้ว');
+  } catch (e) {
+    toast(e.message, true);
+  }
+};
+
+function saveBlob(blob, name) {
+  const u = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = u;
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(u), 30000);
+}
+
+// -------------------------------------------------------------
+// Top Menu Dialog Controls
+// -------------------------------------------------------------
+$('btnMenuForms').onclick = () => {
+  window.scrollTo({ top: $('forms').offsetTop - 120, behavior: 'smooth' });
+};
+
+$('btnMenuSigners').onclick = () => {
+  loadSigners();
+  $('signerDialog').showModal();
+};
+
+$('btnMenuSettings').onclick = () => {
+  loadGlobalSettings();
+  $('settingsDialog').showModal();
+};
+
+$('btnMenuAdmin').onclick = () => {
+  $('adminDialog').showModal();
+};
+
+$('btnMenuScan').onclick = () => {
+  $('scannerDialog').showModal();
+};
+
+// Modal Close Handlers
+document.querySelectorAll('[data-close]').forEach(b => {
+  b.onclick = () => $(b.dataset.close).close();
+});
+
+document.querySelectorAll('dialog').forEach(d => {
+  d.onclick = (e) => {
+    if (e.target === d) {
+      if (d === $('scannerDialog')) stopCamera();
+      d.close();
+    }
+  };
+});
+
+// Search & Filter Listeners
+$('search').oninput = render;
+$('clearSearch').onclick = () => {
+  $('search').value = '';
+  $('search').focus();
+  render();
+};
+
+document.querySelectorAll('.chip').forEach(ch => {
+  ch.onclick = () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    ch.classList.add('active');
+    activeFilter = ch.dataset.filter;
+    render();
+  };
+});
+
+// Custom Form Upload / Add
+const fileInput = $('htmlFile');
+const dropzone = $('dropzone');
+
+['dragenter', 'dragover'].forEach(name => {
+  dropzone.addEventListener(name, (e) => {
+    e.preventDefault();
+    dropzone.classList.add('drag');
+  });
+});
+
+['dragleave', 'drop'].forEach(name => {
+  dropzone.addEventListener(name, (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('drag');
+  });
+});
+
+dropzone.ondrop = (e) => {
+  if (e.dataTransfer.files[0]) {
+    const dt = new DataTransfer();
+    dt.items.add(e.dataTransfer.files[0]);
+    fileInput.files = dt.files;
+    fileInput.dispatchEvent(new Event('change'));
+  }
+};
+
+fileInput.onchange = async () => {
+  const f = fileInput.files[0];
+  $('fileName').textContent = f ? f.name : '';
+  if (!f) return;
+  if (f.size > 20 * 1024 * 1024) {
+    toast('ไฟล์ใหญ่เกิน 20 MB', true);
+    fileInput.value = '';
+    return;
+  }
+  const doc = new DOMParser().parseFromString(await f.text(), 'text/html');
+  if (!$('title').value) $('title').value = doc.title || f.name.replace(/\.html?$/i, '');
+};
+
+$('addOpen').onclick = () => {
+  $('adminDialog').close();
+  $('addForm').reset();
+  $('department').value = 'ลูกหีบ';
+  $('fileName').textContent = '';
+  $('addDialog').showModal();
+};
+
+$('addForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const f = fileInput.files[0];
+  try {
+    if (!f || !/.html?$/i.test(f.name) || f.size > 20 * 1024 * 1024) throw Error('เลือก HTML ขนาดไม่เกิน 20 MB');
+    const html = await f.text();
+    if (!/<(?:html|body|form|input|script)\b/i.test(html)) throw Error('ไฟล์ไม่มีเนื้อหาแบบฟอร์ม HTML');
+
+    const item = {
+      id: crypto.randomUUID(),
+      title: $('title').value.trim(),
+      code: $('code').value.trim(),
+      department: $('department').value.trim(),
+      filename: f.name,
+      html,
+      createdAt: new Date().toISOString()
+    };
+    if (!item.title) throw Error('กรุณาระบุชื่อ');
+
+    await dbTransaction('readwrite', s => s.add(item));
+    await refreshDb();
+    $('addDialog').close();
+    toast('เพิ่มแบบฟอร์มแล้ว: ' + item.title);
+  } catch (err) {
+    toast('เพิ่มไม่สำเร็จ: ' + err.message, true);
+  }
+};
+
+// Backup / Restore JSON Library
+$('backup').onclick = () => {
+  saveBlob(new Blob([JSON.stringify({ type: 'ESC_RECORD_FORM_LIBRARY', version: 1, forms: customItems }, null, 2)], { type: 'application/json' }), 'document-form-library.json');
+  toast('ดาวน์โหลดข้อมูลสำรองแล้ว');
+};
+
+$('restore').onchange = async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  try {
+    if (f.size > 100 * 1024 * 1024) throw Error('คลังใหญ่เกิน 100 MB');
+    const x = JSON.parse(await f.text());
+    if (x.type !== 'ESC_RECORD_FORM_LIBRARY' || x.version !== 1 || !Array.isArray(x.forms)) throw Error('รูปแบบคลังไม่ถูกต้อง');
+
+    const restored = x.forms.map(i => {
+      if (!i || typeof i.id !== 'string' || builtin.some(b => b.id === i.id) || !i.title.trim() || !i.html) throw Error('ข้อมูลแบบฟอร์มไม่สมบูรณ์');
+      return {
+        id: i.id,
+        title: i.title,
+        code: i.code || '',
+        department: i.department || '',
+        filename: i.filename || 'form.html',
+        html: i.html,
+        createdAt: i.createdAt || new Date().toISOString()
+      };
+    });
+
+    if (!confirm(`นำเข้า ${restored.length} แบบฟอร์ม? รายการเดิมจะถูกแทนที่`)) return;
+    await dbTransaction('readwrite', s => restored.forEach(item => s.put(item)));
+    await refreshDb();
+    $('adminDialog').close();
+    toast('กู้คืนคลังสำเร็จ');
+  } catch (err) {
+    toast('กู้คืนไม่สำเร็จ: ' + err.message, true);
+  } finally {
+    e.target.value = '';
+  }
+};
+
+// -------------------------------------------------------------
+// QR Scanner
+// -------------------------------------------------------------
+$('scannerClose').onclick = () => {
+  stopCamera();
+  $('scannerDialog').close();
+};
+
+$('cameraStart').onclick = startCamera;
+$('cameraStop').onclick = stopCamera;
+$('cameraFlip').onclick = async () => {
+  facingMode = facingMode === 'environment' ? 'user' : 'environment';
+  await startCamera();
+};
+
+async function startCamera() {
+  stopCamera();
+  try {
+    if (!navigator.mediaDevices?.getUserMedia) throw Error('เบราว์เซอร์นี้ไม่รองรับกล้อง');
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: facingMode } },
+      audio: false
+    });
+    const v = $('scannerVideo');
+    v.srcObject = stream;
+    await v.play();
+    $('cameraPlaceholder').classList.add('hidden');
+    $('scanFrame').classList.remove('hidden');
+    $('cameraStart').classList.add('hidden');
+    $('cameraStop').classList.remove('hidden');
+    $('cameraFlip').disabled = false;
+    $('scannerStatus').textContent = 'กำลังค้นหา QR Code…';
+    scan();
+  } catch (e) {
+    $('scannerStatus').textContent = 'เปิดกล้องไม่ได้: ' + e.message;
+    toast('กรุณาอนุญาตการใช้กล้อง', true);
+  }
+}
+
+function stopCamera() {
+  cancelAnimationFrame(scanLoop);
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  }
+  $('scannerVideo').srcObject = null;
+  $('cameraPlaceholder').classList.remove('hidden');
+  $('scanFrame').classList.add('hidden');
+  $('cameraStart').classList.remove('hidden');
+  $('cameraStop').classList.add('hidden');
+  $('cameraFlip').disabled = true;
+}
+
+function scan() {
+  const v = $('scannerVideo');
+  const c = $('scannerCanvas');
+  if (v.readyState === 4) {
+    c.width = v.videoWidth;
+    c.height = v.videoHeight;
+    const ctx = c.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(v, 0, 0, c.width, c.height);
+    const imgData = ctx.getImageData(0, 0, c.width, c.height);
+    const code = typeof jsQR === 'function' ? jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts: 'dontInvert' }) : null;
+    if (code?.data && code.data !== lastScan) {
+      lastScan = code.data;
+      handleScan(code.data);
+      return;
+    }
+  }
+  scanLoop = requestAnimationFrame(scan);
+}
+
+function handleScan(raw) {
+  const value = raw.trim();
+  const allList = [...builtin, ...customItems];
+  const match = allList.find(i => value.toUpperCase().includes((i.code || '').toUpperCase()) || (i.url && value.toLowerCase().includes(i.url.toLowerCase())));
+  stopCamera();
+  $('scannerStatus').className = 'scanner-status success';
+  navigator.vibrate?.([100, 60, 100]);
+
+  if (match) {
+    $('scannerStatus').textContent = `พบ ${match.code} · กำลังเปิดฟอร์ม`;
+    toast('สแกนสำเร็จ: ' + match.code);
+    setTimeout(() => openFormById(match.id), 600);
+    return;
+  }
+
+  try {
+    const u = new URL(value, location.href);
+    if (!/^https?:$/.test(u.protocol)) throw Error();
+    toast('สแกนลิงก์สำเร็จ');
+    setTimeout(() => location.href = u.href, 600);
+  } catch (_) {
+    $('scannerStatus').textContent = 'ไม่พบแบบฟอร์มที่ตรงกับ QR นี้';
+    toast('ไม่พบรหัสแบบฟอร์ม', true);
+    setTimeout(() => { lastScan = ''; startCamera(); }, 1800);
+  }
+}
+
+// -------------------------------------------------------------
+// App Initialization
+// -------------------------------------------------------------
+(async () => {
+  try {
+    const o = indexedDB.open('ESC_DOCUMENT_CENTER_V1', 1);
+    o.onupgradeneeded = () => {
+      if (!o.result.objectStoreNames.contains('forms')) {
+        o.result.createObjectStore('forms', { keyPath: 'id' });
+      }
+    };
+    db = await requestPromise(o);
+    await refreshDb();
+  } catch (e) {
+    customItems = [];
+    render();
+    $('storageStatus').textContent = 'ไม่สามารถเปิดคลังในเบราว์เซอร์นี้';
+    $('addOpen').disabled = true;
+    toast('เปิดคลังไม่ได้: ' + e.message, true);
+  }
+
+  // Load Theme, Signers & Global Settings
+  initTheme();
+  $('btnThemeToggle').onclick = toggleTheme;
+  loadSigners();
+  loadGlobalSettings();
+  setViewMode(currentViewMode);
+
+  // Signer Scope Filter Events
+  $('signerFilterSelect').onchange = (e) => {
+    activeSignerScope = e.target.value;
+    try { localStorage.setItem(ACTIVE_SIGNER_SCOPE_KEY, activeSignerScope); } catch (_) {}
+    render();
+  };
+  $('btnClearSignerScope').onclick = () => {
+    activeSignerScope = 'ALL';
+    try { localStorage.setItem(ACTIVE_SIGNER_SCOPE_KEY, 'ALL'); } catch (_) {}
+    $('signerFilterSelect').value = 'ALL';
+    render();
+  };
+})();
+</script>
+</body>
+</html>

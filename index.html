@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESC Machine Inspection Center | บริษัท น้ำตาลและอ้อยตะวันออก จำกัด (มหาชน)</title>
+  <link rel="shortcut icon" type="image/png" href="public/assets/brand/favicon.ico" />
+  <!-- Tailwind CSS -->
+  <script src="public/assets/vendor/tailwind-3.4.17.js"></script>
+  <!-- Chart.js for CBM Trend & KPI Charts -->
+  <script src="public/assets/vendor/chart.umd.min.js"></script>
+  <!-- QRCode Generator -->
+  <script src="public/assets/vendor/qrcode.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="public/assets/vendor/lucide.min.js"></script>
+  <!-- FontAwesome 6 Icons for 3D Factory World & Audit Log -->
+  <link rel="stylesheet" href="public/assets/vendor/fontawesome/css/all.min.css" />
+  <link rel="stylesheet" href="public/css/custom.css" />
+  <link rel="stylesheet" href="public/css/factory-overview.css" />
+  <link rel="stylesheet" href="public/css/reliability.css" />
+  <script>
+    try {
+      if (localStorage.getItem('ESC_THEME_MODE') === 'dark') {
+        document.documentElement.classList.add('dark-theme');
+      }
+    } catch (_) {}
+  </script>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row">
+
+  <!-- ========================================================= -->
+  <!-- SIDEBAR NAVIGATION (ESC CORPORATE THEME)                  -->
+  <!-- ========================================================= -->
+  <aside id="sidebar" class="w-full lg:w-72 esc-sidebar text-slate-100 flex-shrink-0 flex flex-col justify-between lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto z-30 shadow-xl">
+    <div>
+      <!-- ESC Brand Header with Official Logo -->
+      <div class="p-4 border-b border-emerald-900/80 bg-white/95 text-slate-900">
+        <div class="flex items-center justify-between gap-2">
+          <a href="https://www.esgroup.co.th/th/home" target="_blank" class="flex items-center gap-2.5 group">
+            <img src="public/assets/brand/logo.png"
+                 onerror="this.style.display='none'; document.getElementById('esc-fallback-logo').classList.remove('hidden');"
+                 alt="Eastern Sugar & Cane Group (ESC)"
+                 class="h-12 w-auto object-contain" />
+            <div id="esc-fallback-logo" class="hidden w-11 h-11 rounded-xl bg-[#1f760e] text-white font-extrabold flex items-center justify-center text-sm shadow">
+              ESC
+            </div>
+          </a>
+          <img src="public/assets/brand/badge.webp"
+               onerror="this.style.display='none'"
+               alt="ESC Badge"
+               class="h-10 w-auto object-contain hidden sm:block" />
+          <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg bg-[#1f760e] text-white">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="mt-2 pt-2 border-t border-emerald-100 flex items-center justify-between">
+          <div>
+            <div class="font-bold text-xs text-[#1f760e] tracking-tight">ESC MACHINE CENTER</div>
+            <div class="text-[11px] text-slate-600 font-medium">ระบบตรวจเช็คเครื่องจักรออนไลน์</div>
+          </div>
+          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1f760e]/10 text-[#1f760e] border border-[#1f760e]/30">ES GROUP</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav id="nav-menu" class="hidden lg:block p-3 pb-36 space-y-1">
+        <div class="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#8ce617]">ศูนย์บัญชาการและหน้างาน</div>
+        <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-item active w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
+          <span class="flex items-center gap-3"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> แดชบอร์ดศูนย์กลาง (Center)</span>
+        </button>
+        <button onclick="switchTab('factory3d')" data-tab="factory3d" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
+          <span class="flex items-center gap-3"><i class="fa-solid fa-cubes w-4 text-center text-[#8ce617]"></i> ภาพรวมโรงงาน 3D</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-semibold border border-[#8ce617]/40">3D Map</span>
+        </button>
+        <button onclick="switchTab('inspect')" data-tab="inspect" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
+          <span class="flex items-center gap-3"><i data-lucide="clipboard-check" class="w-4 h-4"></i> ตรวจเช็คหน้างาน (E-Check)</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-semibold border border-[#8ce617]/40">QR / iPad</span>
+        </button>
+        <button onclick="switchTab('routes')" data-tab="routes" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition" title="ระบบสายเดินตรวจตามลำดับเครื่องจักร & แบ่งงานทีมช่างช่วยกันตรวจในแผนก">
+          <span class="flex items-center gap-2.5 text-left"><i data-lucide="route" class="w-4 h-4 shrink-0 text-[#8ce617]"></i> <span class="leading-tight">สายเดินตรวจตามลำดับ & แบ่งทีมช่าง</span></span>
+          <span id="badge-routes" class="text-xs px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-bold">0</span>
+        </button>
+        <button onclick="switchTab('defects')" data-tab="defects" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
+          <span class="flex items-center gap-3"><i data-lucide="alert-triangle" class="w-4 h-4"></i> ติดตามงานซ่อม / F-Tag</span>
+          <span id="badge-defects" class="text-xs px-2 py-0.5 rounded-full bg-rose-500 text-white font-bold">0</span>
+        </button>
+        <button onclick="switchTab('history')" data-tab="history" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
+          <span class="flex items-center gap-3"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> ประวัติผลตรวจ & อนุมัติ</span>
+          <span id="badge-pending" class="text-xs px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-semibold">0</span>
+        </button>
+        <a href="เอกสารตรวจเครื่องจักร/data-center.html" target="_blank" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition" title="คลังเอกสารตรวจเครื่องจักรดิจิทัล Standalone HTML + Canvas Print 100%">
+          <span class="flex items-center gap-3"><i data-lucide="file-check-2" class="w-4 h-4 text-[#8ce617]"></i> คลังแบบฟอร์ม PDF 100% (Hub)</span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-semibold border border-[#8ce617]/40">8 ฟอร์ม</span>
+        </a>
+
+        <div class="pt-3 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#8ce617]">จัดการฐานข้อมูลหลัก (CRUD)</div>
+        <button onclick="switchTab('machines')" data-tab="machines" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
+          <span class="flex items-center gap-3"><i data-lucide="cog" class="w-4 h-4"></i> ทะเบียนเครื่องจักร (Machines)</span>
+          <span id="badge-machines" class="text-xs text-emerald-300/80">0</span>
+        </button>
+        <button onclick="switchTab('csvimport')" data-tab="csvimport" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
+          <span class="flex items-center gap-3"><i data-lucide="file-up" class="w-4 h-4 text-[#8ce617]"></i> นำเข้าข้อมูล CSV (Template)</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-[#8ce617]/20 text-[#8ce617] font-bold">CSV</span>
+        </button>
+        <button onclick="switchTab('forms')" data-tab="forms" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
+          <span class="flex items-center gap-3"><i data-lucide="file-plus-2" class="w-4 h-4"></i> สร้างฟอร์มเอง (Form Builder)</span>
+          <span id="badge-forms" class="text-xs text-emerald-300/80">0</span>
+        </button>
+        <button onclick="switchTab('departments')" data-tab="departments" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
+          <span class="flex items-center gap-3"><i data-lucide="building-2" class="w-4 h-4"></i> จัดการแผนก (Departments)</span>
+          <span id="badge-depts" class="text-xs text-emerald-300/80">0</span>
+        </button>
+        <button onclick="switchTab('users')" data-tab="users" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
+          <span class="flex items-center gap-3"><i data-lucide="users" class="w-4 h-4"></i> ผู้ใช้งาน & ตั้งค่าระบบ</span>
+        </button>
+        <button onclick="switchTab('auditlog')" data-tab="auditlog" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
+          <span class="flex items-center gap-3"><i data-lucide="history" class="w-4 h-4 text-amber-300"></i> ประวัติระบบ & ย้อนข้อมูล</span>
+          <span id="badge-auditlogs" class="text-xs px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-bold">0</span>
+        </button>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- ========================================================= -->
+  <!-- FIXED BOTTOM-LEFT ACTIVE USER WIDGET (ซ้ายล่าง ไม่ขยับ)    -->
+  <!-- ========================================================= -->
+  <div id="fixed-active-user-dock" class="fixed bottom-3 left-3 z-40 w-[264px] p-3.5 rounded-2xl border border-emerald-800/90 bg-[#0b2106]/95 backdrop-blur-md shadow-2xl no-print">
+    <div class="text-[11px] text-emerald-200/90 mb-1.5 flex items-center justify-between gap-2">
+      <span class="font-semibold">👤 ผู้ใช้งานขณะนี้:</span>
+      <span id="active-role-badge" class="px-2 py-0.5 rounded bg-[#8ce617]/20 text-[#8ce617] font-bold text-[10px]">SUPER ADMIN</span>
+    </div>
+    <select id="current-user-select" onchange="onChangeActiveUser(this.value)" class="w-full bg-[#061404] text-white text-xs rounded-lg px-2.5 py-2 border border-emerald-700/80 focus:outline-none focus:border-[#8ce617] cursor-pointer">
+    </select>
+    <div class="mt-2 flex items-center justify-between text-[11px] text-emerald-300/80">
+      <span>กลุ่มบริษัทน้ำตาลและอ้อยตะวันออก</span>
+      <span class="text-[#8ce617] font-bold">ESC</span>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MAIN CONTENT AREA                                         -->
+  <!-- ========================================================= -->
+  <div class="flex-1 flex flex-col min-w-0">
+
+    <!-- Top Header Bar with ESC Green Top Accent Border -->
+    <header class="bg-white border-t-4 border-t-[#1f760e] border-b border-slate-200 px-4 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-20 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="hidden sm:flex w-10 h-10 rounded-xl bg-[#f0f9eb] border border-[#b7e1a1] items-center justify-center text-[#1f760e]">
+          <i data-lucide="shield-check" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 id="page-title" class="text-lg lg:text-xl font-bold text-[#1a2e16] flex items-center gap-2">
+            แดชบอร์ดศูนย์กลาง (Central Command Center)
+          </h1>
+          <p id="org-subtitle" class="text-xs text-slate-500">บริษัท น้ำตาลและอ้อยตะวันออก จำกัด (มหาชน) — ฝ่ายวิศวกรรมจักรกลและซ่อมบำรุงกลาง</p>
+        </div>
+      </div>
+
+      <!-- Global Controls: Department Filter + Dark/Light Mode + iPad Mode + Emergency Log + Quick Inspect -->
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="flex items-center gap-1.5 bg-[#f0f9eb] border border-[#b7e1a1] rounded-xl px-3 py-1.5">
+          <i data-lucide="filter" class="w-4 h-4 text-[#1f760e]"></i>
+          <span class="text-xs font-medium text-[#1f760e]">กรองแผนก:</span>
+          <select id="global-dept-filter" onchange="onChangeGlobalDept(this.value)" class="bg-transparent text-xs font-semibold text-slate-800 focus:outline-none">
+            <option value="ALL">🏢 ทุกแผนก (All ESC Center)</option>
+          </select>
+        </div>
+
+        <button id="btn-theme-mode" onclick="toggleThemeMode()" class="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#1f760e] border border-[#1f760e]/30 text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs transition" title="สลับโหมดสว่าง / โหมดมืด (คงโทนสี ES Group)">
+          <span id="theme-mode-label">🌙 โหมดมืด</span>
+        </button>
+
+        <button id="btn-tablet-mode" onclick="toggleTabletFieldMode()" class="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-[#1f760e] border border-[#1f760e]/30 text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs transition" title="สลับโหมดหน้าจอปุ่มใหญ่พิเศษสำหรับ iPad / แท็บเล็ตช่างหน้างาน">
+          <i data-lucide="tablet" class="w-4 h-4"></i>
+          <span id="tablet-mode-label">📱 โหมดไอแพดหน้างาน: ปิด</span>
+        </button>
+
+        <button onclick="openEmergencyQuickEntryModal(null)" class="flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold px-3.5 py-2 rounded-xl shadow-sm transition pulse-abnormal" title="บันทึกเฉพาะค่าที่ผิดปกติหรือเหตุฉุกเฉินทันทีโดยไม่ต้องกรอกทั้งฟอร์ม">
+          <i data-lucide="zap" class="w-4 h-4 text-amber-300"></i>
+          <span>⚡ ลงข้อมูลฉุกเฉิน</span>
+        </button>
+
+        <button onclick="openQuickQRScannerModal()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-sm transition">
+          <i data-lucide="qr-code" class="w-4 h-4 text-[#8ce617]"></i>
+          <span>สแกน QR</span>
+        </button>
+
+        <button onclick="startInspectionForMachine(null)" class="flex items-center gap-2 btn-esc-primary text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-sm transition">
+          <i data-lucide="clipboard-signature" class="w-4 h-4"></i>
+          <span>+ เริ่มตรวจเช็ค</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Server Connection / Data Freshness Banner (P0-4) -->
+    <div id="server-status-banner" class="hidden px-4 lg:px-8 py-2 bg-amber-500 text-slate-950 text-xs font-bold flex items-center justify-between gap-3"></div>
+
+    <!-- Toast Notification Banner -->
+    <div id="toast-container" class="fixed bottom-6 right-4 z-50 space-y-2 max-w-md"></div>
+
+    <!-- Main Dynamic View Container -->
+    <main id="main-content" class="flex-1 p-4 lg:p-7 overflow-y-auto space-y-6">
+      <!-- Dynamic Content Injected by app.js -->
+    </main>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- UNIVERSAL MODAL DIALOG                                    -->
+  <!-- ========================================================= -->
+  <div id="app-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4 overflow-y-auto">
+    <div id="app-modal-box" class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
+      <div class="px-6 py-4 bg-[#f0f9eb] border-b border-[#b7e1a1] flex items-center justify-between">
+        <h3 id="modal-title" class="font-bold text-[#1a2e16] text-base">หน้าต่างจัดการข้อมูล</h3>
+        <button onclick="closeModal()" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-white/60">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="modal-body" class="p-6 overflow-y-auto flex-1 space-y-4"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- PRINTABLE REPORT / QR CODE STICKER MODAL                  -->
+  <!-- ========================================================= -->
+  <div id="print-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden">
+      <div class="px-6 py-3.5 bg-[#0f2e09] text-white flex items-center justify-between no-print">
+        <div class="flex items-center gap-2">
+          <i data-lucide="printer" class="w-5 h-5 text-[#8ce617]"></i>
+          <span id="print-modal-title" class="font-semibold text-sm">ตัวอย่างก่อนพิมพ์เอกสาร / ป้าย QR Code (ESC Standard)</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="btn-esc-primary text-white text-xs font-semibold px-4 py-2 rounded-lg flex items-center gap-1.5">
+            <i data-lucide="printer" class="w-4 h-4"></i> สั่งพิมพ์ / บันทึกเป็น PDF
+          </button>
+          <button onclick="closePrintModal()" class="bg-white/15 hover:bg-white/25 text-white text-xs px-3 py-2 rounded-lg">
+            ปิดหน้าต่าง
+          </button>
+        </div>
+      </div>
+      <div id="printable-area" class="p-8 overflow-y-auto flex-1 bg-white"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- INDIVIDUAL MACHINE DASHBOARD MODAL                        -->
+  <!-- ========================================================= -->
+  <div id="machine-dashboard-modal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-xs z-50 hidden items-center justify-center p-2 sm:p-4 md:p-6 overflow-y-auto">
+    <div id="machine-dashboard-box" class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-6xl max-h-[94vh] flex flex-col overflow-hidden">
+      <div id="machine-dashboard-content" class="flex flex-col flex-1 overflow-hidden"></div>
+    </div>
+  </div>
+
+  <!-- Three.js r128 Local Bundle + ESC 3D Factory World Modules -->
+  <script src="public/assets/factory/three.r128.min.js"></script>
+  <script src="public/js/domain.js"></script>
+  <script src="public/js/persistence.js"></script>
+  <script src="public/js/session-and-sync.js"></script>
+  <script src="public/assets/vendor/jsQR.js"></script>
+  <script src="public/js/qr-scanner.js"></script>
+  <script src="public/js/factory-map-config.js"></script>
+  <script src="public/js/factory-3d-scene.js"></script>
+  <script src="public/js/factory-overview.js"></script>
+  <script src="public/js/table-layout.js"></script>
+  <script src="public/js/standalone-api.js"></script>
+  <script src="public/js/inspection.js"></script>
+  <script src="public/js/views-and-crud.js"></script>
+  <script src="public/js/app.js"></script>
+  <script src="public/js/release-updates.js"></script>
+</body>
+</html>

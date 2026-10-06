@@ -1,0 +1,693 @@
+@import url('../assets/vendor/fonts.css');
+
+:root {
+  --font-sans: 'Kanit', 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+  --esc-green-dark: #0f2e09;
+  --esc-green-primary: #1f760e;
+  --esc-green-mid: #5c9f06;
+  --esc-lime-accent: #8ce617;
+  --esc-gold: #eab308;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #f4f7f2;
+  color: #1a2e16;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #eef3ec;
+}
+::-webkit-scrollbar-thumb {
+  background: #a3bfa0;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5c9f06;
+}
+
+/* ESC Sidebar Styling */
+.esc-sidebar {
+  background: linear-gradient(180deg, #0d2608 0%, #14380d 60%, #0b2106 100%);
+  border-right: 1px solid #1f4d14;
+}
+
+/* Active Sidebar Link (ESC Green & Lime Gold Accent) */
+.nav-item.active {
+  background: linear-gradient(90deg, #1f760e 0%, #5c9f06 100%);
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(31, 118, 14, 0.45);
+  border-left: 4px solid #8ce617;
+}
+
+/* ESC Primary Button Override */
+.btn-esc-primary {
+  background: linear-gradient(135deg, #1f760e 0%, #4b8305 100%);
+  color: #ffffff;
+}
+.btn-esc-primary:hover {
+  background: linear-gradient(135deg, #17590a 0%, #3c6904 100%);
+}
+
+/* Map Tailwind Blue CTA classes to ESC Corporate Green (#1f760e / #5c9f06) */
+.bg-blue-600 {
+  background-color: #1f760e !important;
+}
+.hover\:bg-blue-700:hover, .hover\:bg-blue-500:hover {
+  background-color: #16560a !important;
+}
+.text-blue-600, .text-blue-700 {
+  color: #1f760e !important;
+}
+.bg-blue-50 {
+  background-color: #f0f9eb !important;
+}
+.border-blue-200, .border-blue-300 {
+  border-color: #b7e1a1 !important;
+}
+
+/* Status Pulse Animation */
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
+  50% { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); }
+}
+.pulse-abnormal {
+  animation: pulse-red 2s infinite;
+}
+
+/* Signature Canvas */
+#signature-canvas {
+  touch-action: none;
+  cursor: crosshair;
+}
+
+/* ========================================================= */
+/* v2.0 iPad / Tablet Field Inspector UX Mode                */
+/* ========================================================= */
+body.tablet-field-mode {
+  font-size: 16px;
+}
+
+body.tablet-field-mode .touch-target-btn {
+  min-height: 56px !important;
+  font-size: 15px !important;
+  padding-top: 14px !important;
+  padding-bottom: 14px !important;
+  border-width: 2px !important;
+}
+
+body.tablet-field-mode .touch-num-input {
+  min-height: 56px !important;
+  font-size: 20px !important;
+  padding-left: 16px !important;
+  padding-right: 42px !important;
+}
+
+body.tablet-field-mode .touch-stepper-btn {
+  min-height: 52px !important;
+  min-width: 60px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+
+body.tablet-field-mode .inspect-field-card {
+  padding: 22px !important;
+}
+
+/* Print Styles for QR Sticker and Inspection Report */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-area, #printable-area * {
+    visibility: visible;
+  }
+  #printable-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* =========================================================
+   ES GROUP DARK MODE (Deep Forest Emerald & Gold-Lime Tone)
+   High-Contrast Readability Rules (v2.2.1)
+   ========================================================= */
+html.dark-theme,
+html.dark-theme body,
+body.dark-theme {
+  background-color: #071505 !important;
+  color: #ecfdf5 !important;
+}
+
+body.dark-theme header {
+  background-color: #0b1f08 !important;
+  border-bottom-color: #1e4616 !important;
+}
+
+body.dark-theme #page-title {
+  color: #ecfdf5 !important;
+}
+
+body.dark-theme #org-subtitle {
+  color: #86efac !important;
+}
+
+/* Keep Sidebar Brand Logo Box Crisp White with Dark Legible Text */
+body.dark-theme #sidebar .bg-white\/95 {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  color: #0f172a !important;
+}
+
+body.dark-theme #sidebar .bg-white\/95 .text-\[\#1f760e\] {
+  color: #14532d !important;
+}
+
+body.dark-theme #sidebar .bg-white\/95 .text-slate-600,
+body.dark-theme #sidebar .bg-white\/95 .text-slate-700,
+body.dark-theme #sidebar .bg-white\/95 .text-slate-500 {
+  color: #334155 !important;
+}
+
+/* White cards & containers become Deep Emerald Cards */
+body.dark-theme .bg-white,
+body.dark-theme .bg-white\/90,
+body.dark-theme .bg-white\/80 {
+  background-color: #0d2309 !important;
+  color: #ecfdf5 !important;
+  border-color: #1e4616 !important;
+}
+
+body.dark-theme .bg-slate-50,
+body.dark-theme .bg-slate-50\/90,
+body.dark-theme .bg-slate-50\/80,
+body.dark-theme .bg-slate-50\/70,
+body.dark-theme .bg-slate-50\/60,
+body.dark-theme .bg-slate-50\/50,
+body.dark-theme .bg-slate-50\/40,
+body.dark-theme .bg-slate-100,
+body.dark-theme .bg-slate-100\/80,
+body.dark-theme .bg-gray-50,
+body.dark-theme .bg-gray-100 {
+  background-color: #122d0d !important;
+  color: #e2fbe8 !important;
+  border-color: #23521a !important;
+}
+
+body.dark-theme .bg-slate-200,
+body.dark-theme .bg-slate-200\/80,
+body.dark-theme .bg-slate-200\/70,
+body.dark-theme .bg-gray-200 {
+  background-color: #193d13 !important;
+  color: #ecfdf5 !important;
+  border-color: #2c6620 !important;
+}
+
+body.dark-theme .bg-slate-800,
+body.dark-theme .bg-slate-900 {
+  background-color: #153510 !important;
+  color: #ffffff !important;
+  border-color: #2c6620 !important;
+}
+
+/* Emerald / Green Tinted Surfaces & Badges (-50, -100, -200) */
+body.dark-theme .bg-\[\#f0f9eb\],
+body.dark-theme .bg-\[\#f0f9eb\]\/60,
+body.dark-theme .bg-\[\#f0f9eb\]\/40,
+body.dark-theme .bg-\[\#f0f9eb\]\/30,
+body.dark-theme .bg-emerald-50,
+body.dark-theme .bg-emerald-50\/90,
+body.dark-theme .bg-emerald-50\/80,
+body.dark-theme .bg-emerald-50\/70,
+body.dark-theme .bg-emerald-50\/60,
+body.dark-theme .bg-emerald-50\/50,
+body.dark-theme .bg-emerald-50\/40,
+body.dark-theme .bg-emerald-50\/30,
+body.dark-theme .bg-emerald-50\/20,
+body.dark-theme .bg-emerald-100,
+body.dark-theme .bg-emerald-100\/90,
+body.dark-theme .bg-emerald-100\/80,
+body.dark-theme .bg-emerald-100\/70,
+body.dark-theme .bg-emerald-200,
+body.dark-theme .bg-green-50,
+body.dark-theme .bg-green-100 {
+  background-color: #14380f !important;
+  border-color: #2e6f21 !important;
+  color: #d1fae5 !important;
+}
+
+/* Amber / Yellow / Orange Tinted Surfaces & Badges (-50, -100, -200) */
+body.dark-theme .bg-amber-50,
+body.dark-theme .bg-amber-50\/90,
+body.dark-theme .bg-amber-50\/80,
+body.dark-theme .bg-amber-50\/70,
+body.dark-theme .bg-amber-50\/60,
+body.dark-theme .bg-amber-50\/50,
+body.dark-theme .bg-amber-50\/40,
+body.dark-theme .bg-amber-50\/30,
+body.dark-theme .bg-amber-50\/20,
+body.dark-theme .bg-amber-100,
+body.dark-theme .bg-amber-100\/90,
+body.dark-theme .bg-amber-100\/80,
+body.dark-theme .bg-amber-100\/70,
+body.dark-theme .bg-amber-200,
+body.dark-theme .bg-yellow-50,
+body.dark-theme .bg-yellow-100,
+body.dark-theme .bg-orange-50,
+body.dark-theme .bg-orange-100 {
+  background-color: #2e2207 !important;
+  border-color: #926311 !important;
+  color: #fef08a !important;
+}
+
+/* Rose / Red Tinted Surfaces & Badges (-50, -100, -200) */
+body.dark-theme .bg-rose-50,
+body.dark-theme .bg-rose-50\/90,
+body.dark-theme .bg-rose-50\/80,
+body.dark-theme .bg-rose-50\/70,
+body.dark-theme .bg-rose-50\/60,
+body.dark-theme .bg-rose-50\/50,
+body.dark-theme .bg-rose-50\/40,
+body.dark-theme .bg-rose-50\/30,
+body.dark-theme .bg-rose-50\/20,
+body.dark-theme .bg-rose-100,
+body.dark-theme .bg-rose-100\/90,
+body.dark-theme .bg-rose-100\/80,
+body.dark-theme .bg-rose-100\/70,
+body.dark-theme .bg-rose-200,
+body.dark-theme .bg-red-50,
+body.dark-theme .bg-red-50\/80,
+body.dark-theme .bg-red-50\/50,
+body.dark-theme .bg-red-50\/40,
+body.dark-theme .bg-red-50\/30,
+body.dark-theme .bg-red-50\/20,
+body.dark-theme .bg-red-100,
+body.dark-theme .bg-red-200 {
+  background-color: #351018 !important;
+  border-color: #9f1d35 !important;
+  color: #fecdd3 !important;
+}
+
+/* Blue / Sky / Cyan / Teal Tinted Surfaces & Badges (-50, -100, -200) */
+body.dark-theme .bg-blue-50,
+body.dark-theme .bg-blue-50\/90,
+body.dark-theme .bg-blue-50\/80,
+body.dark-theme .bg-blue-50\/70,
+body.dark-theme .bg-blue-50\/60,
+body.dark-theme .bg-blue-50\/50,
+body.dark-theme .bg-blue-50\/40,
+body.dark-theme .bg-blue-50\/30,
+body.dark-theme .bg-blue-100,
+body.dark-theme .bg-blue-100\/80,
+body.dark-theme .bg-blue-200,
+body.dark-theme .bg-sky-50,
+body.dark-theme .bg-sky-50\/80,
+body.dark-theme .bg-sky-50\/60,
+body.dark-theme .bg-sky-50\/50,
+body.dark-theme .bg-sky-100,
+body.dark-theme .bg-sky-200,
+body.dark-theme .bg-cyan-50,
+body.dark-theme .bg-cyan-100,
+body.dark-theme .bg-teal-50,
+body.dark-theme .bg-teal-100 {
+  background-color: #0d283a !important;
+  border-color: #215e82 !important;
+  color: #bae6fd !important;
+}
+
+/* Indigo / Purple / Violet Tinted Surfaces & Badges (-50, -100, -200) */
+body.dark-theme .bg-indigo-50,
+body.dark-theme .bg-indigo-50\/80,
+body.dark-theme .bg-indigo-50\/60,
+body.dark-theme .bg-indigo-50\/50,
+body.dark-theme .bg-indigo-100,
+body.dark-theme .bg-indigo-200,
+body.dark-theme .bg-purple-50,
+body.dark-theme .bg-purple-50\/60,
+body.dark-theme .bg-purple-100,
+body.dark-theme .bg-purple-200,
+body.dark-theme .bg-violet-50,
+body.dark-theme .bg-violet-100 {
+  background-color: #1c1b3a !important;
+  border-color: #46438a !important;
+  color: #e0e7ff !important;
+}
+
+/* High-Contrast Text Color Overrides inside Dark Theme */
+body.dark-theme .text-slate-950,
+body.dark-theme .text-slate-900,
+body.dark-theme .text-slate-800,
+body.dark-theme .text-gray-900,
+body.dark-theme .text-gray-800,
+body.dark-theme .text-\[\#1a2e16\] {
+  color: #f0fdf4 !important;
+}
+
+body.dark-theme .text-slate-700,
+body.dark-theme .text-slate-600,
+body.dark-theme .text-gray-700,
+body.dark-theme .text-gray-600 {
+  color: #d1fae5 !important;
+}
+
+body.dark-theme .text-slate-500,
+body.dark-theme .text-slate-400,
+body.dark-theme .text-gray-500,
+body.dark-theme .text-gray-400 {
+  color: #86efac !important;
+}
+
+body.dark-theme .text-\[\#1f760e\],
+body.dark-theme .text-\[\#154c0c\],
+body.dark-theme .text-emerald-950,
+body.dark-theme .text-emerald-900,
+body.dark-theme .text-emerald-800,
+body.dark-theme .text-emerald-700,
+body.dark-theme .text-emerald-600,
+body.dark-theme .text-green-800,
+body.dark-theme .text-green-700,
+body.dark-theme .text-green-600 {
+  color: #8ce617 !important;
+}
+
+body.dark-theme .text-amber-950,
+body.dark-theme .text-amber-900,
+body.dark-theme .text-amber-800,
+body.dark-theme .text-amber-700,
+body.dark-theme .text-amber-600,
+body.dark-theme .text-yellow-800,
+body.dark-theme .text-yellow-700,
+body.dark-theme .text-orange-800,
+body.dark-theme .text-orange-700,
+body.dark-theme .text-orange-600 {
+  color: #fcd34d !important;
+}
+
+body.dark-theme .text-rose-950,
+body.dark-theme .text-rose-900,
+body.dark-theme .text-rose-800,
+body.dark-theme .text-rose-700,
+body.dark-theme .text-rose-600,
+body.dark-theme .text-red-900,
+body.dark-theme .text-red-800,
+body.dark-theme .text-red-700,
+body.dark-theme .text-red-600 {
+  color: #fda4af !important;
+}
+
+body.dark-theme .text-blue-950,
+body.dark-theme .text-blue-900,
+body.dark-theme .text-blue-800,
+body.dark-theme .text-blue-700,
+body.dark-theme .text-blue-600,
+body.dark-theme .text-sky-900,
+body.dark-theme .text-sky-800,
+body.dark-theme .text-sky-700,
+body.dark-theme .text-sky-600,
+body.dark-theme .text-cyan-800,
+body.dark-theme .text-cyan-700,
+body.dark-theme .text-teal-800,
+body.dark-theme .text-teal-700 {
+  color: #7dd3fc !important;
+}
+
+body.dark-theme .text-indigo-950,
+body.dark-theme .text-indigo-900,
+body.dark-theme .text-indigo-800,
+body.dark-theme .text-indigo-700,
+body.dark-theme .text-indigo-600,
+body.dark-theme .text-purple-900,
+body.dark-theme .text-purple-800,
+body.dark-theme .text-purple-700,
+body.dark-theme .text-purple-600,
+body.dark-theme .text-violet-700 {
+  color: #c4b5fd !important;
+}
+
+/* Preserve Dark Text on Bright Solid Gold/Lime Buttons & Badges */
+body.dark-theme .bg-amber-400,
+body.dark-theme .bg-amber-300,
+body.dark-theme .bg-\[\#8ce617\],
+body.dark-theme .bg-amber-500.text-slate-950,
+body.dark-theme .bg-amber-500.text-slate-900,
+body.dark-theme .bg-amber-400.text-slate-950,
+body.dark-theme .bg-amber-400.text-slate-900 {
+  color: #071505 !important;
+}
+
+/* Brighten Inline Department Color Styles on Dark Cards */
+body.dark-theme [style*="color:#1f760e"],
+body.dark-theme [style*="color: #1f760e"],
+body.dark-theme [style*="color:#16a34a"],
+body.dark-theme [style*="color: #16a34a"],
+body.dark-theme [style*="color:#059669"],
+body.dark-theme [style*="color: #059669"] {
+  color: #8ce617 !important;
+}
+
+body.dark-theme [style*="color:#2563eb"],
+body.dark-theme [style*="color: #2563eb"],
+body.dark-theme [style*="color:#1d4ed8"],
+body.dark-theme [style*="color: #1d4ed8"],
+body.dark-theme [style*="color:#0284c7"],
+body.dark-theme [style*="color: #0284c7"] {
+  color: #60a5fa !important;
+}
+
+body.dark-theme [style*="color:#d97706"],
+body.dark-theme [style*="color: #d97706"],
+body.dark-theme [style*="color:#b45309"],
+body.dark-theme [style*="color: #b45309"],
+body.dark-theme [style*="color:#ea580c"],
+body.dark-theme [style*="color: #ea580c"] {
+  color: #fbbf24 !important;
+}
+
+body.dark-theme [style*="color:#dc2626"],
+body.dark-theme [style*="color: #dc2626"],
+body.dark-theme [style*="color:#e11d48"],
+body.dark-theme [style*="color: #e11d48"],
+body.dark-theme [style*="color:#be185d"],
+body.dark-theme [style*="color: #be185d"] {
+  color: #fb7185 !important;
+}
+
+body.dark-theme [style*="color:#7c3aed"],
+body.dark-theme [style*="color: #7c3aed"],
+body.dark-theme [style*="color:#4f46e5"],
+body.dark-theme [style*="color: #4f46e5"] {
+  color: #c084fc !important;
+}
+
+/* Borders & Dividers */
+body.dark-theme .border-slate-200,
+body.dark-theme .border-slate-100,
+body.dark-theme .border-slate-300,
+body.dark-theme .border-gray-200,
+body.dark-theme .border-gray-300,
+body.dark-theme .border-\[\#b7e1a1\] {
+  border-color: #1e4616 !important;
+}
+
+body.dark-theme .border-emerald-200,
+body.dark-theme .border-emerald-300 {
+  border-color: #2e6f21 !important;
+}
+
+body.dark-theme .border-amber-200,
+body.dark-theme .border-amber-300 {
+  border-color: #926311 !important;
+}
+
+body.dark-theme .border-rose-200,
+body.dark-theme .border-rose-300,
+body.dark-theme .border-red-200,
+body.dark-theme .border-red-300 {
+  border-color: #9f1d35 !important;
+}
+
+body.dark-theme .border-blue-200,
+body.dark-theme .border-blue-300,
+body.dark-theme .border-sky-200,
+body.dark-theme .border-sky-300,
+body.dark-theme .border-indigo-200,
+body.dark-theme .border-purple-200 {
+  border-color: #215e82 !important;
+}
+
+body.dark-theme .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+body.dark-theme .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #193b12 !important;
+}
+
+/* Inputs, Selects, Textareas */
+body.dark-theme input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+body.dark-theme select,
+body.dark-theme textarea {
+  background-color: #091a06 !important;
+  color: #ecfdf5 !important;
+  border-color: #285e1d !important;
+}
+
+body.dark-theme select option {
+  background-color: #0d2309 !important;
+  color: #ecfdf5 !important;
+}
+
+body.dark-theme input::placeholder,
+body.dark-theme textarea::placeholder {
+  color: #4ade80 !important;
+  opacity: 0.65;
+}
+
+/* Keep Signature Pad Canvas Light so Blue Ink is Crisp & Printable */
+body.dark-theme canvas#signature-canvas {
+  background-color: #f8fafc !important;
+  border-color: #4ade80 !important;
+}
+
+body.dark-theme tr:hover {
+  background-color: rgba(31, 118, 14, 0.22) !important;
+}
+
+body.dark-theme #btn-theme-mode {
+  background-color: #183d11 !important;
+  color: #8ce617 !important;
+  border-color: #8ce617 !important;
+}
+
+/* ========================================================
+   Resizable Table Columns & Column Resizer Handles
+   ======================================================== */
+table.table-resizable {
+  table-layout: fixed;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+table.table-resizable th {
+  position: relative !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  user-select: none;
+  padding-right: 14px !important;
+}
+
+table.table-resizable td {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* Resizer Handle on Header Right Edge */
+.col-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 7px;
+  height: 100%;
+  cursor: col-resize;
+  user-select: none;
+  z-index: 10;
+  transition: background-color 0.15s ease;
+}
+
+.col-resizer:hover,
+.col-resizer.is-resizing {
+  background-color: #1f760e !important;
+  width: 5px;
+}
+
+body.dark-theme .col-resizer:hover,
+body.dark-theme .col-resizer.is-resizing {
+  background-color: #8ce617 !important;
+}
+
+/* Subtle separator bar indicator on header */
+table.table-resizable th:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background-color: #cbd5e1;
+  pointer-events: none;
+}
+
+body.dark-theme table.table-resizable th:not(:last-child)::after {
+  background-color: #274e1d;
+}
+
+/* While resizing column, show col-resize cursor everywhere */
+body.resizing-col {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+body.resizing-col * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+.col-resizer {
+  touch-action: none;
+  -webkit-touch-callout: none;
+}
+
+table.table-resizable th {
+  min-width: 55px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* Enhanced Factory Tablet & High-Contrast Touch Ergonomics */
+body.tablet-field-mode {
+  font-size: 15px !important;
+}
+
+body.tablet-field-mode .touch-target-btn {
+  min-height: 48px !important;
+  font-size: 13.5px !important;
+  border-width: 2px !important;
+  font-weight: 800 !important;
+}
+
+body.tablet-field-mode input,
+body.tablet-field-mode select {
+  min-height: 44px !important;
+  font-size: 14px !important;
+  border-width: 2px !important;
+}
+
+body.tablet-field-mode .inspect-field-card {
+  border-width: 2px !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Mobile Responsive Bottom Dock */
+@media (max-width: 640px) {
+  #fixed-active-user-dock {
+    width: calc(100% - 24px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    bottom: 8px !important;
+    padding: 8px 12px !important;
+  }
+}

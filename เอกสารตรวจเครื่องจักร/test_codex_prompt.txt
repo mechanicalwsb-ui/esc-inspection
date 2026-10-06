@@ -1,0 +1,1 @@
+Create a python script hello_codex.py that prints 'Hello from Codex AI Specialist'
