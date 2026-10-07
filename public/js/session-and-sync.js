@@ -35,10 +35,15 @@
   }
   async function initialize() {
     await ComisStore.initialize();
-    if (location.protocol === 'file:') return;
+    if (ComisDomain.isStandalone()) return;
     bootstrapCache = await ComisStore.get('cache', 'bootstrap');
     try { await authenticate(); }
-    catch (err) { if (!err.network || !bootstrapCache?.data?.currentUser) throw err; currentUser = bootstrapCache.data.currentUser; }
+    catch (err) {
+      window.ESC_FORCE_STANDALONE = true;
+      currentUser = null;
+      state.connectionMode = 'local_file';
+      return;
+    }
     const controls = document.createElement('div'); controls.id = 'comis-session-controls'; controls.className = 'comis-session-controls no-print';
     controls.innerHTML = '<span id="comis-sync-status"></span><button onclick="ComisSync.showQueue()">รายการรอส่ง</button><button onclick="ComisSync.password()">รหัสผ่าน</button><button onclick="ComisSync.logout()">ออกจากระบบ</button><span>v' + ComisDomain.version + '</span>';
     document.querySelector('header').after(controls);
@@ -60,7 +65,7 @@
   }
   async function remember(data) { if ((data.dataRevision ?? 0) < (bootstrapCache?.data?.dataRevision ?? 0)) return; bootstrapCache = { id: 'bootstrap', data, savedAt: ComisDomain.timestamp() }; await ComisStore.put('cache', bootstrapCache); if (data.currentUser) currentUser = data.currentUser; }
   async function request(url, method = 'GET', body = null) {
-    if (location.protocol === 'file:') {
+    if (ComisDomain.isStandalone()) {
       const job = localTail.catch(() => {}).then(async () => {
         if (url === '/api/inspections' && method === 'POST') { const raw = getLocalDb(); ComisDomain.validateInspection(body, raw.machines.find(m => m.id === Number(body.machine_id)), raw.forms.find(f => f.id === Number(body.form_id))); }
         if (url === '/api/csv-import') { const raw=getLocalDb();ComisDomain.validateCsv(body,raw.departments,raw.machines); }
@@ -103,7 +108,7 @@
     try { return await syncPromise; } finally { syncPromise = null; }
   }
   async function performSync() {
-    if (syncing || !currentUser || location.protocol === 'file:') return;
+    if (syncing || !currentUser || ComisDomain.isStandalone()) return;
     syncing = true;
     try {
       for (const item of (await ComisStore.list('queue')).sort((a,b) => a.createdAt.localeCompare(b.createdAt))) {
@@ -153,7 +158,7 @@
     document.getElementById('comis-password-form').onsubmit=async e=>{e.preventDefault();try{await http('/api/auth/password','POST',{...Object.fromEntries(new FormData(e.target)),user_id:userId});closeModal();showToast('ตั้งรหัสผ่านแล้ว','success');}catch(err){showToast(err.message,'error');}};
   }
   function applyPermissions() {
-    if (location.protocol === 'file:' || !currentUser) return;
+    if (ComisDomain.isStandalone() || !currentUser) return;
     const admin = currentUser.role === 'super_admin'; const lead = admin || currentUser.role === 'dept_admin';
     for (const button of document.querySelectorAll('[onclick]')) {
       const action = button.getAttribute('onclick');

@@ -1,6 +1,10 @@
 /* Shared rules used by SQLite, standalone storage and the offline queue. */
 (function (root) {
   const version = '3.0.2';
+  function isStandalone() {
+    return Boolean(root.ESC_FORCE_STANDALONE || root.location?.protocol === 'file:' ||
+      ['github.io', 'pages.dev', 'gitlab.io'].some(host => (root.location?.hostname || '').endsWith(host)));
+  }
   const dateParts = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date()).reduce((o, p) => (o[p.type] = p.value, o), {});
   function day() { const p = dateParts(); return `${p.year}-${p.month}-${p.day}`; }
   function timestamp() { return new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Bangkok', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(new Date()); }
@@ -87,7 +91,7 @@
     for (const c of changes) { const current = c.id !== undefined ? raw[c.name].find(r => rowId(r) === c.id) || null : raw[c.name]; assert(JSON.stringify(current) === JSON.stringify(c.after), 'รายการนี้ถูกแก้ไขภายหลัง จึงไม่สามารถย้อนทับข้อมูลได้'); }
     for (const c of [...changes].reverse()) { if (c.id !== undefined) { raw[c.name] = raw[c.name].filter(r => rowId(r) !== c.id); if (c.before) raw[c.name].push(c.before); } else raw[c.name] = c.before; }
   }
-  const api = { version, day, timestamp, number, assert, classify, validateInspection, validateCsv, csvRows, localChanges, localUndo };
+  const api = { isStandalone, version, day, timestamp, number, assert, classify, validateInspection, validateCsv, csvRows, localChanges, localUndo };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.ComisDomain = api;
 })(typeof window === 'undefined' ? globalThis : window);

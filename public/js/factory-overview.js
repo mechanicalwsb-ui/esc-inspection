@@ -1396,7 +1396,7 @@
       });
     }
 
-    if (location.protocol === 'file:') { placements.set(machineCode, updatedPlacement); saveMachinePlacementsMap(placements); }
+    if (ComisDomain.isStandalone()) { placements.set(machineCode, updatedPlacement); saveMachinePlacementsMap(placements); }
     if (typeof showToast === 'function') {
       showToast(`บันทึกพิกัดโซน 3D ของ ${machineCode} เรียบร้อย`, 'success');
     }

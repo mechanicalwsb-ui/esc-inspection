@@ -401,7 +401,7 @@ function openInspectionReportModal(inspectionId) {
     <div class="border-2 border-[#1f760e] p-6 rounded-xl space-y-5 text-xs text-slate-900">
       <div class="flex items-start justify-between border-b-2 border-[#1f760e] pb-4">
         <div class="flex items-center gap-3">
-          <img src="${location.protocol === 'file:' ? 'public/' : ''}assets/brand/logo.png" onerror="this.style.display='none'" alt="ESC Logo" class="h-12 w-auto object-contain" />
+          <img src="${ComisDomain.isStandalone() ? 'public/' : ''}assets/brand/logo.png" onerror="this.style.display='none'" alt="ESC Logo" class="h-12 w-auto object-contain" />
           <div>
             <div class="text-xs font-bold text-[#1f760e] uppercase">EASTERN SUGAR & CANE GROUP — OFFICIAL INSPECTION REPORT</div>
             <h2 class="text-lg font-extrabold text-slate-900 mt-0.5">${state.data.settings.organization_name || 'บริษัท น้ำตาลและอ้อยตะวันออก จำกัด (มหาชน)'}</h2>
@@ -820,7 +820,7 @@ function openMachineQRModal(machineId) {
   const html = `
     <div class="max-w-md mx-auto border-4 border-[#1f760e] rounded-2xl p-6 text-center space-y-4 bg-white">
       <div class="flex items-center justify-center gap-2 pb-1">
-        <img src="${location.protocol === 'file:' ? 'public/' : ''}assets/brand/logo.png" onerror="this.style.display='none'" alt="ESC Logo" class="h-10 w-auto object-contain" />
+        <img src="${ComisDomain.isStandalone() ? 'public/' : ''}assets/brand/logo.png" onerror="this.style.display='none'" alt="ESC Logo" class="h-10 w-auto object-contain" />
       </div>
       <div class="bg-[#1f760e] text-white py-2.5 px-4 rounded-xl">
         <div class="text-[10px] uppercase tracking-widest text-[#8ce617] font-bold">EASTERN SUGAR & CANE — MACHINE TAG</div>
@@ -868,7 +868,7 @@ function renderForms(container) {
   container.innerHTML = `
     <div class="space-y-4">
       ${renderUserScopeFilterBar('แบบฟอร์มในการตรวจเช็คที่เกี่ยวข้องกับยูเซอร์ของคุณ')}
-      <a href="${location.protocol === 'file:' ? 'public/' : ''}source-forms.html" class="block bg-emerald-50 border border-emerald-300 p-4 rounded-xl text-emerald-900 font-bold">📚 ฟอร์มจากเอกสารจริงแผนกลูกหีบ — เปิดต้นฉบับ 59 ไฟล์ / กรอกแบบบันทึก 39 แบบ →</a>
+      <a href="${ComisDomain.isStandalone() ? 'public/' : ''}source-forms.html" class="block bg-emerald-50 border border-emerald-300 p-4 rounded-xl text-emerald-900 font-bold">📚 ฟอร์มจากเอกสารจริงแผนกลูกหีบ — เปิดต้นฉบับ 59 ไฟล์ / กรอกแบบบันทึก 39 แบบ →</a>
       <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-5">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -1589,7 +1589,7 @@ function openUserModal(userId) {
   if (userId) ComisSync.captureRevision('/api/users/' + userId);
   const u = userId ? state.data.users.find(x => x.id === Number(userId)) : null;
   const html = `
-    ${u && location.protocol !== 'file:' ? `<button type="button" onclick="ComisSync.password(${u.id})" class="px-4 py-2 bg-emerald-700 text-white rounded-lg">ตั้งรหัสผ่านชั่วคราว</button>` : ''}
+    ${u && !ComisDomain.isStandalone() ? `<button type="button" onclick="ComisSync.password(${u.id})" class="px-4 py-2 bg-emerald-700 text-white rounded-lg">ตั้งรหัสผ่านชั่วคราว</button>` : ''}
     <form onsubmit="saveUser(event, ${u ? u.id : 'null'})" class="space-y-4 text-xs">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -1650,7 +1650,7 @@ async function saveUser(e, id) {
     closeModal();
     updateStateData(res.data);
     showToast('บันทึกข้อมูลผู้ใช้งานสำเร็จ', 'success');
-    if (!id && location.protocol !== 'file:') { const user=res.data.users.find(u=>u.emp_code===payload.emp_code.trim().toUpperCase()); if(user) ComisSync.password(user.id); }
+    if (!id && !ComisDomain.isStandalone()) { const user=res.data.users.find(u=>u.emp_code===payload.emp_code.trim().toUpperCase()); if(user) ComisSync.password(user.id); }
   } catch (err) {
     showToast(err.message, 'error');
   }

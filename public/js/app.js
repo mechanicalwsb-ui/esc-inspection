@@ -1369,7 +1369,7 @@ const state = {
   activeUser: null,
   userScopeOnly: true,
   themeMode: localStorage.getItem('ESC_THEME_MODE') || 'light',
-  connectionMode: window.location.protocol === 'file:' ? 'local_file' : 'server',
+  connectionMode: ComisDomain.isStandalone() ? 'local_file' : 'server',
   lastSyncAt: null,
   tabletMode: false,
   inspectFilterMode: 'ALL',
@@ -1721,7 +1721,7 @@ function syncHeaderAndSidebar() {
   }
 
   const userSelect = document.getElementById('current-user-select');
-  if (userSelect && location.protocol !== 'file:') userSelect.disabled = true;
+  if (userSelect && !ComisDomain.isStandalone()) userSelect.disabled = true;
   if (userSelect && state.data.users.length > 0) {
     const admins = state.data.users.filter(u => u.role === 'super_admin');
     const mlUsers = state.data.users.filter(u => u.role !== 'super_admin' && (Number(u.department_id) === 5 || u.department_code === 'ML'));
@@ -1780,7 +1780,7 @@ function onChangeGlobalDept(deptId) {
 }
 
 function onChangeActiveUser(userId) {
-  if (location.protocol !== 'file:') return;
+  if (!ComisDomain.isStandalone()) return;
   const user = state.data.users.find(u => String(u.id) === String(userId));
   if (user) {
     state.activeUser = user;
