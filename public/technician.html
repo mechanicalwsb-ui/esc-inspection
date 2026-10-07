@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#143d25">
+  <title>ศูนย์ช่างตรวจเครื่องจักร | ESC Technician Portal</title>
+  <script src="assets/vendor/tailwind-3.4.17.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap');
+    *{box-sizing:border-box}body{font-family:Sarabun,system-ui,sans-serif;background:#f8fbf8;color:#17251c}
+    button,a,input,select{touch-action:manipulation}.touch{min-height:52px}.safe-bottom{padding-bottom:max(1rem,env(safe-area-inset-bottom))}
+    :focus-visible{outline:3px solid #f59e0b;outline-offset:2px}.card-shadow{box-shadow:0 8px 28px rgba(20,61,37,.08)}
+  </style>
+</head>
+<body class="min-h-screen">
+  <main id="app" class="min-h-screen"></main>
+
+  <script src="assets/vendor/lucide.min.js"></script>
+  <script src="js/domain.js"></script>
+  <script src="js/supabase-sync.js"></script>
+  <script src="js/forms-hub.js"></script>
+  <script>
+  (() => {
+    'use strict';
+    const SESSION_KEY = 'ESC_TECH_SESSION';
+    const DB_KEY = 'ESC_COMIS_CENTER_DB_V2';
+    const DIRECTORY_KEY = 'ESC_TURBINE_SIGNER_DIRECTORY_V1';
+    const app = document.getElementById('app');
+    const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    let state = window.state = { activeUser: null, data: { users: [], departments: [], machines: [], forms: [] } };
+    let filter = 'mine';
+    let query = '';
+
+    function readJson(key) { try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (_) { return null; } }
+    function normalizeData(value) {
+      const raw = value?.data && !Array.isArray(value.data) ? value.data : value;
+      if (!raw || typeof raw !== 'object') return null;
+      const users = raw.users || raw.userDirectory || [];
+      return { ...raw, users: Array.isArray(users) ? users : [], departments: Array.isArray(raw.departments) ? raw.departments : [], machines: Array.isArray(raw.machines) ? raw.machines : [], forms: Array.isArray(raw.forms) ? raw.forms : (Array.isArray(raw.formTemplates) ? raw.formTemplates : []) };
+    }
+    function directoryFallback() {
+      const directory = readJson(DIRECTORY_KEY);
+      const users = Array.isArray(directory) ? directory : (directory?.users || []);
+      return { users: users.map((u, i) => ({ id: u.id || `directory-${i}`, emp_code: u.emp_code || u.employee_code || u.code, full_name: u.full_name || u.name, position: u.position, department_id: u.department_id, department_name: u.department_name, role: u.role || 'inspector', assigned_forms: u.assigned_forms || [], is_active: u.is_active ?? 1 })), departments: [], machines: [], forms: [] };
+    }
+    async function loadData() {
+      let data = null;
+      try { const remote = await window.SupabaseSync?.fetchRemote(); data = normalizeData(remote?.data); } catch (_) {}
+      if (!data?.users?.length) data = normalizeData(readJson(DB_KEY));
+      if (!data?.users?.length) data = directoryFallback();
+      if (!data?.users?.length && location.protocol !== 'file:') {
+        try { const response = await fetch('/api/bootstrap', { cache: 'no-store' }); const result = await response.json(); if (result.ok) data = normalizeData(result.data); } catch (_) {}
+      }
+      state.data = data || { users: [], departments: [], machines: [], forms: [] };
+      const saved = readJson(SESSION_KEY);
+      if (saved?.emp_code) state.activeUser = state.data.users.find(u => String(u.emp_code).toUpperCase() === String(saved.emp_code).toUpperCase() && u.is_active !== 0) || saved;
+    }
+    function departmentName(user) {
+      return user.department_name || state.data.departments.find(d => String(d.id) === String(user.department_id))?.name || 'ยังไม่ระบุแผนก';
+    }
+    function assignedSet(user) {
+      let values = user?.assigned_forms || [];
+      if (typeof values === 'string') { try { values = JSON.parse(values); } catch (_) { values = values.split(/[,;\n]/); } }
+      const codes = new Set((Array.isArray(values) ? values : [values]).map(v => String(v?.code || v?.form_code || v || '').trim().replace(/\.html$/i, '').toUpperCase()).filter(Boolean));
+      if (user?.department_id != null) {
+        state.data.machines.filter(m => m.is_active !== 0 && String(m.department_id) === String(user.department_id)).forEach(m => {
+          const code = window.getMachineLinkedForm?.(m, state)?.code;
+          if (code) codes.add(code.toUpperCase());
+        });
+      }
+      if (!codes.size && (user?.role === 'inspector' || String(user?.position || '').includes('ช่าง'))) {
+        ['FM-ML01-ML-09', 'FM-ML01-ML-10', 'FM-ML01-ML-02', 'FM-ML01-ML-11', 'FM-ML01-ML-12'].forEach(c => codes.add(c));
+      }
+      return codes;
+    }
+    function linkedMachines(form) {
+      const matched = state.data.machines.filter(m => m.is_active !== 0 && window.getMachineLinkedForm?.(m, state)?.code === form.code);
+      if (matched.length) return matched;
+      return state.data.machines.filter(m => m.is_active !== 0 && String(m.department_id) === String(state.activeUser?.department_id));
+    }
+    function availableForms(user) {
+      const assigned = assignedSet(user);
+      const sameDeptCodes = new Set(state.data.machines.filter(m => m.is_active !== 0 && String(m.department_id) === String(user.department_id)).map(m => window.getMachineLinkedForm?.(m, state)?.code).filter(Boolean));
+      const entitled = assigned.size ? assigned : sameDeptCodes;
+      return window.ESC_BUILTIN_FORMS.filter(f => entitled.has(f.code.toUpperCase()));
+    }
+    function isAssigned(form, user) { return availableForms(user).some(item => item.code === form.code); }
+    function renderLogin() {
+      app.innerHTML = `<section class="min-h-screen grid place-items-center px-4 py-8 bg-[radial-gradient(circle_at_top,#dff2e5,#f8fbf8_52%)]"><div class="w-full max-w-lg bg-white rounded-3xl border border-emerald-100 card-shadow overflow-hidden"><header class="bg-[#143d25] text-white p-6 sm:p-8"><div class="flex items-center gap-3 mb-5"><span class="grid place-items-center w-12 h-12 rounded-2xl bg-white/10"><i data-lucide="wrench" class="w-7 h-7"></i></span><div><p class="text-xs tracking-widest text-emerald-200 font-bold">EASTERN SUGAR AND CANE · ESC</p><p class="text-sm text-emerald-100">ระบบตรวจเช็คเครื่องจักรออนไลน์</p></div></div><h1 class="text-2xl sm:text-3xl font-extrabold leading-snug">เข้าสู่ระบบศูนย์ช่างตรวจเครื่องจักร <span class="block text-lg text-emerald-200">(Technician Portal)</span></h1><p class="mt-3 text-emerald-50">สำหรับช่างเทคนิค ผู้ตรวจเช็คเครื่องจักร และพนักงานหน้างาน ESC</p></header><form id="login-form" class="p-6 sm:p-8 space-y-5" novalidate><div class="rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-sm leading-7 text-[#143d25]"><strong>วิธีเข้าสู่ระบบ:</strong> กรอกรหัสพนักงานในช่องชื่อผู้ใช้และรหัสผ่านให้เหมือนกัน (ใช้รหัสพนักงานเดียวกันทั้ง 2 ช่อง)</div><label class="block font-bold">ชื่อผู้ใช้ (Username)<input id="tech-emp-code" autocomplete="username" autocapitalize="characters" class="touch mt-2 w-full rounded-xl border-2 border-slate-300 px-4 text-lg uppercase focus:border-green-700" placeholder="รหัสพนักงาน เช่น 629315"></label><label class="block font-bold">รหัสผ่าน (Password)<div class="relative mt-2"><input id="tech-password" type="password" autocomplete="current-password" class="touch w-full rounded-xl border-2 border-slate-300 px-4 pr-14 text-lg focus:border-green-700" placeholder="รหัสพนักงาน เช่น 629315"><button id="toggle-password" type="button" class="absolute inset-y-0 right-0 w-14 grid place-items-center" aria-label="แสดงหรือซ่อนรหัสผ่าน"><i data-lucide="eye" class="w-5 h-5"></i></button></div></label><fieldset><legend class="font-bold text-sm mb-2">เลือกผู้ใช้งานด่วนสำหรับช่างกะ</legend><div class="grid sm:grid-cols-2 gap-2">${[['629315','บุญชู (กะ 1)'],['659170','ทินกร'],['619279','จรุนันท์'],['EMP-1001','ผู้ดูแลระบบ']].map(([code,name]) => `<button type="button" data-demo="${code}" class="touch rounded-xl border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-bold text-green-900 hover:bg-emerald-100">${code} ${name}</button>`).join('')}</div></fieldset><p id="login-error" class="hidden rounded-xl bg-red-50 border border-red-300 p-3 text-red-800 font-semibold" role="alert"></p><button id="login-button" class="touch w-full rounded-xl bg-[#15803d] px-5 text-lg font-extrabold text-white shadow-lg hover:bg-green-800 disabled:opacity-60">เข้าสู่ระบบช่างตรวจเครื่องจักร</button><p id="data-status" class="text-center text-xs text-slate-500">พบผู้ใช้งานในระบบ ${state.data.users.length} คน</p></form></div></section>`;
+      app.querySelectorAll('[data-demo]').forEach(b => b.addEventListener('click', () => { app.querySelector('#tech-emp-code').value = b.dataset.demo; app.querySelector('#tech-password').value = b.dataset.demo; }));
+      app.querySelector('#toggle-password').addEventListener('click', () => { const p = app.querySelector('#tech-password'); p.type = p.type === 'password' ? 'text' : 'password'; });
+      app.querySelector('#login-form').addEventListener('submit', login);
+      window.lucide?.createIcons();
+    }
+    function login(event) {
+      event.preventDefault();
+      const username = app.querySelector('#tech-emp-code').value.trim().toUpperCase();
+      const password = app.querySelector('#tech-password').value.trim().toUpperCase();
+      const user = state.data.users.find(u => String(u.emp_code || '').trim().toUpperCase() === username && u.is_active !== 0 && u.active !== false);
+      if (!username || username !== password || !user) {
+        const error = app.querySelector('#login-error'); error.textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง กรุณากรอกรหัสพนักงานให้เหมือนกันทั้งช่อง User และ Pass'; error.classList.remove('hidden'); return;
+      }
+      state.activeUser = user; localStorage.setItem(SESSION_KEY, JSON.stringify(user)); renderDashboard();
+    }
+    function renderDashboard() {
+      const user = state.activeUser;
+      const mine = availableForms(user);
+      const effectiveAssigned = assignedSet(user);
+      if (!effectiveAssigned.size) mine.forEach(item => effectiveAssigned.add(item.code.toUpperCase()));
+      const forms = filter === 'all' ? window.ESC_BUILTIN_FORMS : mine;
+      const visible = forms.filter(f => [f.code,f.title,f.dept,f.desc,...linkedMachines(f).flatMap(m => [m.machine_code,m.name])].join(' ').toLocaleLowerCase('th').includes(query.toLocaleLowerCase('th')));
+      app.innerHTML = `<div class="min-h-screen safe-bottom"><header class="bg-[#143d25] text-white"><div class="max-w-7xl mx-auto p-4 sm:p-6 flex flex-wrap items-center justify-between gap-4"><div><p class="text-xs font-bold tracking-widest text-emerald-200">ESC TECHNICIAN PORTAL</p><h1 class="mt-1 text-xl sm:text-2xl font-extrabold">สวัสดี ช่าง${esc(user.full_name)} (${esc(user.emp_code)})</h1><p class="mt-1 text-sm text-emerald-100">ตำแหน่ง: ${esc(user.position || 'ช่างเทคนิค')} | แผนก: ${esc(departmentName(user))} | กลุ่มงาน: ${esc(user.work_group || 'ทีมช่างตรวจเช็คเครื่องจักร')}</p></div><button id="logout" class="touch rounded-xl border border-white/40 bg-white/10 px-5 font-bold hover:bg-white/20"><i data-lucide="log-out" class="inline w-5 h-5 mr-1"></i> ออกจากระบบ</button></div></header><section class="max-w-7xl mx-auto p-4 sm:p-6"><div class="bg-white border border-slate-200 rounded-2xl p-4 card-shadow"><div class="flex flex-wrap gap-2"><button data-filter="mine" class="touch flex-1 sm:flex-none rounded-xl px-4 font-bold ${filter==='mine'?'bg-[#15803d] text-white':'bg-emerald-50 text-green-900'}">⭐ แบบฟอร์มของฉัน (${forms.filter(f=>assignedSet(user).has(f.code.toUpperCase())).length})</button><button data-filter="all" class="touch flex-1 sm:flex-none rounded-xl px-4 font-bold ${filter==='all'?'bg-[#15803d] text-white':'bg-slate-100 text-slate-800'}">📋 แบบฟอร์มทั้งหมด</button><a href="index.html" target="_blank" rel="noopener" class="touch flex items-center justify-center rounded-xl border border-green-700 px-4 font-bold text-green-800">↗ เปิดศูนย์ควบคุม (สำหรับหัวหน้างาน)</a></div><div class="relative mt-3"><i data-lucide="search" class="absolute left-4 top-4 w-5 h-5 text-slate-400"></i><input id="search" type="search" value="${esc(query)}" class="touch w-full rounded-xl border-2 border-slate-300 pl-12 pr-4 text-base focus:border-green-700" placeholder="ค้นหารหัสแบบฟอร์ม หรือชื่อเครื่องจักร"></div></div><p class="my-4 text-sm font-semibold text-slate-600">แสดง ${visible.length} แบบฟอร์มที่ใช้งานได้</p><div id="cards" class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">${visible.map(formCard).join('') || `<div class="md:col-span-2 xl:col-span-3 rounded-2xl border-2 border-dashed border-slate-300 bg-white p-10 text-center"><i data-lucide="clipboard-x" class="mx-auto w-10 h-10 text-slate-400"></i><p class="mt-3 font-bold">ไม่พบแบบฟอร์มที่ได้รับมอบหมาย</p><p class="text-sm text-slate-500 mt-1">กรุณาติดต่อหัวหน้างานเพื่อตรวจสอบแผนกหรือรายการแบบฟอร์ม</p></div>`}</div></section></div>`;
+      app.querySelector('#logout').addEventListener('click', () => { localStorage.removeItem(SESSION_KEY); state.activeUser = null; filter='mine'; query=''; renderLogin(); });
+      app.querySelectorAll('[data-filter]').forEach(b => b.addEventListener('click', () => { filter=b.dataset.filter; renderDashboard(); }));
+      app.querySelector('#search').addEventListener('input', e => { query=e.target.value; renderDashboard(); requestAnimationFrame(() => { const s=app.querySelector('#search'); s.focus(); s.setSelectionRange(query.length,query.length); }); });
+      app.querySelector('#cards').addEventListener('click', openForm);
+      window.lucide?.createIcons();
+    }
+    function formCard(form) {
+      const machines = linkedMachines(form);
+      const assigned = isAssigned(form, state.activeUser);
+      return `<article class="flex flex-col rounded-2xl border-2 ${assigned?'border-amber-400':'border-emerald-100'} bg-white p-5 card-shadow"><div class="flex items-start justify-between gap-3"><div><code class="text-base font-extrabold text-green-800">${esc(form.code)}</code><h2 class="mt-2 text-lg font-extrabold leading-relaxed">${esc(form.title)}</h2></div><span class="rounded-xl bg-emerald-50 p-3 text-green-800"><i data-lucide="clipboard-check" class="w-6 h-6"></i></span></div><div class="flex flex-wrap gap-2 my-3"><span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-green-900">${esc(form.dept)}</span>${assigned?'<span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-900">⭐ แบบฟอร์มที่ได้รับมอบหมาย</span>':''}</div><p class="text-sm text-slate-600 mb-4">${esc(form.desc)}</p><label class="mt-auto text-sm font-bold">เลือกเครื่องจักรที่ต้องการตรวจสอบ:<select data-machine="${esc(form.code)}" class="touch mt-2 w-full rounded-xl border-2 border-slate-300 bg-white px-3 focus:border-green-700">${machines.length?machines.map(m=>`<option value="${esc(m.id)}">${esc(m.machine_code)} — ${esc(m.name)}</option>`).join(''):'<option value="">(ฟอร์มทั่วไป / ไม่ระบุเครื่องจักรเฉพาะ)</option>'}</select></label><div class="grid gap-2 mt-4"><button data-open="${esc(form.code)}" class="touch rounded-xl bg-[#15803d] px-4 font-extrabold text-white shadow-md hover:bg-green-800 active:scale-[0.99] transition">📝 เริ่มกรอกแบบฟอร์ม (ตรวจเครื่องจักร)</button><button data-print="${esc(form.code)}" class="touch rounded-xl border-2 border-green-700 px-4 font-bold text-green-800 hover:bg-green-50 active:scale-[0.99] transition">🖨 พิมพ์เอกสาร / PDF</button></div></article>`;
+    }
+    function openForm(event) {
+      const button = event.target.closest('[data-open],[data-print]'); if (!button) return;
+      const code = button.dataset.open || button.dataset.print;
+      const form = window.ESC_BUILTIN_FORMS.find(f => f.code === code);
+      const machineSelect = button.closest('article').querySelector('[data-machine]');
+      const machineId = machineSelect ? machineSelect.value : null;
+      const machine = state.data.machines.find(m => String(m.id) === String(machineId)) || null;
+      if (form) window.openEmbeddedForm(window.getFormUrl(form.file), `${form.code} · ${form.title}`, { machine, formCode: form.code, printOnLoad: Boolean(button.dataset.print) });
+    }
+    loadData().then(() => state.activeUser ? renderDashboard() : renderLogin());
+  })();
+  </script>
+</body>
+</html>

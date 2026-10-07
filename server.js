@@ -1113,7 +1113,16 @@ async function handleRequest(req, res) {
       res.writeHead(200, { 'Content-Type': MIME_TYPES[path.extname(target).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'no-store' });
       return fs.createReadStream(target).pipe(res);
     }
-    let filePath = pathname === '/' ? path.join(PUBLIC_DIR, 'index.html') : path.join(PUBLIC_DIR, pathname);
+    // Dedicated technician portal: support both the extensionless shared URL
+    // and the explicit HTML URL without routing either request into the SPA.
+    if ((pathname === '/technician' || pathname === '/technician.html') && req.method === 'GET') {
+      const technicianHtml = [path.join(PUBLIC_DIR, 'technician.html'), path.join(__dirname, 'technician.html')].find(candidate => fs.existsSync(candidate));
+      if (!technicianHtml) { res.writeHead(404); return res.end('Technician portal not found'); }
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+      return fs.createReadStream(technicianHtml).pipe(res);
+    }
+    const relativePath = pathname.startsWith('/public/') ? pathname.slice('/public'.length) : pathname;
+    let filePath = relativePath === '/' ? path.join(PUBLIC_DIR, 'index.html') : path.join(PUBLIC_DIR, relativePath);
     if (!filePath.startsWith(PUBLIC_DIR)) {
       res.writeHead(403);
       return res.end('Forbidden');

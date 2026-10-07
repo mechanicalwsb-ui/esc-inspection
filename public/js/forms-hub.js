@@ -272,18 +272,28 @@
             || (targetFormCode.startsWith('FM-ML') && forms.includes('ML'))
             || (targetFormCode.startsWith('FM-PD') && forms.includes('PD'))
             || (targetFormCode.startsWith('FM-MR') && forms.includes('MR'))
-            || (['dept_admin', 'engineer'].includes(user.role) && sameDepartment);
+            || sameDepartment;
         });
+        if (activeUser && !eligibleUsers.some(u => String(u.id) === String(activeUser.id))) {
+          eligibleUsers.unshift(activeUser);
+        }
         if (eligibleUsers.length && frame.contentWindow) {
           frame.contentWindow.signerDirectory = eligibleUsers.map(user => ({ name: user.full_name, position: user.position || 'ผู้ตรวจสอบเครื่องจักร' }));
           frame.contentWindow.restoreSignerSelections?.();
         }
-        const activeIsEligible = activeUser && eligibleUsers.some(user => String(user.id) === String(activeUser.id));
         const recorder = frame.contentDocument.getElementById('recorder1') || frame.contentDocument.getElementById('recorder') || frame.contentDocument.getElementById('name_recorder');
-        if (activeIsEligible && recorder && !recorder.value) {
+        if (activeUser && recorder) {
+          if (recorder.tagName === 'SELECT' && !Array.from(recorder.options).some(o => o.value === activeUser.full_name)) {
+            recorder.append(new Option(activeUser.full_name, activeUser.full_name));
+          }
           recorder.value = activeUser.full_name || '';
           const position = frame.contentDocument.getElementById('position_recorder1') || frame.contentDocument.getElementById('position_recorder');
-          if (position) position.value = activeUser.position || '';
+          if (position) {
+            if (position.tagName === 'SELECT' && !Array.from(position.options).some(o => o.value === activeUser.position)) {
+              position.append(new Option(activeUser.position, activeUser.position));
+            }
+            position.value = activeUser.position || '';
+          }
           recorder.dispatchEvent(new Event('change', { bubbles: true }));
         }
 
