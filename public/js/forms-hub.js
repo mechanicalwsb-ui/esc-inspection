@@ -24,10 +24,18 @@
   let previousOverflow = '';
 
   function getFormUrl(file) {
-    if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
+    if (typeof window === 'undefined') return 'เอกสารตรวจเครื่องจักร/' + file;
+    if (window.location.protocol === 'file:') {
       return (/\/public(?:\/|$)/i.test(window.location.pathname) ? '../' : '') + 'เอกสารตรวจเครื่องจักร/' + file;
     }
-    return '/inspection-forms/' + file;
+    // Calculate application base path (e.g. /esc-inspection/ on GitHub Pages, or / on localhost)
+    let basePath = window.location.pathname.replace(/\/public(?:\/.*)?$/i, '');
+    if (/\.html?$/i.test(basePath)) {
+      basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+    } else if (!basePath.endsWith('/')) {
+      basePath += '/';
+    }
+    return basePath + 'เอกสารตรวจเครื่องจักร/' + file;
   }
 
   function ensureStyles() {
