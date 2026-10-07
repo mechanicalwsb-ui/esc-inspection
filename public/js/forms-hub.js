@@ -60,7 +60,39 @@
       .esc-fh-filter{font-size:15px}.esc-fh-filter[aria-pressed=true]{background:#185d36;border-color:#185d36;color:#fff}
       .esc-fh-filter.esc-fh-mine{border:2px solid #bb850e}.esc-fh-filter.esc-fh-mine[aria-pressed=true]{background:#ffe099;color:#30230b}
       .esc-fh-filter-count{padding:2px 8px;border-radius:20px;background:var(--soft);color:var(--ink);font-size:13px}
-      .esc-fh-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:20px}
+      .esc-fh-view-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0;flex-wrap:wrap}
+      .esc-fh-view-toggles{display:inline-flex;gap:4px;background:var(--soft);padding:4px;border-radius:12px;border:1px solid var(--line)}
+      .esc-fh-view-btn{border:none;background:transparent;color:var(--muted);font-weight:700;font-size:13px;padding:6px 12px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:36px;touch-action:manipulation;transition:all .15s ease}
+      .esc-fh-view-btn.active{background:var(--surface);color:var(--ink);box-shadow:0 2px 6px #0001;border:1px solid var(--line)}
+
+      /* 1. Large Card (Default) */
+      .esc-fh-grid.view-large{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:20px}
+
+      /* 2. Small Card (Compact) */
+      .esc-fh-grid.view-small{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px}
+      .esc-fh-grid.view-small .esc-fh-card{padding:14px;gap:8px;border-radius:14px}
+      .esc-fh-grid.view-small .esc-fh-icon{width:36px;height:36px;font-size:18px}
+      .esc-fh-grid.view-small .esc-fh-icon svg{width:18px;height:18px}
+      .esc-fh-grid.view-small .esc-fh-code{font-size:14px}
+      .esc-fh-grid.view-small .esc-fh-badge{font-size:11px;padding:4px 8px}
+      .esc-fh-grid.view-small .esc-fh-category{font-size:11px;padding:4px 8px}
+      .esc-fh-grid.view-small h3{font-size:15px;line-height:1.4}
+      .esc-fh-grid.view-small p.esc-fh-muted{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;margin:0}
+      .esc-fh-grid.view-small .esc-fh-machine-picker label{font-size:11px;margin-bottom:1px}
+      .esc-fh-grid.view-small .esc-fh-machine-select{padding:4px 8px;font-size:12px}
+      .esc-fh-grid.view-small .esc-fh-actions{gap:6px;padding-top:6px}
+      .esc-fh-grid.view-small .esc-fh-actions button,.esc-fh-grid.view-small .esc-fh-actions a{min-height:38px;padding:6px 10px;font-size:12px}
+
+      /* 3. List View (Horizontal Rows) */
+      .esc-fh-grid.view-list{display:flex;flex-direction:column;gap:10px}
+      .esc-fh-grid.view-list .esc-fh-card{display:flex;flex-direction:row;align-items:center;justify-content:space-between;padding:14px 18px;gap:16px;border-radius:14px;flex-wrap:wrap}
+      .esc-fh-grid.view-list .esc-fh-card-head{min-width:130px;flex-shrink:0}
+      .esc-fh-grid.view-list .esc-fh-card-body{flex:1;min-width:220px}
+      .esc-fh-grid.view-list .esc-fh-card-body h3{margin:2px 0 4px;font-size:16px}
+      .esc-fh-grid.view-list .esc-fh-card-body p{margin:0;font-size:13px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+      .esc-fh-grid.view-list .esc-fh-machine-picker{min-width:220px;flex:1;max-width:320px;margin:0}
+      .esc-fh-grid.view-list .esc-fh-actions{display:flex;flex-direction:row;align-items:center;gap:8px;margin:0;padding:0;min-width:auto;flex-wrap:wrap}
+      .esc-fh-grid.view-list .esc-fh-actions button,.esc-fh-grid.view-list .esc-fh-actions a{min-height:42px;padding:8px 14px;font-size:13px}
       .esc-fh-card{display:flex;min-width:0;flex-direction:column;gap:12px;background:var(--surface);border:2px solid var(--line);padding:24px;border-radius:18px;box-shadow:0 4px 16px #102f2308}
       .esc-fh-card.is-assigned{border-color:#b78412;box-shadow:inset 0 4px 0 #288344,0 4px 16px #102f2308}
       .esc-fh-card h3{margin:0;font-size:19px;font-weight:800;line-height:1.6}.esc-fh-card p{margin:0;font-size:15px}
@@ -182,21 +214,29 @@
     root.className = 'esc-fh';
     root.setAttribute('aria-label', 'ศูนย์แบบฟอร์มตรวจเครื่องจักร');
     root.lang = 'th';
-    root.innerHTML = `<header class="esc-fh-banner"><span class="esc-fh-eyebrow">EASTERN SUGAR AND CANE · ESC</span><h2>👋 สวัสดี คุณ${escapeHtml(user?.full_name || 'ช่างเทคนิค')} (${escapeHtml(user?.emp_code || 'ไม่ระบุรหัส')}) · ${escapeHtml(user?.position || 'ช่างเทคนิคตรวจเช็ค')}</h2><div class="esc-fh-context"><span>👷 กลุ่มงาน: <strong>${escapeHtml(user?.work_group || 'ทีมช่างตรวจเช็คเครื่องจักร')}</strong></span><span>🏢 แผนก: <strong>${escapeHtml(departmentLabel)}</strong></span><span>⭐ แบบฟอร์มที่ได้รับมอบหมาย: <strong>${assignedCount} รายการ</strong></span></div><p class="esc-fh-tip">เลือกแบบฟอร์มของฉัน แล้วกด “เริ่มกรอกแบบฟอร์ม” เพื่อบันทึกผลตรวจเครื่องจักร เมื่อต้องการเอกสาร ให้กด “พิมพ์ / PDF” และกลับมาหน้านี้ได้ด้วยปุ่มสีแดง</p></header><input class="esc-fh-search" type="search" aria-label="ค้นหาแบบฟอร์ม" placeholder="ค้นหารหัส ชื่อเครื่องจักร หรือแผนก เช่น ML-09, ดั๊มพ์..."><nav class="esc-fh-filters" aria-label="หมวดแบบฟอร์ม">${filters.map(([key, label, count]) => `<button type="button" class="esc-fh-filter ${key === 'mine' ? 'esc-fh-mine' : ''}" data-filter="${key}" aria-pressed="${key === filter}">${label} <span class="esc-fh-filter-count">${count}</span></button>`).join('')}</nav><p class="esc-fh-count esc-fh-muted" role="status" aria-live="polite"></p><div class="esc-fh-grid"></div>`;
+    root.innerHTML = `<header class="esc-fh-banner"><span class="esc-fh-eyebrow">EASTERN SUGAR AND CANE · ESC</span><h2>👋 สวัสดี คุณ${escapeHtml(user?.full_name || 'ช่างเทคนิค')} (${escapeHtml(user?.emp_code || 'ไม่ระบุรหัส')}) · ${escapeHtml(user?.position || 'ช่างเทคนิคตรวจเช็ค')}</h2><div class="esc-fh-context"><span>👷 กลุ่มงาน: <strong>${escapeHtml(user?.work_group || 'ทีมช่างตรวจเช็คเครื่องจักร')}</strong></span><span>🏢 แผนก: <strong>${escapeHtml(departmentLabel)}</strong></span><span>⭐ แบบฟอร์มที่ได้รับมอบหมาย: <strong>${assignedCount} รายการ</strong></span></div><p class="esc-fh-tip">เลือกแบบฟอร์มของฉัน แล้วกด “เริ่มกรอกแบบฟอร์ม” เพื่อบันทึกผลตรวจเครื่องจักร เมื่อต้องการเอกสาร ให้กด “พิมพ์ / PDF” และกลับมาหน้านี้ได้ด้วยปุ่มสีแดง</p></header><input class="esc-fh-search" type="search" aria-label="ค้นหาแบบฟอร์ม" placeholder="ค้นหารหัส ชื่อเครื่องจักร หรือแผนก เช่น ML-09, ดั๊มพ์..."><nav class="esc-fh-filters" aria-label="หมวดแบบฟอร์ม">${filters.map(([key, label, count]) => `<button type="button" class="esc-fh-filter ${key === 'mine' ? 'esc-fh-mine' : ''}" data-filter="${key}" aria-pressed="${key === filter}">${label} <span class="esc-fh-filter-count">${count}</span></button>`).join('')}</nav><div class="esc-fh-view-bar"><span class="esc-fh-count esc-fh-muted" role="status" aria-live="polite"></span><div class="esc-fh-view-toggles" role="group" aria-label="ปรับรูปแบบการแสดงผล"><button type="button" class="esc-fh-view-btn" data-view="large" title="การ์ดใหญ่">🗂 การ์ดใหญ่</button><button type="button" class="esc-fh-view-btn" data-view="small" title="การ์ดเล็ก">▦ การ์ดเล็ก</button><button type="button" class="esc-fh-view-btn" data-view="list" title="รายการ">☰ รายการ</button></div></div><div class="esc-fh-grid view-large"></div>`;
     container.replaceChildren(root);
     const search = root.querySelector('input');
     const grid = root.querySelector('.esc-fh-grid');
     const iconFallbacks = { truck: '🚛', conveyor: '↔', turbine: '⚙', gauge: '◴', clock: '◷', factory: '🏭', scale: '⚖', 'check-square': '☑', 'shield-alert': '⛨', users: '♟', cpu: '▦', 'alert-octagon': '⚠' };
+    let viewMode = 'large';
+    try { viewMode = localStorage.getItem('ESC_FORMS_VIEW_MODE') || 'large'; } catch (_) {}
+    root.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === viewMode));
+
     function update() {
       const query = search.value.trim().toLocaleLowerCase('th');
       const forms = ESC_BUILTIN_FORMS.filter(form => (filter === 'all' || (filter === 'mine' ? assigned.has(form.code) : form.category === filter)) && [form.code, form.title, form.dept, form.desc].join(' ').toLocaleLowerCase('th').includes(query));
       root.querySelectorAll('[data-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.filter === filter)));
       root.querySelector('.esc-fh-count').textContent = `แสดง ${forms.length} จาก ${ESC_BUILTIN_FORMS.length} แบบฟอร์ม`;
+      grid.className = 'esc-fh-grid view-' + viewMode;
       grid.innerHTML = forms.map(form => {
         const linkedMachines = (appState?.data?.machines || []).filter(machine => getMachineLinkedForm(machine, appState)?.code === form.code);
         const linkedTags = linkedMachines.length ? `<p class="esc-fh-muted"><strong>🔗 เครื่องจักรที่เชื่อมโยง:</strong> ${linkedMachines.map(machine => escapeHtml(machine.machine_code)).join(', ')}</p>` : '';
         const machinePicker = linkedMachines.length ? `<div class="esc-fh-machine-picker" style="margin-top:6px;margin-bottom:8px;"><label style="font-size:12px;font-weight:bold;color:#1e3a24;display:block;margin-bottom:2px;">เลือกเครื่องจักรที่ต้องการตรวจสอบ:</label><select class="esc-fh-machine-select" data-card-form="${form.code}" style="width:100%;padding:6px 10px;border:1px solid #b7cdbd;border-radius:8px;font-size:13px;background:#f8fbf8;color:#18311e;">${linkedMachines.map(machine => `<option value="${escapeHtml(machine.id)}">${escapeHtml(machine.machine_code)} — ${escapeHtml(machine.name)}</option>`).join('')}</select></div>` : '';
-        return `<article class="esc-fh-card ${assigned.has(form.code) ? 'is-assigned' : ''}"><div class="esc-fh-card-head"><span class="esc-fh-icon" aria-hidden="true" data-icon="${form.icon}">${iconFallbacks[form.icon]}</span><span class="esc-fh-code">${form.code}</span></div>${assigned.has(form.code) ? '<span class="esc-fh-badge">⭐ แบบฟอร์มที่ได้รับมอบหมาย</span>' : ''}<span class="esc-fh-category">${escapeHtml(form.dept)}</span><h3>${escapeHtml(form.title)}</h3><p class="esc-fh-muted">${escapeHtml(form.desc)}</p>${linkedTags}${machinePicker}<div class="esc-fh-actions"><button type="button" class="esc-fh-primary" data-open="${form.code}">📝 เริ่มกรอกแบบฟอร์ม (ตรวจเครื่องจักร)</button><button type="button" class="esc-fh-secondary" data-print="${form.code}">🖨 พิมพ์เอกสาร / PDF</button><a class="esc-fh-secondary" href="${escapeHtml(getFormUrl(form.file))}" target="_blank" rel="noopener noreferrer">↗ เปิดในหน้าต่างใหม่</a></div></article>`;
+        const cardBody = viewMode === 'list'
+          ? `<div class="esc-fh-card-body"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span class="esc-fh-category">${escapeHtml(form.dept)}</span>${assigned.has(form.code) ? '<span class="esc-fh-badge">⭐ มอบหมาย</span>' : ''}</div><h3>${escapeHtml(form.title)}</h3><p class="esc-fh-muted">${escapeHtml(form.desc)}</p></div>`
+          : `${assigned.has(form.code) ? '<span class="esc-fh-badge">⭐ แบบฟอร์มที่ได้รับมอบหมาย</span>' : ''}<span class="esc-fh-category">${escapeHtml(form.dept)}</span><h3>${escapeHtml(form.title)}</h3><p class="esc-fh-muted">${escapeHtml(form.desc)}</p>${linkedTags}`;
+        return `<article class="esc-fh-card ${assigned.has(form.code) ? 'is-assigned' : ''}"><div class="esc-fh-card-head"><span class="esc-fh-icon" aria-hidden="true" data-icon="${form.icon}">${iconFallbacks[form.icon]}</span><span class="esc-fh-code">${form.code}</span></div>${cardBody}${machinePicker}<div class="esc-fh-actions"><button type="button" class="esc-fh-primary" data-open="${form.code}">📝 เริ่มกรอกแบบฟอร์ม (ตรวจเครื่องจักร)</button><button type="button" class="esc-fh-secondary" data-print="${form.code}">🖨 พิมพ์เอกสาร / PDF</button><a class="esc-fh-secondary" href="${escapeHtml(getFormUrl(form.file))}" target="_blank" rel="noopener noreferrer">↗ เปิดในหน้าต่างใหม่</a></div></article>`;
       }).join('') || `<div class="esc-fh-empty">${filter === 'mine' && !assignedCount ? 'ยังไม่มีแบบฟอร์มที่ได้รับมอบหมาย กรุณาติดต่อหัวหน้างาน หรือเลือกดูแบบฟอร์มทั้งหมด' : 'ไม่พบแบบฟอร์ม ลองเปลี่ยนคำค้นหรือเลือกหมวดอื่น'}<br><button type="button" class="esc-fh-secondary" data-reset>ดูแบบฟอร์มทั้งหมด</button></div>`;
       // Keep a visible fallback for custom icons absent from the installed Lucide version.
       if (window.lucide?.icons && window.lucide.createIcons) {
@@ -212,6 +252,14 @@
     root.addEventListener('click', event => {
       const button = event.target.closest('button');
       if (!button || !root.contains(button)) return;
+      if (button.dataset.view) {
+        viewMode = button.dataset.view;
+        try { localStorage.setItem('ESC_FORMS_VIEW_MODE', viewMode); } catch (_) {}
+        root.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === viewMode));
+        grid.className = 'esc-fh-grid view-' + viewMode;
+        update();
+        return;
+      }
       if (button.hasAttribute('data-reset')) { filter = 'all'; search.value = ''; update(); return; }
       if (button.dataset.filter) { filter = button.dataset.filter; update(); return; }
       const form = ESC_BUILTIN_FORMS.find(item => item.code === (button.dataset.open || button.dataset.print));
