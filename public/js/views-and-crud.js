@@ -586,12 +586,14 @@ function renderMachines(container) {
               <th style="width: 70px;" class="py-3 px-3 font-bold">Class</th>
               <th style="width: 120px;" class="py-3 px-3 font-bold">การเดินเครื่อง</th>
               <th style="width: 120px;" class="py-3 px-3 font-bold">สุขภาพเครื่อง</th>
+              <th style="width: 250px;" class="py-3 px-3 font-bold">แบบฟอร์มตรวจที่เชื่อมโยง (Linked Form)</th>
               <th style="width: 230px;" class="py-3 px-3 font-bold text-right">จัดการ (CRUD & QR)</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-200">
             ${machines.map(m => {
               const divName = m.division_name || (state.data.departments.find(d => Number(d.id) === Number(m.department_id))?.plant_name) || 'ฝ่ายปฏิบัติการ';
+              const linkedForm = typeof getMachineLinkedForm === 'function' ? getMachineLinkedForm(m, state) : null;
               return `
               <tr class="hover:bg-slate-50/90">
                 <td class="py-3 px-3 font-mono font-bold text-slate-900">${m.machine_code}</td>
@@ -611,6 +613,9 @@ function renderMachines(container) {
                 </td>
                 <td class="py-3 px-3">${getOperatingBadge(m.operating_state)}</td>
                 <td class="py-3 px-3">${getHealthBadge(m.health_status)}</td>
+                <td class="py-3 px-3">
+                  ${linkedForm ? `<div class="space-y-1.5"><span class="inline-flex px-2 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 font-mono font-bold">${linkedForm.code}</span><div class="flex gap-1"><button onclick="openLinkedFormForMachine(${m.id})" class="px-2 py-1 rounded-lg bg-emerald-600 text-white font-bold">📝 เปิดฟอร์ม</button><button onclick="openLinkedFormForMachine(${m.id}, 'print')" class="px-2 py-1 rounded-lg bg-slate-700 text-white font-bold">🖨 พิมพ์</button></div></div>` : '<span class="text-slate-400">ยังไม่พบฟอร์ม</span>'}
+                </td>
                 <td class="py-3 px-3 text-right">
                   <div class="inline-flex items-center gap-1">
                     <button onclick="openMachineDashboard(${m.id})" class="px-2 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-bold flex items-center gap-1" title="ดูแดชบอร์ดเฉพาะเครื่องนี้">
@@ -618,6 +623,7 @@ function renderMachines(container) {
                     </button>
                     <button onclick="openEmergencyQuickEntryModal(${m.id})" class="px-2 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold" title="ลงค่าฉุกเฉินเฉพาะจุด">⚡ ด่วน</button>
                     <button onclick="startInspectionForMachine(${m.id})" class="px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold" title="ตรวจเช็คเครื่องนี้">ตรวจ</button>
+                    <button onclick="openLinkedFormForMachine(${m.id})" class="px-2 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold" title="เปิดแบบฟอร์มที่เชื่อมโยง">📝 ฟอร์ม</button>
                     <button onclick="openMachineQRModal(${m.id})" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-900 text-white font-semibold flex items-center gap-1" title="พิมพ์ป้าย QR">
                       <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> QR
                     </button>
@@ -653,6 +659,12 @@ function openMachineModal(machineId) {
       ? state.data.departments.find(d => Number(d.id) === Number(state.selectedDeptId))
       : state.data.departments[0]);
   const currentDivision = m?.division_name || defaultDept?.plant_name || 'ฝ่ายปฏิบัติการ';
+  const selectedLinkedForm = m?.specs?.linked_form_code || m?.linked_form_code || '';
+  const builtinFormOptions = (window.ESC_BUILTIN_FORMS || []).map(form => `<option value="${form.code}" ${selectedLinkedForm === form.code ? 'selected' : ''}>[${form.code}] ${form.title}</option>`).join('');
+  const templateFormOptions = (state.data.forms || []).map(form => {
+    const value = form.form_code || form.code || form.id;
+    return `<option value="${value}" ${String(selectedLinkedForm) === String(value) ? 'selected' : ''}>[${form.form_code || form.code || form.id}] ${form.title} (Template)</option>`;
+  }).join('');
 
   const html = `
     <form onsubmit="saveMachine(event, ${m ? m.id : 'null'})" class="space-y-4 text-xs">
@@ -680,6 +692,15 @@ function openMachineModal(machineId) {
         <div>
           <label class="block font-bold text-slate-700 mb-1">หมวดหมู่เครื่องจักร (Category)</label>
           <input type="text" id="m-category" value="${m?.category || 'Milling & Cane Prep'}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2" />
+        </div>
+
+        <div class="md:col-span-3">
+          <label class="block font-bold text-slate-700 mb-1">แบบฟอร์มตรวจที่เชื่อมโยง (Linked Inspection Form)</label>
+          <select id="m-linked-form" class="w-full bg-indigo-50 border border-indigo-300 rounded-xl px-3 py-2 font-semibold">
+            <option value="">เลือกอัตโนมัติตามรหัส/ชื่อ/หมวดหมู่เครื่องจักร</option>
+            <optgroup label="แบบฟอร์มมาตรฐาน ESC 13 แบบ">${builtinFormOptions}</optgroup>
+            <optgroup label="แบบฟอร์ม Template ที่สร้างเอง">${templateFormOptions}</optgroup>
+          </select>
         </div>
 
         <div>
@@ -757,6 +778,7 @@ function openMachineModal(machineId) {
 async function saveMachine(e, id) {
   e.preventDefault();
   const comps = document.getElementById('m-spec-comp').value.split(',').map(s => s.trim()).filter(Boolean);
+  const existingSpecs = id ? (state.data.machines.find(machine => Number(machine.id) === Number(id))?.specs || {}) : {};
   const payload = {
     machine_code: document.getElementById('m-code').value,
     name: document.getElementById('m-name').value,
@@ -770,10 +792,12 @@ async function saveMachine(e, id) {
     operating_state: document.getElementById('m-opstate').value,
     health_status: document.getElementById('m-health').value,
     specs: {
+      ...existingSpecs,
       power_kw: document.getElementById('m-spec-kw').value,
       bearing_de: document.getElementById('m-spec-brg').value,
       lube_oil: document.getElementById('m-spec-lube').value,
-      components: comps
+      components: comps,
+      linked_form_code: document.getElementById('m-linked-form')?.value || ''
     },
     actor: state.activeUser?.full_name || 'Admin'
   };

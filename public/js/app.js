@@ -2894,8 +2894,20 @@ window.renderMachineDashboardTabBody = function(m, insps, defects, dept) {
   }
 
   // Default 'overview' tab: CBM Trend Chart & Analytics
+  const linkedForm = typeof getMachineLinkedForm === 'function' ? getMachineLinkedForm(m, state) : null;
   return `
     <div class="space-y-5">
+      <div class="bg-gradient-to-r from-indigo-950 to-slate-900 text-white rounded-2xl border-2 border-amber-400 p-5 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="text-xs font-black text-amber-300">📋 แบบฟอร์มตรวจที่เชื่อมโยง</div>
+          <div class="font-extrabold mt-1">${linkedForm ? `${linkedForm.code} · ${linkedForm.title}` : 'ยังไม่พบแบบฟอร์มที่เชื่อมโยง'}</div>
+          ${linkedForm?.desc ? `<div class="text-xs text-slate-300 mt-1">${linkedForm.desc}</div>` : ''}
+        </div>
+        <div class="flex flex-wrap gap-2 shrink-0">
+          <button onclick="openLinkedFormForMachine(${m.id})" class="min-h-12 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black">📝 เปิดแบบฟอร์มตรวจ</button>
+          <button onclick="openLinkedFormForMachine(${m.id}, 'print')" class="min-h-12 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-900 text-xs font-bold">🖨 พิมพ์ PDF</button>
+        </div>
+      </div>
       <!-- Chart Card -->
       <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-4">

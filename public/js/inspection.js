@@ -249,6 +249,8 @@ function renderInspect(container) {
 
   const isRunning = state.inspectSession.machine_state_at_check === 'running';
   const fieldFilter = state.inspectSession.fieldFilter || 'all';
+  const linkedInspectionForm = typeof getMachineLinkedForm === 'function' ? getMachineLinkedForm(selectedMachine, state) : null;
+  const hubFormOptions = (window.ESC_BUILTIN_FORMS || []).map(form => `<option value="${form.code}" ${linkedInspectionForm?.code === form.code ? 'selected' : ''}>[${form.code}] ${form.title}</option>`).join('');
 
   // Calculate form completion progress & co-inspectors
   let totalFieldsCount = 0;
@@ -420,6 +422,25 @@ function renderInspect(container) {
               <button type="button" onclick="onChangeInspectOperatingState('under_repair')" class="touch-target-btn py-2 px-2 rounded-xl text-xs font-bold border transition ${state.inspectSession.machine_state_at_check === 'under_repair' || state.inspectSession.machine_state_at_check === 'maintenance' ? 'bg-rose-600 text-white border-rose-600 shadow-xs' : 'bg-slate-50 text-slate-600 border-slate-200'}">
                 🛠️ ระหว่างซ่อม
               </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border-2 border-amber-400 bg-gradient-to-r from-slate-950 to-indigo-950 text-white p-5 shadow-lg">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="min-w-0">
+              <div class="text-amber-300 text-xs font-black tracking-wide">📋 ศูนย์แบบฟอร์มตรวจเครื่องจักรหน้างาน (Inspection Forms Hub)</div>
+              <div class="mt-1 text-base font-extrabold">${linkedInspectionForm ? `${linkedInspectionForm.code} · ${linkedInspectionForm.title}` : 'ยังไม่พบแบบฟอร์มที่เชื่อมโยง'}</div>
+              <div class="mt-2">
+                <label class="block text-[11px] text-slate-300 mb-1">สลับไปยังแบบฟอร์มมาตรฐานอื่น</label>
+                <select onchange="const f=window.ESC_BUILTIN_FORMS.find(x=>x.code===this.value); if(f) openEmbeddedForm(getFormUrl(f.file), f.code + ' · ' + f.title)" class="w-full max-w-xl bg-white text-slate-900 border-2 border-white rounded-xl px-3 py-2 text-xs font-bold">
+                  ${hubFormOptions}
+                </select>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2 shrink-0">
+              <button type="button" onclick="openLinkedFormForMachine(${selectedMachine.id})" class="min-h-12 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm shadow-md">📝 เปิดแบบฟอร์มตรวจ ${linkedInspectionForm?.code || ''}</button>
+              <button type="button" onclick="openLinkedFormForMachine(${selectedMachine.id}, 'print')" class="min-h-12 px-4 rounded-xl bg-white hover:bg-slate-100 text-slate-900 font-bold text-sm">🖨 พิมพ์เอกสาร / PDF</button>
             </div>
           </div>
         </div>
