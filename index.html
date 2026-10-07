@@ -52,57 +52,57 @@
       <!-- Navigation Links -->
       <nav id="nav-menu" class="hidden lg:block p-3 pb-36 space-y-1">
         <div class="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#8ce617]">ศูนย์บัญชาการและหน้างาน</div>
-        <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-item active w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
-          <span class="flex items-center gap-3"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> แดชบอร์ดศูนย์กลาง (Center)</span>
+        <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-item active w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left">
+          <span class="flex items-center gap-3 text-left min-w-0 flex-1"><i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i> <span class="text-left leading-snug">แดชบอร์ดศูนย์กลาง (Center)</span></span>
         </button>
-        <button onclick="switchTab('factory3d')" data-tab="factory3d" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
-          <span class="flex items-center gap-3"><i class="fa-solid fa-cubes w-4 text-center text-[#8ce617]"></i> ภาพรวมโรงงาน 3D</span>
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-semibold border border-[#8ce617]/40">3D Map</span>
+        <button onclick="switchTab('factory3d')" data-tab="factory3d" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left">
+          <span class="flex items-center gap-3 text-left min-w-0 flex-1"><i class="fa-solid fa-cubes w-4 text-center text-[#8ce617] shrink-0"></i> <span class="text-left leading-snug">ภาพรวมโรงงาน 3D</span></span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-semibold border border-[#8ce617]/40 shrink-0 ml-2">3D Map</span>
         </button>
-        <button onclick="switchTab('inspect')" data-tab="inspect" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
-          <span class="flex items-center gap-3"><i data-lucide="clipboard-check" class="w-4 h-4"></i> ตรวจเช็คหน้างาน (E-Check)</span>
-          <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-semibold border border-[#8ce617]/40">QR / iPad</span>
+        <button onclick="switchTab('inspect')" data-tab="inspect" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left">
+          <span class="flex items-center gap-3 text-left min-w-0 flex-1"><i data-lucide="clipboard-check" class="w-4 h-4 shrink-0"></i> <span class="text-left leading-snug">ตรวจเช็คหน้างาน (E-Check)</span></span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-semibold border border-[#8ce617]/40 shrink-0 ml-2">QR / iPad</span>
         </button>
-        <button onclick="switchTab('routes')" data-tab="routes" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition" title="ระบบสายเดินตรวจตามลำดับเครื่องจักร & แบ่งงานทีมช่างช่วยกันตรวจในแผนก">
-          <span class="flex items-center gap-2.5 text-left"><i data-lucide="route" class="w-4 h-4 shrink-0 text-[#8ce617]"></i> <span class="leading-tight">สายเดินตรวจตามลำดับ & แบ่งทีมช่าง</span></span>
-          <span id="badge-routes" class="text-xs px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-bold">0</span>
+        <button onclick="switchTab('routes')" data-tab="routes" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left" title="ระบบสายเดินตรวจตามลำดับเครื่องจักร & แบ่งงานทีมช่างช่วยกันตรวจในแผนก">
+          <span class="flex items-center gap-2.5 text-left min-w-0 flex-1"><i data-lucide="route" class="w-4 h-4 shrink-0 text-[#8ce617]"></i> <span class="text-left leading-snug">สายเดินตรวจตามลำดับ & แบ่งทีมช่าง</span></span>
+          <span id="badge-routes" class="text-xs px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-bold shrink-0 ml-2">0</span>
         </button>
-        <button onclick="switchTab('defects')" data-tab="defects" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
-          <span class="flex items-center gap-3"><i data-lucide="alert-triangle" class="w-4 h-4"></i> ติดตามงานซ่อม / F-Tag</span>
-          <span id="badge-defects" class="text-xs px-2 py-0.5 rounded-full bg-rose-500 text-white font-bold">0</span>
+        <button onclick="switchTab('defects')" data-tab="defects" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left">
+          <span class="flex items-center gap-3 text-left min-w-0 flex-1"><i data-lucide="alert-triangle" class="w-4 h-4 shrink-0"></i> <span class="text-left leading-snug">ติดตามงานซ่อม / F-Tag</span></span>
+          <span id="badge-defects" class="text-xs px-2 py-0.5 rounded-full bg-rose-500 text-white font-bold shrink-0 ml-2">0</span>
         </button>
-        <button onclick="switchTab('history')" data-tab="history" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
-          <span class="flex items-center gap-3"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> ประวัติผลตรวจ & อนุมัติ</span>
-          <span id="badge-pending" class="text-xs px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-semibold">0</span>
+        <button onclick="switchTab('history')" data-tab="history" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left">
+          <span class="flex items-center gap-3 text-left min-w-0 flex-1"><i data-lucide="file-spreadsheet" class="w-4 h-4 shrink-0"></i> <span class="text-left leading-snug">ประวัติผลตรวจ & อนุมัติ</span></span>
+          <span id="badge-pending" class="text-xs px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-semibold shrink-0 ml-2">0</span>
         </button>
-        <button onclick="switchTab('data-center')" data-tab="data-center" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition" title="คลังเอกสารตรวจเครื่องจักรดิจิทัล Standalone HTML + Canvas Print 100%">
-          <span class="flex items-center gap-3"><i data-lucide="file-check-2" class="w-4 h-4 text-[#8ce617]"></i> คลังแบบฟอร์มตรวจเครื่องจักร (Forms Hub)</span>
-          <span id="badge-hub-forms" class="text-[10px] px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-semibold border border-[#8ce617]/40">13 ฟอร์ม</span>
+        <button onclick="switchTab('data-center')" data-tab="data-center" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left" title="คลังเอกสารตรวจเครื่องจักรดิจิทัล Standalone HTML + Canvas Print 100%">
+          <span class="flex items-center gap-3 text-left min-w-0 flex-1"><i data-lucide="file-check-2" class="w-4 h-4 text-[#8ce617] shrink-0"></i> <span class="text-left leading-snug">คลังแบบฟอร์มตรวจเครื่องจักร (Forms Hub)</span></span>
+          <span id="badge-hub-forms" class="text-[10px] px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-semibold border border-[#8ce617]/40 shrink-0 ml-2">13 ฟอร์ม</span>
         </button>
 
-        <div class="pt-3 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#8ce617]">จัดการฐานข้อมูลหลัก (CRUD)</div>
-        <button onclick="switchTab('machines')" data-tab="machines" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
-          <span class="flex items-center gap-3"><i data-lucide="cog" class="w-4 h-4"></i> ทะเบียนเครื่องจักร (Machines)</span>
-          <span id="badge-machines" class="text-xs text-emerald-300/80">0</span>
+        <div class="pt-3 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#8ce617] text-left">จัดการฐานข้อมูลหลัก (CRUD)</div>
+        <button onclick="switchTab('machines')" data-tab="machines" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left">
+          <span class="flex items-center gap-3 text-left min-w-0 flex-1"><i data-lucide="cog" class="w-4 h-4 shrink-0"></i> <span class="text-left leading-snug">ทะเบียนเครื่องจักร (Machines)</span></span>
+          <span id="badge-machines" class="text-xs text-emerald-300/80 shrink-0 ml-2">0</span>
         </button>
-        <button onclick="switchTab('csvimport')" data-tab="csvimport" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
-          <span class="flex items-center gap-3"><i data-lucide="file-up" class="w-4 h-4 text-[#8ce617]"></i> นำเข้าข้อมูล CSV (Template)</span>
-          <span class="text-[10px] px-1.5 py-0.5 rounded bg-[#8ce617]/20 text-[#8ce617] font-bold">CSV</span>
+        <button onclick="switchTab('csvimport')" data-tab="csvimport" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left">
+          <span class="flex items-center gap-3 text-left min-w-0 flex-1"><i data-lucide="file-up" class="w-4 h-4 text-[#8ce617] shrink-0"></i> <span class="text-left leading-snug">นำเข้าข้อมูล CSV (Template)</span></span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-[#8ce617]/20 text-[#8ce617] font-bold shrink-0 ml-2">CSV</span>
         </button>
-        <button onclick="switchTab('forms')" data-tab="forms" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
-          <span class="flex items-center gap-3"><i data-lucide="file-plus-2" class="w-4 h-4"></i> สร้างฟอร์มเอง (Form Builder)</span>
-          <span id="badge-forms" class="text-xs text-emerald-300/80">0</span>
+        <button onclick="switchTab('forms')" data-tab="forms" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left">
+          <span class="flex items-center gap-3 text-left min-w-0 flex-1"><i data-lucide="file-plus-2" class="w-4 h-4 shrink-0"></i> <span class="text-left leading-snug">สร้างฟอร์มเอง (Form Builder)</span></span>
+          <span id="badge-forms" class="text-xs text-emerald-300/80 shrink-0 ml-2">0</span>
         </button>
-        <button onclick="switchTab('departments')" data-tab="departments" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
-          <span class="flex items-center gap-3"><i data-lucide="building-2" class="w-4 h-4"></i> จัดการแผนก (Departments)</span>
-          <span id="badge-depts" class="text-xs text-emerald-300/80">0</span>
+        <button onclick="switchTab('departments')" data-tab="departments" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left">
+          <span class="flex items-center gap-3 text-left min-w-0 flex-1"><i data-lucide="building-2" class="w-4 h-4 shrink-0"></i> <span class="text-left leading-snug">จัดการแผนก (Departments)</span></span>
+          <span id="badge-depts" class="text-xs text-emerald-300/80 shrink-0 ml-2">0</span>
         </button>
-        <button onclick="switchTab('users')" data-tab="users" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
-          <span class="flex items-center gap-3"><i data-lucide="users" class="w-4 h-4"></i> ผู้ใช้งาน & ตั้งค่าระบบ</span>
+        <button onclick="switchTab('users')" data-tab="users" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left">
+          <span class="flex items-center gap-3 text-left min-w-0 flex-1"><i data-lucide="users" class="w-4 h-4 shrink-0"></i> <span class="text-left leading-snug">ผู้ใช้งาน & ตั้งค่าระบบ</span></span>
         </button>
-        <button onclick="switchTab('auditlog')" data-tab="auditlog" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
-          <span class="flex items-center gap-3"><i data-lucide="history" class="w-4 h-4 text-amber-300"></i> ประวัติระบบ & ย้อนข้อมูล</span>
-          <span id="badge-auditlogs" class="text-xs px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-bold">0</span>
+        <button onclick="switchTab('auditlog')" data-tab="auditlog" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition text-left">
+          <span class="flex items-center gap-3 text-left min-w-0 flex-1"><i data-lucide="history" class="w-4 h-4 text-amber-300 shrink-0"></i> <span class="text-left leading-snug">ประวัติระบบ & ย้อนข้อมูล</span></span>
+          <span id="badge-auditlogs" class="text-xs px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-bold shrink-0 ml-2">0</span>
         </button>
       </nav>
     </div>

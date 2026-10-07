@@ -45,6 +45,24 @@ body {
   border-left: 4px solid #8ce617;
 }
 
+/* Force left alignment for all sidebar menu text */
+.nav-item {
+  text-align: left !important;
+  justify-content: space-between !important;
+}
+
+.nav-item,
+.nav-item * {
+  text-align: left !important;
+}
+
+.nav-item > span:first-child {
+  display: flex !important;
+  align-items: center !important;
+  text-align: left !important;
+  min-width: 0 !important;
+}
+
 /* ESC Primary Button Override */
 .btn-esc-primary {
   background: linear-gradient(135deg, #1f760e 0%, #4b8305 100%);
