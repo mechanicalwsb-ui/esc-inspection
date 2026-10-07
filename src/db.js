@@ -67,7 +67,7 @@ function initDatabase() {
       running_hours REAL DEFAULT 0,
       specs_json TEXT DEFAULT '{}', -- JSON: motor_kw, rpm, bearing_de, bearing_nde, lube_type, components[]
       location_note TEXT DEFAULT '',
-      is_active INTEGER DEFAULT 1,
+      is_active INTEGER DEFAULT 1 NOT NULL,
       created_at TEXT DEFAULT (datetime('now', '+7 hours')),
       updated_at TEXT DEFAULT (datetime('now', '+7 hours'))
     );
@@ -209,6 +209,11 @@ function initDatabase() {
       updated_at TEXT DEFAULT (datetime('now', '+7 hours'))
     );
   `);
+
+  // Inspect the schema first; migration failures must not be silently ignored.
+  if (!db.prepare('PRAGMA table_info(machines)').all().some(c => c.name === 'is_active')) {
+    db.exec('ALTER TABLE machines ADD COLUMN is_active INTEGER DEFAULT 1 NOT NULL');
+  }
 
   // Safe schema migrations for existing SQLite databases upgrading to v2.0, v2.1 & v2.2
   const safeAddColumn = (sql) => {

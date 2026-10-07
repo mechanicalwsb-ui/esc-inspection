@@ -254,6 +254,14 @@ async function handleRequest(req, res) {
     }
 
     // --- 2. MACHINES CRUD ---
+    if (pathname === '/api/machines' && req.method === 'GET') {
+      return sendJson(res, 200, { ok: true, data: getFullBootstrapData().machines });
+    }
+    if (/^\/api\/machines\/\d+$/.test(pathname) && req.method === 'GET') {
+      const machine = db.prepare('SELECT * FROM machines WHERE id = ?').get(Number(pathname.split('/')[3]));
+      if (!machine) return sendJson(res, 404, { ok: false, error: '???????????????????' });
+      return sendJson(res, 200, { ok: true, data: { ...machine, specs: JSON.parse(machine.specs_json || '{}') } });
+    }
     if (pathname === '/api/machines' && req.method === 'POST') {
       const body = await parseBody(req);
       if (!body.machine_code || !body.name) {
@@ -346,7 +354,7 @@ async function handleRequest(req, res) {
       const id = Number(pathname.split('/')[3]);
       const m = db.prepare('SELECT * FROM machines WHERE id = ?').get(id);
       if (!m) return sendJson(res, 404, { ok: false, error: 'ไม่พบเครื่องจักรนี้' });
-      db.prepare('DELETE FROM machines WHERE id = ?').run(id);
+      db.prepare('UPDATE machines SET is_active = 0 WHERE id = ?').run(id);
       logAudit('Admin', 'DELETE', 'MACHINE', `${m.machine_code} - ${m.name}`);
       return sendJson(res, 200, { ok: true, data: getFullBootstrapData() });
     }

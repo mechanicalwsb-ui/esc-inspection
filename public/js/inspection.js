@@ -1,3 +1,8 @@
+// Escape dynamic text and quoted attributes before inserting report HTML.
+function esc(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 // Inspection form, measurement rules, photos and signatures.
 function startInspectionForMachine(machineId, routeId = null, routeRoundId = null) {
   state.inspectSession.queuedReviewId = null;

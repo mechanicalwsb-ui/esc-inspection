@@ -51,7 +51,7 @@
       if (!data?.users?.length) data = normalizeData(readJson(DB_KEY));
       if (!data?.users?.length) data = directoryFallback();
       if (!data?.users?.length && location.protocol !== 'file:') {
-        try { const response = await fetch('/api/bootstrap', { cache: 'no-store' }); const result = await response.json(); if (result.ok) data = normalizeData(result.data); } catch (_) {}
+        try { const response = await fetch('api/bootstrap', { cache: 'no-store' }); const result = await response.json(); if (result.ok) data = normalizeData(result.data); } catch (_) {}
       }
       state.data = data || { users: [], departments: [], machines: [], forms: [] };
       const saved = readJson(SESSION_KEY);
@@ -233,3 +233,4 @@
   </script>
 </body>
 </html>
+

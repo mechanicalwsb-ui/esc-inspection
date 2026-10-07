@@ -131,3 +131,36 @@ test('Stopped machines can skip running-only numbers without reporting measured 
   assert.doesNotThrow(()=>Domain.validateInspection(body,{id:1,category:'TEST'},template));
   assert.throws(()=>Domain.validateInspection({...body,machine_state_at_check:'running'},{id:1,category:'TEST'},template));
 });
+
+
+test('Machine archive preserves inspections, defects and historical machine lookup', async()=>{
+  const created=await call('/api/v1/machines','POST',{machine_code:'ARCHIVE-01',name:'Historical machine',department_id:5});
+  assert.equal(created.status,201);
+  const m=created.json.data.machines.find(x=>x.machine_code==='ARCHIVE-01');
+  const f=await call('/api/forms','POST',{form_code:'ARCHIVE-FORM',title:'Archive test',department_id:5,machine_category:'ALL',target_machine_id:m.id,require_signature:false,sections:form.sections});
+  assert.equal(f.status,201);
+  const archiveForm=f.json.data.forms.find(x=>x.form_code==='ARCHIVE-FORM');
+  const saved=await call('/api/inspections','POST',{...inspection(100),machine_id:m.id,form_id:archiveForm.id});
+  assert.equal(saved.status,201,JSON.stringify(saved.json));
+  const historical=saved.json.data.inspections.filter(x=>x.machine_id===m.id);
+  const defects=saved.json.data.defects.filter(x=>x.machine_id===m.id);
+  assert.ok(historical.length);assert.ok(defects.length);
+  assert.equal((await call('/api/v1/machines/'+m.id,'DELETE',{},adminCookie,{'If-Match':'0'})).status,200);
+  const list=await call('/api/v1/machines');assert.equal(list.status,200);assert.ok(!list.json.data.some(x=>x.id===m.id));
+  const detail=await call('/api/v1/machines/'+m.id);assert.equal(detail.status,200);assert.equal(detail.json.data.is_active,0);assert.equal(detail.json.data.name,m.name);
+  const data=(await call('/api/bootstrap')).json.data;assert.ok(!data.machines.some(x=>x.id===m.id));
+  assert.deepEqual(data.inspections.filter(x=>x.machine_id===m.id),historical);
+  assert.deepEqual(data.defects.filter(x=>x.machine_id===m.id),defects);
+  const db=new DatabaseSync(path.join(folder,'test.db'),{readOnly:true});
+  assert.equal(db.prepare('PRAGMA foreign_key_check').all().length,0);assert.equal(db.prepare('PRAGMA integrity_check').get().integrity_check,'ok');db.close();
+});
+
+test('Inspection reports and machine tags escape stored HTML before printing',()=>{
+  const vm=require('node:vm');let rendered,title;
+  const payload='<img src=x onerror="alert(1)">';
+  const context={state:{data:{settings:{organization_name:payload},departments:[],inspections:[{id:1,answers:[{label:payload,value:payload,unit:payload,remark:payload,checked_by:payload}],co_inspectors:[payload,payload],inspector_note:payload,approval_note:payload,inspector_name:payload,signature_data:payload,approved_by:payload,approval_status:'approved',doc_no:payload}],machines:[{id:1,machine_code:payload,name:payload,plant_area:payload,brand:payload,model:payload}]}},ComisDomain:{isStandalone:()=>false},setText:(_,v)=>{title=v;},document:{getElementById:id=>id==='printable-area'?{set innerHTML(v){rendered=v;}}:null},window:{},setTimeout:()=>{}};
+  vm.createContext(context);
+  vm.runInContext(fs.readFileSync(path.resolve('public/js/inspection.js'),'utf8'),context);
+  vm.runInContext(fs.readFileSync(path.resolve('public/js/views-and-crud.js'),'utf8'),context);
+  for(const fn of ['openInspectionReportModal','openMachineQRModal']){context[fn](1);assert.ok(!rendered.includes(payload));assert.ok(rendered.includes('&lt;img src=x onerror=&quot;alert(1)&quot;&gt;'));assert.ok(title.includes(payload));}
+});

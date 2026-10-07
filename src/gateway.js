@@ -170,11 +170,14 @@ function createGateway({ db, handler, bootstrap, parseBody, sendJson, setAuditAc
     } catch (e) { if (active) db.exec('ROLLBACK'); sendJson(res, e.status || 500, { ok: false, error: e.message }); }
     finally { setAuditActor(null); }
   }
-  return (req, res) => { if (!req.url.startsWith('/api/')) { handler(req, res); return; } tail = tail.then(() => dispatch(req, res)).catch(e => { console.error(e); if (!res.writableEnded) sendJson(res, 500, { ok: false, error: 'เกิดข้อผิดพลาดในระบบ' }); }); };
+  return (req, res) => {
+    // Normalize versioned machine aliases before authorization and revision checks.
+    req.url = req.url.replace(/^\/api\/v1\/machines(?=\/|\?|$)/, '/api/machines');
+    if (!req.url.startsWith('/api/')) { handler(req, res); return; } tail = tail.then(() => dispatch(req, res)).catch(e => { console.error(e); if (!res.writableEnded) sendJson(res, 500, { ok: false, error: 'เกิดข้อผิดพลาดในระบบ' }); }); };
 }
 function tablePath(url) { return /^\/api\/(machines|departments|users|forms|routes|route-rounds|inspections|defects)\/\d+/.test(url); }
 function sanitize(result, user) {
-  if (!result.data) return result;
+  if (!result.data || !Array.isArray(result.data.users)) return result;
   const data = { ...result.data, currentUser: Security.publicUser(user), appVersion: Domain.version };
   data.users = data.users.map(u => ({ ...u, password: undefined }));
   if (user?.role !== 'super_admin') {

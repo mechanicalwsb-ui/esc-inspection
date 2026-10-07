@@ -3,7 +3,7 @@ function createBootstrap(db, Gateway) {
 function getFullBootstrapData() {
   const departments = db.prepare(`
     SELECT d.*,
-      (SELECT COUNT(*) FROM machines m WHERE m.department_id = d.id) as machine_count,
+      (SELECT COUNT(*) FROM machines m WHERE m.department_id = d.id AND m.is_active = 1) as machine_count,
       (SELECT COUNT(*) FROM form_templates f WHERE f.department_id = d.id) as form_count,
       (SELECT COUNT(*) FROM users u WHERE u.department_id = d.id) as user_count
     FROM departments d
@@ -14,6 +14,7 @@ function getFullBootstrapData() {
     SELECT m.*, d.name as department_name, d.code as department_code, d.color as department_color, d.plant_name as division_name
     FROM machines m
     LEFT JOIN departments d ON m.department_id = d.id
+    WHERE m.is_active = 1
     ORDER BY m.criticality ASC, m.machine_code ASC
   `).all().map(m => ({
     ...m,

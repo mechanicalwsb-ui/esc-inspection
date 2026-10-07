@@ -404,30 +404,30 @@ function openInspectionReportModal(inspectionId) {
           <img src="${ComisDomain.isStandalone() ? 'public/' : ''}assets/brand/logo.png" onerror="this.style.display='none'" alt="ESC Logo" class="h-12 w-auto object-contain" />
           <div>
             <div class="text-xs font-bold text-[#1f760e] uppercase">EASTERN SUGAR & CANE GROUP — OFFICIAL INSPECTION REPORT</div>
-            <h2 class="text-lg font-extrabold text-slate-900 mt-0.5">${state.data.settings.organization_name || 'บริษัท น้ำตาลและอ้อยตะวันออก จำกัด (มหาชน)'}</h2>
+            <h2 class="text-lg font-extrabold text-slate-900 mt-0.5">${esc(state.data.settings.organization_name || 'บริษัท น้ำตาลและอ้อยตะวันออก จำกัด (มหาชน)')}</h2>
             <p class="text-xs text-slate-600">
-              แบบฟอร์ม: <strong>[${ins.form_code}] ${ins.form_title}</strong>
+              แบบฟอร์ม: <strong>[${esc(ins.form_code)}] ${esc(ins.form_title)}</strong>
               ${ins.inspection_type === 'emergency_quick' ? `<span class="ml-2 px-2 py-0.5 rounded bg-rose-600 text-white font-bold text-[10px]">⚡ บันทึกฉุกเฉินเฉพาะจุด (Ad-Hoc Quick Log)</span>` : ''}
             </p>
           </div>
         </div>
         <div class="text-right">
-          <div class="font-mono font-bold text-sm bg-[#1f760e] text-white px-3 py-1 rounded inline-block">${ins.doc_no}</div>
-          <div class="text-xs text-slate-600 mt-1">วันที่ตรวจ: <strong>${ins.inspected_at}</strong></div>
+          <div class="font-mono font-bold text-sm bg-[#1f760e] text-white px-3 py-1 rounded inline-block">${esc(ins.doc_no)}</div>
+          <div class="text-xs text-slate-600 mt-1">วันที่ตรวจ: <strong>${esc(ins.inspected_at)}</strong></div>
         </div>
       </div>
 
       <div class="grid grid-cols-2 md:grid-cols-5 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-        <div><span class="text-slate-400 block">รหัสเครื่องจักร:</span><strong class="text-sm">${ins.machine_code}</strong></div>
-        <div><span class="text-slate-400 block">ชื่อเครื่องจักร:</span><strong>${ins.machine_name}</strong></div>
-        <div><span class="text-slate-400 block">ฝ่าย (Division):</span><strong>${divName}</strong></div>
-        <div><span class="text-slate-400 block">แผนกผู้ตรวจ:</span><strong>[${ins.department_code || '-'}] ${ins.department_name || '-'}</strong></div>
-        <div><span class="text-slate-400 block">ผลการประเมินรวม:</span><strong class="uppercase">${ins.overall_result}</strong></div>
+        <div><span class="text-slate-400 block">รหัสเครื่องจักร:</span><strong class="text-sm">${esc(ins.machine_code)}</strong></div>
+        <div><span class="text-slate-400 block">ชื่อเครื่องจักร:</span><strong>${esc(ins.machine_name)}</strong></div>
+        <div><span class="text-slate-400 block">ฝ่าย (Division):</span><strong>${esc(divName)}</strong></div>
+        <div><span class="text-slate-400 block">แผนกผู้ตรวจ:</span><strong>[${esc(ins.department_code || '-')}] ${esc(ins.department_name || '-')}</strong></div>
+        <div><span class="text-slate-400 block">ผลการประเมินรวม:</span><strong class="uppercase">${esc(ins.overall_result)}</strong></div>
       </div>
 
       ${Array.isArray(ins.co_inspectors) && ins.co_inspectors.length > 1 ? `
         <div class="bg-emerald-50 border border-emerald-200 rounded-xl px-3.5 py-2 text-xs text-emerald-900">
-          🤝 <strong>ทีมช่างผู้ร่วมตรวจเช็คในใบงานนี้ (${ins.co_inspectors.length} คน):</strong> ${ins.co_inspectors.join(', ')}
+          🤝 <strong>ทีมช่างผู้ร่วมตรวจเช็คในใบงานนี้ (${ins.co_inspectors.length} คน):</strong> ${esc(ins.co_inspectors.join(', '))}
         </div>
       ` : ''}
 
@@ -445,14 +445,14 @@ function openInspectionReportModal(inspectionId) {
           ${(ins.answers || []).map((a, idx) => `
             <tr>
               <td class="border border-slate-300 py-2 px-3 font-bold">${idx + 1}</td>
-              <td class="border border-slate-300 py-2 px-3 font-medium">${a.label}</td>
-              <td class="border border-slate-300 py-2 px-3 text-center font-mono font-bold">${a.value} ${a.unit || ''}</td>
+              <td class="border border-slate-300 py-2 px-3 font-medium">${esc(a.label)}</td>
+              <td class="border border-slate-300 py-2 px-3 text-center font-mono font-bold">${esc(a.value)} ${esc(a.unit || '')}</td>
               <td class="border border-slate-300 py-2 px-3 text-center font-bold ${a.status === 'abnormal' ? 'text-rose-600' : a.status === 'warning' ? 'text-amber-600' : 'text-emerald-700'}">
                 ${a.status === 'abnormal' ? '🔴 ผิดปกติ' : a.status === 'warning' ? '🟡 เฝ้าระวัง' : '🟢 ปกติ'}
               </td>
               <td class="border border-slate-300 py-2 px-3 text-slate-600">
-                ${a.remark || '-'}
-                ${a.checked_by ? `<div class="text-[10px] text-slate-400">👤 ตรวจโดย: ${a.checked_by}</div>` : ''}
+                ${esc(a.remark || '-')}
+                ${a.checked_by ? `<div class="text-[10px] text-slate-400">👤 ตรวจโดย: ${esc(a.checked_by)}</div>` : ''}
               </td>
             </tr>
           `).join('')}
@@ -461,23 +461,24 @@ function openInspectionReportModal(inspectionId) {
 
       <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
         <strong>📝 สรุปผลการตรวจเช็ค / ข้อเสนอแนะจากผู้ตรวจ:</strong>
-        <p class="mt-1 text-slate-700">${ins.inspector_note || '-'}</p>
+        <p class="mt-1 text-slate-700">${esc(ins.inspector_note || '-')}</p>
+        <p class="mt-1 text-slate-700">Supervisor comments: ${esc(ins.approval_note || '-')}</p>
       </div>
 
       <div class="grid grid-cols-2 gap-6 pt-4 border-t border-slate-300">
         <div class="text-center space-y-1">
           <div class="text-slate-500">ลงชื่อผู้ตรวจเช็ค (Inspector)</div>
-          ${ins.signature_data ? `<img src="${ins.signature_data}" class="h-14 mx-auto object-contain" />` : `<div class="h-10 flex items-center justify-center font-bold text-blue-800">${ins.inspector_name}</div>`}
-          <div class="font-bold">(${ins.inspector_name})</div>
-          <div class="text-[11px] text-slate-500">${ins.shift}</div>
+          ${ins.signature_data ? `<img src="${esc(ins.signature_data)}" class="h-14 mx-auto object-contain" />` : `<div class="h-10 flex items-center justify-center font-bold text-blue-800">${esc(ins.inspector_name)}</div>`}
+          <div class="font-bold">(${esc(ins.inspector_name)})</div>
+          <div class="text-[11px] text-slate-500">${esc(ins.shift)}</div>
         </div>
         <div class="text-center space-y-1">
           <div class="text-slate-500">ลงชื่อหัวหน้าแผนก / ผู้อนุมัติ (Supervisor)</div>
           <div class="h-14 flex items-center justify-center font-bold text-emerald-700">
-            ${ins.approval_status === 'approved' ? `✅ อนุมัติแล้วโดย ${ins.approved_by}` : '⏳ รอการอนุมัติ'}
+            ${ins.approval_status === 'approved' ? `✅ อนุมัติแล้วโดย ${esc(ins.approved_by)}` : '⏳ รอการอนุมัติ'}
           </div>
-          <div class="font-bold">(${ins.approved_by || '............................................'})</div>
-          <div class="text-[11px] text-slate-500">วันที่อนุมัติ: ${ins.approved_at || '-'}</div>
+          <div class="font-bold">(${esc(ins.approved_by || '............................................')})</div>
+          <div class="text-[11px] text-slate-500">วันที่อนุมัติ: ${esc(ins.approved_at || '-')}</div>
         </div>
       </div>
     </div>
@@ -848,15 +849,15 @@ function openMachineQRModal(machineId) {
       </div>
       <div class="bg-[#1f760e] text-white py-2.5 px-4 rounded-xl">
         <div class="text-[10px] uppercase tracking-widest text-[#8ce617] font-bold">EASTERN SUGAR & CANE — MACHINE TAG</div>
-        <div class="text-lg font-mono font-extrabold">${m.machine_code}</div>
+        <div class="text-lg font-mono font-extrabold">${esc(m.machine_code)}</div>
       </div>
-      <div class="font-bold text-slate-900 text-base leading-snug">${m.name}</div>
+      <div class="font-bold text-slate-900 text-base leading-snug">${esc(m.name)}</div>
       <div id="qrcode-box" class="flex justify-center py-3"></div>
       <div class="text-xs text-slate-600 bg-[#f0f9eb] p-3 rounded-xl border border-[#b7e1a1] space-y-1 text-left">
-        <div><strong>📂 ฝ่ายต้นสังกัด:</strong> ${divName}</div>
-        <div><strong>🏢 แผนกดูแล:</strong> [${m.department_code || '-'}] ${m.department_name || '-'}</div>
-        <div><strong>📍 สถานที่ติดตั้ง:</strong> ${m.plant_area}</div>
-        <div><strong>⚡ ความสำคัญ:</strong> Class ${m.criticality} (${m.brand || '-'} ${m.model || ''})</div>
+        <div><strong>📂 ฝ่ายต้นสังกัด:</strong> ${esc(divName)}</div>
+        <div><strong>🏢 แผนกดูแล:</strong> [${esc(m.department_code || '-')}] ${esc(m.department_name || '-')}</div>
+        <div><strong>📍 สถานที่ติดตั้ง:</strong> ${esc(m.plant_area)}</div>
+        <div><strong>⚡ ความสำคัญ:</strong> Class ${esc(m.criticality)} (${esc(m.brand || '-')} ${esc(m.model || '')})</div>
       </div>
       <div class="text-[11px] text-slate-500 font-medium">📱 สแกน QR Code นี้ด้วยมือถือเพื่อเปิดฟอร์มตรวจเช็คเครื่องจักรออนไลน์</div>
     </div>
@@ -1813,6 +1814,7 @@ function closeModal() {
 function openPrintModal(title, htmlContent) {
   setText('print-modal-title', title);
   const area = document.getElementById('printable-area');
+  // Callers supply report markup with dynamic values escaped using esc().
   if (area) area.innerHTML = htmlContent;
   const modal = document.getElementById('print-modal');
   if (modal) {
