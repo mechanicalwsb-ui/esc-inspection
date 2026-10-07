@@ -1456,6 +1456,16 @@ async function deleteDepartment(id) {
 // ============================================================================
 // 8. USERS CRUD, FREE TELEGRAM BOT SETTINGS & AUDIT LOGS
 // ============================================================================
+function escapeUserAssignmentHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+}
+
+function selectUserAssignedForms(button, group) {
+  button.closest('form').querySelectorAll('input[name="assigned_forms"]').forEach(input => {
+    input.checked = group === 'all' || (group !== 'none' && input.value.startsWith(`FM-${group}`));
+  });
+}
+
 function renderUsersAndSettings(container) {
   const users = state.data.users;
   const s = state.data.settings || {};
@@ -1496,6 +1506,7 @@ function renderUsersAndSettings(container) {
                 <th style="width: 250px;" class="py-2.5 px-3 font-bold">ชื่อ-นามสกุล / ตำแหน่ง</th>
                 <th style="width: 180px;" class="py-2.5 px-3 font-bold">ฝ่าย (Division)</th>
                 <th style="width: 220px;" class="py-2.5 px-3 font-bold">แผนก</th>
+                <th style="width: 260px;" class="py-2.5 px-3 font-bold">กลุ่มงาน & แบบฟอร์มที่ได้รับมอบหมาย</th>
                 <th style="width: 150px;" class="py-2.5 px-3 font-bold">ระดับสิทธิ์ (Role)</th>
                 <th style="width: 140px;" class="py-2.5 px-3 text-right font-bold">จัดการ</th>
               </tr>
@@ -1514,6 +1525,11 @@ function renderUsersAndSettings(container) {
                     <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200 font-bold text-[11px]">📂 ${divName}</span>
                   </td>
                   <td class="py-2.5 px-3 font-semibold" style="color:${u.department_color || '#2563eb'}">[${u.department_code || 'ALL'}] ${u.department_name || ''}</td>
+                  <td class="py-2.5 px-3">
+                    <span class="inline-block px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-semibold">👥 ${escapeUserAssignmentHtml(u.work_group || 'ยังไม่กำหนดกลุ่มงาน')}</span>
+                    <div class="mt-1 text-slate-500">📋 ${Array.isArray(u.assigned_forms) ? u.assigned_forms.length : 0} แบบฟอร์ม</div>
+                    <div class="mt-1 text-[10px] text-slate-400">${escapeUserAssignmentHtml(Array.isArray(u.assigned_forms) ? u.assigned_forms.join(', ') : '')}</div>
+                  </td>
                   <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded bg-slate-100 font-bold uppercase text-[10px] text-slate-700">${u.role}</span></td>
                   <td class="py-2.5 px-3 text-right">
                     <button onclick="openUserModal(${u.id})" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium mr-1">แก้ไข</button>
@@ -1588,6 +1604,9 @@ function renderUsersAndSettings(container) {
 function openUserModal(userId) {
   if (userId) ComisSync.captureRevision('/api/users/' + userId);
   const u = userId ? state.data.users.find(x => x.id === Number(userId)) : null;
+  const workGroups = ['ทีมตรวจเช็ค กะ 1 (กลางวัน)', 'ทีมตรวจเช็ค กะ 2 (กลางคืน)', 'ทีมตรวจเช็ค กะ 3 (สำรอง)', 'ทีมซ่อมบำรุงเครื่องจักร', 'ทีมควบคุมเครื่องจักร & DCS', 'ทีมฝ่ายผลิต', 'ทีมวิศวกรรม & จป.'];
+  const assignedForms = Array.isArray(u?.assigned_forms) ? u.assigned_forms : [];
+  const builtinForms = window.ESC_BUILTIN_FORMS || [];
   const html = `
     ${u && !ComisDomain.isStandalone() ? `<button type="button" onclick="ComisSync.password(${u.id})" class="px-4 py-2 bg-emerald-700 text-white rounded-lg">ตั้งรหัสผ่านชั่วคราว</button>` : ''}
     <form onsubmit="saveUser(event, ${u ? u.id : 'null'})" class="space-y-4 text-xs">
@@ -1624,6 +1643,20 @@ function openUserModal(userId) {
           <input type="text" id="u-phone" value="${u?.phone || ''}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2" />
         </div>
       </div>
+      <div>
+        <label for="u-work-group" class="block font-bold text-slate-700 mb-1">กลุ่มงาน (Work Group / Shift Team)</label>
+        <input type="text" id="u-work-group" list="u-work-groups" value="${escapeUserAssignmentHtml(u?.work_group || '')}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2" />
+        <datalist id="u-work-groups">${workGroups.map(group => `<option value="${escapeUserAssignmentHtml(group)}"></option>`).join('')}</datalist>
+      </div>
+      <fieldset class="space-y-2">
+        <legend class="font-bold text-slate-700">แบบฟอร์มที่ได้รับมอบหมาย (Assigned Forms)</legend>
+        <div class="flex flex-wrap gap-2">
+          ${[['all', 'เลือกทั้งหมด'], ['none', 'ล้างทั้งหมด'], ['ML', 'เลือกเฉพาะ ML'], ['PD', 'เลือกเฉพาะ PD']].map(([group, label]) => `<button type="button" onclick="selectUserAssignedForms(this, '${group}')" class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 font-semibold">${label}</button>`).join('')}
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-64 overflow-y-auto p-2 border border-slate-200 rounded-xl">
+          ${builtinForms.map(form => `<label class="flex items-start gap-2 p-2 rounded-lg hover:bg-slate-50"><input type="checkbox" name="assigned_forms" value="${escapeUserAssignmentHtml(form.code)}" ${assignedForms.includes(form.code) ? 'checked' : ''} class="mt-0.5" /><span><strong>${escapeUserAssignmentHtml(form.code)}</strong><br>${escapeUserAssignmentHtml(form.title)}</span></label>`).join('')}
+        </div>
+      </fieldset>
       <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
         <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold">ยกเลิก</button>
         <button type="submit" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold">💾 บันทึกผู้ใช้งาน</button>
@@ -1641,7 +1674,9 @@ async function saveUser(e, id) {
     position: document.getElementById('u-pos').value,
     department_id: Number(document.getElementById('u-dept').value),
     role: document.getElementById('u-role').value,
-    phone: document.getElementById('u-phone').value
+    phone: document.getElementById('u-phone').value,
+    work_group: document.getElementById('u-work-group').value.trim(),
+    assigned_forms: Array.from(e.target.querySelectorAll('input[name="assigned_forms"]:checked'), input => input.value)
   };
   try {
     const res = id

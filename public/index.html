@@ -44,7 +44,10 @@
 
       <!-- Navigation Links -->
       <nav id="nav-menu" class="hidden lg:block p-3 pb-36 space-y-1">
-        <a href="/inspection-forms/data-center.html" class="nav-item block px-3.5 py-2.5 text-sm text-emerald-100">คลังแบบฟอร์มตรวจเครื่องจักร</a>
+        <button onclick="switchTab('data-center')" data-tab="data-center" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition" title="คลังเอกสารตรวจเครื่องจักรดิจิทัล Standalone HTML + Canvas Print 100%">
+          <span class="flex items-center gap-3"><i data-lucide="file-check-2" class="w-4 h-4 text-[#8ce617]"></i> คลังแบบฟอร์มตรวจเครื่องจักร (Forms Hub)</span>
+          <span id="badge-hub-forms" class="text-[10px] px-2 py-0.5 rounded-full bg-[#8ce617]/20 text-[#8ce617] font-semibold border border-[#8ce617]/40">13 ฟอร์ม</span>
+        </button>
         <div class="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#8ce617]">ศูนย์บัญชาการและหน้างาน</div>
         <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-item active w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-emerald-100/90 hover:bg-white/10 hover:text-white transition">
           <span class="flex items-center gap-3"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> แดชบอร์ดศูนย์กลาง (Center)</span>
@@ -234,6 +237,7 @@
   <script src="js/inspection.js"></script>
   <script src="js/views-and-crud.js"></script>
   <script src="js/supabase-sync.js"></script>
+  <script src="js/forms-hub.js"></script>
   <script src="js/app.js"></script>
   <script src="js/release-updates.js"></script>
 </body>

@@ -865,7 +865,11 @@ const OFFICIAL_TECHNICIAN_USERS_SEED = [
   { emp_code: '699127', full_name: 'นายวิทยา สาระคำ', position: 'ช่างเทคนิคตรวจเช็ค', role: 'inspector', dept_code: 'ML' },
   { emp_code: '679191', full_name: 'น.ส.สมฤทัย พูลผล', position: 'ช่างเทคนิคตรวจเช็ค', role: 'inspector', dept_code: 'ML' },
   { emp_code: '698014', full_name: 'นายอริยธรรม ขันคำ(นศ.ฝึกงาน)', position: 'นักศึกษาฝึกงานตรวจเช็ค', role: 'inspector', dept_code: 'ML' }
-];
+].map((user, index) => ({
+  ...user,
+  work_group: index < 11 ? 'ทีมตรวจเช็ค กะ 1 (กลางวัน)' : 'ทีมตรวจเช็ค กะ 2 (กลางคืน)',
+  assigned_forms: ['FM-ML01-ML-09', 'FM-ML01-ML-10', 'FM-ML01-ML-02', 'FM-ML01-ML-11', 'FM-ML01-ML-12']
+}));
 
 function syncOfficialTechniciansInRaw(raw, force = false) {
   if (!raw || typeof raw !== 'object') return false;
@@ -874,7 +878,7 @@ function syncOfficialTechniciansInRaw(raw, force = false) {
 
   const existingCodes = new Set(raw.users.map(u => String(u.emp_code || '').trim().toUpperCase()));
   const allPresent = OFFICIAL_TECHNICIAN_USERS_SEED.every(t => existingCodes.has(t.emp_code.toUpperCase()));
-  if (!force && raw.settings.official_technicians_v212 === '1' && allPresent) {
+  if (!force && raw.settings.official_technicians_v212 === '1' && raw.settings.official_technician_assignments_v1 === '1' && allPresent) {
     return false;
   }
 
@@ -892,6 +896,8 @@ function syncOfficialTechniciansInRaw(raw, force = false) {
       existing.role = tech.role;
       existing.department_id = mlDeptId;
       existing.is_active = 1;
+      if (existing.work_group == null) existing.work_group = tech.work_group;
+      if (existing.assigned_forms == null) existing.assigned_forms = [...tech.assigned_forms];
       changed = true;
     } else {
       maxId++;
@@ -902,6 +908,8 @@ function syncOfficialTechniciansInRaw(raw, force = false) {
         position: tech.position,
         department_id: mlDeptId,
         role: tech.role,
+        work_group: tech.work_group,
+        assigned_forms: [...tech.assigned_forms],
         phone: '',
         email: '',
         is_active: 1
@@ -911,6 +919,7 @@ function syncOfficialTechniciansInRaw(raw, force = false) {
   }
 
   raw.settings.official_technicians_v212 = '1';
+  raw.settings.official_technician_assignments_v1 = '1';
   return changed;
 }
 
@@ -1780,6 +1789,15 @@ function syncHeaderAndSidebar() {
   setText('badge-forms', state.data.forms.length);
   setText('badge-depts', state.data.departments.length);
   setText('badge-auditlogs', auditCount);
+
+  const inspectorOnly = state.activeUser?.role === 'inspector';
+  document.querySelectorAll('#nav-menu .nav-item').forEach(item => {
+    item.style.display = inspectorOnly && item.dataset.tab !== 'data-center' ? 'none' : '';
+  });
+  document.querySelectorAll('#nav-menu > div').forEach(header => {
+    header.style.display = inspectorOnly ? 'none' : '';
+  });
+  if (inspectorOnly && state.activeTab !== 'data-center') switchTab('data-center');
 }
 
 function setText(id, val) {
@@ -1813,6 +1831,7 @@ function onChangeActiveUser(userId) {
 }
 
 function switchTab(tabName) {
+  if (state.activeUser?.role === 'inspector') tabName = 'data-center';
   if (state.activeTab === 'factory3d' && tabName !== 'factory3d' && typeof window.cleanupFactoryOverview === 'function') {
     window.cleanupFactoryOverview();
   }
@@ -1823,6 +1842,7 @@ function switchTab(tabName) {
   });
 
   const titles = {
+    'data-center': '📋 คลังแบบฟอร์มตรวจเครื่องจักร & แบบฟอร์มที่ได้รับมอบหมาย (Forms Hub)',
     dashboard: '📊 แดชบอร์ดศูนย์กลาง (Central Command Center)',
     factory3d: '🏭 ESC Factory World — ภาพรวมโรงงาน (สำรวจพื้นที่ ดูสถานะเครื่องจักร และเริ่มตรวจเช็คจากแผนผังโรงงาน)',
     inspect: '📱 ตรวจเช็คเครื่องจักรหน้างาน (Online E-Checksheet & iPad Mode)',
@@ -1849,6 +1869,11 @@ function renderCurrentTab() {
   }
 
   switch (state.activeTab) {
+    case 'data-center':
+      if (typeof window.renderFormsHub === 'function') {
+        window.renderFormsHub(container);
+      }
+      break;
     case 'dashboard': renderDashboard(container); break;
     case 'factory3d':
       if (typeof window.renderFactoryOverview === 'function') {

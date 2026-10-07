@@ -1,5 +1,5 @@
 ## FREE
-- Last completed task: Supabase Cloud Database Realtime integration (Option 3)
+- Last completed task: Forms Hub in-page integration, Technician Role Scoping, Work Groups & Assigned Forms
 - Completed by: Antigravity AI (Lead Orchestrator)
 - Completed date: 2026-10-07 (Asia/Bangkok)
-- Validation: Edge headless browser verified live Supabase sync with all 41 machines loaded
+- Validation: 13/13 unit & system tests passed, Playwright Edge E2E test passed verifying Forms Hub in-app render, Inspector role filtering, and User Workgroup/Assigned Forms configuration
