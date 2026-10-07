@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แบบฟอร์มตรวจเช็คเครื่องจักร</title>
+<style>
+  @font-face { font-family: 'Sarabun'; src: url('fonts/Sarabun-Regular.ttf') format('truetype'); font-weight: 400; }
+  @font-face { font-family: 'Sarabun'; src: url('fonts/Sarabun-Bold.ttf') format('truetype'); font-weight: 700; }
+  :root { --green: #064e3b; --green-2: #047857; --bg: #f3f6f4; --card: #ffffff; --text: #1f2937; --muted: #6b7280; --line: #d1e7dd; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Sarabun', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+  header { background: var(--green); color: #fff; padding: 24px 16px; }
+  header h1 { margin: 0 auto; max-width: 960px; font-size: 24px; }
+  header p { margin: 4px auto 0; max-width: 960px; opacity: .85; font-size: 15px; }
+  main { max-width: 960px; margin: 0 auto; padding: 20px 16px 40px; }
+  h2 { font-size: 17px; color: var(--green); margin: 24px 0 10px; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+  a { display: block; height: 100%; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--green-2); border-radius: 8px; padding: 12px 14px; text-decoration: none; color: var(--text); }
+  a:hover { border-color: var(--green-2); box-shadow: 0 2px 8px rgba(6,78,59,.15); }
+  .code { display: block; font-weight: 700; color: var(--green); font-size: 14px; }
+  .name { display: block; margin-top: 2px; font-size: 15px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>แบบฟอร์มตรวจเช็คเครื่องจักร</h1>
+  <p>เลือกแบบฟอร์มที่ต้องการบันทึก</p>
+</header>
+<main>
+  <h2>ML01 — แผนกลูกหีบ</h2>
+  <ul>
+    <li><a href="FM-ML01-ML-02.html"><span class="code">FM-ML01-ML-02</span><span class="name">รายงานสภาพการทำงานของเครื่องเทอร์ไบน์</span></a></li>
+    <li><a href="FM-ML01-ML-05.html"><span class="code">FM-ML01-ML-05</span><span class="name">แบบบันทึกการลดรอบลูกหีบ</span></a></li>
+    <li><a href="FM-ML01-ML-06.html"><span class="code">FM-ML01-ML-06</span><span class="name">แบบบันทึกการหยุดหีบ</span></a></li>
+    <li><a href="FM-ML01-ML-09.html"><span class="code">FM-ML01-ML-09</span><span class="name">แบบบันทึกเครื่องจักรดั๊มพ์ยกรถอ้อย</span></a></li>
+    <li><a href="FM-ML01-ML-10.html"><span class="code">FM-ML01-ML-10</span><span class="name">แบบบันทึกเครื่องจักรสะพานดั๊มพ์และสะพานเมน</span></a></li>
+    <li><a href="FM-ML01-ML-11.html"><span class="code">FM-ML01-ML-11</span><span class="name">แบบบันทึกเครื่องจักร High speed belt และสะพานข้ามชุด</span></a></li>
+    <li><a href="FM-ML01-ML-12.html"><span class="code">FM-ML01-ML-12</span><span class="name">บันทึกเครื่องจักร DCS กะทำงาน (A3)</span></a></li>
+    <li><a href="FM-ML01-ML-13.html"><span class="code">FM-ML01-ML-13</span><span class="name">แบบบันทึกการเก็บน้ำหนักเหล็กรางเท</span></a></li>
+    <li><a href="FM-ML01-ML-18.html"><span class="code">FM-ML01-ML-18</span><span class="name">แบบบันทึกการตรวจสอบรถบรรทุกอ้อย</span></a></li>
+  </ul>
+  <h2>PD — ฝ่ายผลิต</h2>
+  <ul>
+    <li><a href="FM-PD01-PD-01.html"><span class="code">FM-PD01-PD-01</span><span class="name">บันทึกรายงานการหยุดหีบ</span></a></li>
+    <li><a href="FM-PD01-PD-02.html"><span class="code">FM-PD01-PD-02</span><span class="name">แบบฟอร์มบันทึกส่งกะ ลูกหีบ</span></a></li>
+    <li><a href="FM-PD02-PD-02.html"><span class="code">FM-PD02-PD-02</span><span class="name">ตรวจสอบวัสดุที่สามารถแตกหักได้ แผนกลูกหีบ</span></a></li>
+  </ul>
+  <h2>MR — อื่น ๆ</h2>
+  <ul>
+    <li><a href="FM-MR10-MR-01.html"><span class="code">FM-MR10-MR-01</span><span class="name">แบบฟอร์มการตรวจสอบสัตว์พาหะนำเชื้อ</span></a></li>
+  </ul>
+</main>
+</body>
+</html>
