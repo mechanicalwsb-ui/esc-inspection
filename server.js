@@ -1101,9 +1101,12 @@ async function handleRequest(req, res) {
     // STATIC FILES (FRONTEND SPA)
     // ====================================================
     if (pathname.startsWith('/api/')) return sendJson(res, 404, { ok: false, error: 'ไม่พบ API นี้' });
-    if (pathname.startsWith('/inspection-forms/')) {
+    const decodedPath = decodeURIComponent(pathname);
+    if (pathname.startsWith('/inspection-forms/') || decodedPath.startsWith('/เอกสารตรวจเครื่องจักร/')) {
       const root = path.join(__dirname, 'เอกสารตรวจเครื่องจักร');
-      const relative = decodeURIComponent(pathname.slice('/inspection-forms/'.length));
+      const relative = pathname.startsWith('/inspection-forms/')
+        ? decodeURIComponent(pathname.slice('/inspection-forms/'.length))
+        : decodedPath.slice('/เอกสารตรวจเครื่องจักร/'.length);
       const target = path.resolve(root, relative);
       if (!target.startsWith(root + path.sep) || !/\.(html|js|png|jpg|ttf|woff2?)$/i.test(target)) { res.writeHead(403); return res.end('Forbidden'); }
       if (!fs.existsSync(target) || !fs.statSync(target).isFile()) { res.writeHead(404); return res.end('Not found'); }

@@ -1710,6 +1710,35 @@ async function loadBootstrap() {
   updateStateData(res.data);
 }
 
+window.syncUsersToSignerDirectory = function syncUsersToSignerDirectory(users) {
+  const directoryKey = 'ESC_TURBINE_SIGNER_DIRECTORY_V1';
+  const sourceUsers = Array.isArray(users) ? users : (Array.isArray(state?.data?.users) ? state.data.users : []);
+  let existing = [];
+  try {
+    const stored = JSON.parse(localStorage.getItem(directoryKey) || '[]');
+    if (Array.isArray(stored)) existing = stored.filter(entry => entry && typeof entry.name === 'string');
+  } catch (_) { /* Replace an invalid directory with the current system users. */ }
+
+  const systemUsers = sourceUsers.map(u => {
+    const assignedForms = Array.isArray(u.assigned_forms) ? u.assigned_forms : [];
+    return {
+      name: (u.full_name || '').trim(),
+      position: (u.position || 'ผู้ตรวจสอบเครื่องจักร').trim(),
+      role: u.role || 'inspector',
+      emp_code: u.emp_code || '',
+      department_id: u.department_id,
+      department_code: u.department_code,
+      work_group: u.work_group || '',
+      assignedForms,
+      formScope: u.role === 'super_admin' ? ['ALL'] : (assignedForms.length ? assignedForms : ['ALL'])
+    };
+  }).filter(user => user.name);
+  const systemNames = new Set(systemUsers.map(user => user.name));
+  const mergedList = existing.filter(entry => !systemNames.has(entry.name)).concat(systemUsers);
+  localStorage.setItem(directoryKey, JSON.stringify(mergedList));
+  return mergedList;
+};
+
 function updateStateData(newData) {
   if (newData?.dataRevision !== undefined && state.data.dataRevision !== undefined && newData.dataRevision < state.data.dataRevision) return;
   const enriched = enrichRawData(newData);
@@ -1720,6 +1749,7 @@ function updateStateData(newData) {
   } else if (state.activeUser) {
     state.activeUser = state.data.users.find(u => u.id === state.activeUser.id) || state.data.users[0];
   }
+  window.syncUsersToSignerDirectory(state.data.users);
   syncHeaderAndSidebar();
   renderCurrentTab();
 }

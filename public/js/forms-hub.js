@@ -24,7 +24,10 @@
   let previousOverflow = '';
 
   function getFormUrl(file) {
-    return (/\/public(?:\/|$)/i.test(window.location.pathname) ? '../' : '') + 'เอกสารตรวจเครื่องจักร/' + file;
+    if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
+      return (/\/public(?:\/|$)/i.test(window.location.pathname) ? '../' : '') + 'เอกสารตรวจเครื่องจักร/' + file;
+    }
+    return '/inspection-forms/' + file;
   }
 
   function ensureStyles() {
@@ -148,7 +151,7 @@
     const linked = getMachineLinkedForm(machine, appState);
     if (!linked) return null;
     if (linked.type === 'builtin' && linked.file) {
-      return openEmbeddedForm(getFormUrl(linked.file), `${linked.code} · ${linked.title}`, { printOnLoad: action === 'print' });
+      return openEmbeddedForm(getFormUrl(linked.file), `${linked.code} · ${linked.title}`, { printOnLoad: action === 'print', machine, formCode: linked.code });
     }
     if (linked.formId && appState.inspectSession) appState.inspectSession.form_id = linked.formId;
     return typeof window.startInspectionForMachine === 'function' ? window.startInspectionForMachine(machineId) : null;
@@ -184,7 +187,8 @@
       grid.innerHTML = forms.map(form => {
         const linkedMachines = (appState?.data?.machines || []).filter(machine => getMachineLinkedForm(machine, appState)?.code === form.code);
         const linkedTags = linkedMachines.length ? `<p class="esc-fh-muted"><strong>🔗 เครื่องจักรที่เชื่อมโยง:</strong> ${linkedMachines.map(machine => escapeHtml(machine.machine_code)).join(', ')}</p>` : '';
-        return `<article class="esc-fh-card ${assigned.has(form.code) ? 'is-assigned' : ''}"><div class="esc-fh-card-head"><span class="esc-fh-icon" aria-hidden="true" data-icon="${form.icon}">${iconFallbacks[form.icon]}</span><span class="esc-fh-code">${form.code}</span></div>${assigned.has(form.code) ? '<span class="esc-fh-badge">⭐ แบบฟอร์มที่ได้รับมอบหมาย</span>' : ''}<span class="esc-fh-category">${escapeHtml(form.dept)}</span><h3>${escapeHtml(form.title)}</h3><p class="esc-fh-muted">${escapeHtml(form.desc)}</p>${linkedTags}<div class="esc-fh-actions"><button type="button" class="esc-fh-primary" data-open="${form.code}">📝 เริ่มกรอกแบบฟอร์ม (ตรวจเครื่องจักร)</button><button type="button" class="esc-fh-secondary" data-print="${form.code}">🖨 พิมพ์เอกสาร / PDF</button><a class="esc-fh-secondary" href="${escapeHtml(getFormUrl(form.file))}" target="_blank" rel="noopener noreferrer">↗ เปิดในหน้าต่างใหม่</a></div></article>`;
+        const machinePicker = linkedMachines.length ? `<div class="esc-fh-machine-picker" style="margin-top:6px;margin-bottom:8px;"><label style="font-size:12px;font-weight:bold;color:#1e3a24;display:block;margin-bottom:2px;">เลือกเครื่องจักรที่ต้องการตรวจสอบ:</label><select class="esc-fh-machine-select" data-card-form="${form.code}" style="width:100%;padding:6px 10px;border:1px solid #b7cdbd;border-radius:8px;font-size:13px;background:#f8fbf8;color:#18311e;">${linkedMachines.map(machine => `<option value="${escapeHtml(machine.id)}">${escapeHtml(machine.machine_code)} — ${escapeHtml(machine.name)}</option>`).join('')}</select></div>` : '';
+        return `<article class="esc-fh-card ${assigned.has(form.code) ? 'is-assigned' : ''}"><div class="esc-fh-card-head"><span class="esc-fh-icon" aria-hidden="true" data-icon="${form.icon}">${iconFallbacks[form.icon]}</span><span class="esc-fh-code">${form.code}</span></div>${assigned.has(form.code) ? '<span class="esc-fh-badge">⭐ แบบฟอร์มที่ได้รับมอบหมาย</span>' : ''}<span class="esc-fh-category">${escapeHtml(form.dept)}</span><h3>${escapeHtml(form.title)}</h3><p class="esc-fh-muted">${escapeHtml(form.desc)}</p>${linkedTags}${machinePicker}<div class="esc-fh-actions"><button type="button" class="esc-fh-primary" data-open="${form.code}">📝 เริ่มกรอกแบบฟอร์ม (ตรวจเครื่องจักร)</button><button type="button" class="esc-fh-secondary" data-print="${form.code}">🖨 พิมพ์เอกสาร / PDF</button><a class="esc-fh-secondary" href="${escapeHtml(getFormUrl(form.file))}" target="_blank" rel="noopener noreferrer">↗ เปิดในหน้าต่างใหม่</a></div></article>`;
       }).join('') || `<div class="esc-fh-empty">${filter === 'mine' && !assignedCount ? 'ยังไม่มีแบบฟอร์มที่ได้รับมอบหมาย กรุณาติดต่อหัวหน้างาน หรือเลือกดูแบบฟอร์มทั้งหมด' : 'ไม่พบแบบฟอร์ม ลองเปลี่ยนคำค้นหรือเลือกหมวดอื่น'}<br><button type="button" class="esc-fh-secondary" data-reset>ดูแบบฟอร์มทั้งหมด</button></div>`;
       // Keep a visible fallback for custom icons absent from the installed Lucide version.
       if (window.lucide?.icons && window.lucide.createIcons) {
@@ -204,7 +208,9 @@
       if (button.dataset.filter) { filter = button.dataset.filter; update(); return; }
       const form = ESC_BUILTIN_FORMS.find(item => item.code === (button.dataset.open || button.dataset.print));
       if (form) {
-        openEmbeddedForm(getFormUrl(form.file), `${form.code} · ${form.title}`, { printOnLoad: Boolean(button.dataset.print) });
+        const machineId = button.closest('.esc-fh-card')?.querySelector(`[data-card-form="${form.code}"]`)?.value;
+        const selectedMachine = (appState?.data?.machines || []).find(machine => String(machine.id) === String(machineId));
+        openEmbeddedForm(getFormUrl(form.file), `${form.code} · ${form.title}`, { printOnLoad: Boolean(button.dataset.print), machine: selectedMachine, formCode: form.code });
       }
     });
     update();
@@ -245,6 +251,51 @@
       status.textContent = '';
       printControl.disabled = false;
       try { frame.contentWindow.addEventListener('keydown', event => { if (event.key === 'Escape') closeEmbeddedForm(); }); } catch (_) { /* Header controls remain available. */ }
+      try {
+        const appState = (typeof state !== 'undefined' ? state : window.state) || {};
+        const targetFormCode = String(options.formCode || String(title || '').match(/FM-[A-Z0-9]+-[A-Z]+-\d+/i)?.[0] || '').toUpperCase();
+        const activeUser = appState.activeUser;
+        const eligibleUsers = (appState.data?.users || []).filter(user => {
+          const forms = Array.isArray(user.assigned_forms) ? user.assigned_forms.map(value => String(value).trim().toUpperCase()) : [];
+          const sameDepartment = activeUser && String(user.department_id ?? '') === String(activeUser.department_id ?? '');
+          return user.role === 'super_admin'
+            || forms.includes(targetFormCode)
+            || forms.includes('ALL')
+            || (targetFormCode.startsWith('FM-ML') && forms.includes('ML'))
+            || (targetFormCode.startsWith('FM-PD') && forms.includes('PD'))
+            || (targetFormCode.startsWith('FM-MR') && forms.includes('MR'))
+            || (['dept_admin', 'engineer'].includes(user.role) && sameDepartment);
+        });
+        if (eligibleUsers.length && frame.contentWindow) {
+          frame.contentWindow.signerDirectory = eligibleUsers.map(user => ({ name: user.full_name, position: user.position || 'ผู้ตรวจสอบเครื่องจักร' }));
+          frame.contentWindow.restoreSignerSelections?.();
+        }
+        const activeIsEligible = activeUser && eligibleUsers.some(user => String(user.id) === String(activeUser.id));
+        const recorder = frame.contentDocument.getElementById('recorder1') || frame.contentDocument.getElementById('recorder') || frame.contentDocument.getElementById('name_recorder');
+        if (activeIsEligible && recorder && !recorder.value) {
+          recorder.value = activeUser.full_name || '';
+          const position = frame.contentDocument.getElementById('position_recorder1') || frame.contentDocument.getElementById('position_recorder');
+          if (position) position.value = activeUser.position || '';
+          recorder.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        if (options.machine) {
+          const setField = (id, value, onlyIfEmpty = false) => {
+            const field = frame.contentDocument.getElementById(id);
+            if (!field || !value || (onlyIfEmpty && field.value && field.value !== field.defaultValue)) return;
+            field.value = value;
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+          };
+          setField('machine', `${options.machine.name} (${options.machine.machine_code})`);
+          setField('department', options.machine.division_name || 'ฝ่ายวิศวกรรม', true);
+          setField('section', options.machine.department_name || 'แผนกซ่อมบำรุง', true);
+          const today = new Date();
+          const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+          setField('date', localDate, true);
+          frame.contentWindow.refreshPrintTemplate?.().catch?.(() => {});
+        }
+      } catch (_) { /* Some legacy forms may not expose same-origin fields. */ }
       if (options.printOnLoad) { options.printOnLoad = false; printEmbeddedForm(); }
     });
     frame.addEventListener('error', () => { status.textContent = 'โหลดแบบฟอร์มไม่สำเร็จ กรุณาเปิดในหน้าต่างใหม่'; });

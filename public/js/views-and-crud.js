@@ -1708,6 +1708,7 @@ async function saveUser(e, id) {
       : await apiRequest('/api/users', 'POST', payload);
     closeModal();
     updateStateData(res.data);
+    window.syncUsersToSignerDirectory?.(state.data.users);
     showToast('บันทึกข้อมูลผู้ใช้งานสำเร็จ', 'success');
     if (!id && !ComisDomain.isStandalone()) { const user=res.data.users.find(u=>u.emp_code===payload.emp_code.trim().toUpperCase()); if(user) ComisSync.password(user.id); }
   } catch (err) {
@@ -1720,6 +1721,7 @@ async function deleteUser(id) {
   try {
     const res = await apiRequest(`/api/users/${id}`, 'DELETE');
     updateStateData(res.data);
+    window.syncUsersToSignerDirectory?.(state.data.users);
     showToast('ลบผู้ใช้งานเรียบร้อยแล้ว', 'info');
   } catch (err) {
     showToast(err.message, 'error');
