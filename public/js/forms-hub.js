@@ -3,19 +3,19 @@
   'use strict';
 
   const ESC_BUILTIN_FORMS = [
-    { code: 'FM-ML01-ML-09', title: 'แบบบันทึกเครื่องจักรดั๊มพ์ยกรถอ้อย (ดั๊มพ์ 1, 2, 3)', dept: 'ลูกหีบ', file: 'FM-ML01-ML-09.html', category: 'milling', icon: 'truck', desc: '21 คอลัมน์ · ตรวจความสะอาด + อุณหภูมิ/แรงดัน 24 ชม. · พิมพ์ Canvas 260 DPI' },
-    { code: 'FM-ML01-ML-10', title: 'แบบบันทึกเครื่องจักรสะพานดั๊มพ์และสะพานเมน', dept: 'ลูกหีบ', file: 'FM-ML01-ML-10.html', category: 'milling', icon: 'conveyor', desc: '43 คอลัมน์ · ตรวจระบบขับเคลื่อนสะพานดั๊มพ์และสะพานเมน 24 ชม.' },
-    { code: 'FM-ML01-ML-02', title: 'รายงานสภาพการทำงานของเครื่องเทอร์ไบน์ ชุดลูกหีบ', dept: 'ลูกหีบ', file: 'FM-ML01-ML-02.html', category: 'milling', icon: 'turbine', desc: 'เทอร์ไบน์ขับลูกหีบ 1-5 และ Crusher · วัดแรงดันไอน้ำ อุณหภูมิ รอบความเร็ว' },
-    { code: 'FM-ML01-ML-11', title: 'แบบบันทึกเครื่องจักร High speed belt และสะพานข้ามชุดลูกหีบ', dept: 'ลูกหีบ', file: 'FM-ML01-ML-11.html', category: 'milling', icon: 'conveyor', desc: 'ตรวจระบบขับเคลื่อน High Speed Belt มอเตอร์ ลูกปืน และสายพานลำเลียง' },
-    { code: 'FM-ML01-ML-05', title: 'แบบบันทึกการลดรอบลูกหีบ', dept: 'ลูกหีบ', file: 'FM-ML01-ML-05.html', category: 'milling', icon: 'gauge', desc: '13 คอลัมน์ · 29 แถว · คำนวณความเร็วเฉลี่ยและปริมาณน้ำอ้อย/น้ำพรมอัตโนมัติ' },
-    { code: 'FM-ML01-ML-06', title: 'แบบบันทึกการหยุดหีบ (ฝ่ายวิศวกรรม)', dept: 'ลูกหีบ', file: 'FM-ML01-ML-06.html', category: 'milling', icon: 'clock', desc: '10 คอลัมน์ · 22 แถว · สรุป Downtime รวมและแผนกที่หยุดนานที่สุด' },
-    { code: 'FM-PD01-PD-01', title: 'บันทึกรายงานการหยุดหีบ (ฝ่ายผลิต)', dept: 'ฝ่ายผลิต', file: 'FM-PD01-PD-01.html', category: 'prod', icon: 'factory', desc: '10 คอลัมน์ · ขั้นตอนเวลา 7 สเต็ป · คำนวณเวลาหยุดหีบและปริมาณอ้อย' },
-    { code: 'FM-ML01-ML-13', title: 'แบบบันทึกการเก็บน้ำหนักเหล็กรางเท', dept: 'ลูกหีบ', file: 'FM-ML01-ML-13.html', category: 'milling', icon: 'scale', desc: '15 คอลัมน์ · 27 แถว · เชรดเดอร์ & High Speed Belt คำนวณเวลานาทีและน้ำหนักรวม กก.' },
-    { code: 'FM-ML01-ML-18', title: 'แบบบันทึกการตรวจสอบรถบรรทุกอ้อย', dept: 'ลูกหีบ', file: 'FM-ML01-ML-18.html', category: 'milling', icon: 'check-square', desc: '12 คอลัมน์ · 38 แถว · 🗸 ผ่าน | ✗ ไม่ผ่าน | ☒ แก้ไขแล้ว · Safety Compliance %' },
-    { code: 'FM-MR10-MR-01', title: 'แบบฟอร์มการตรวจสอบสัตว์พาหะนำเชื้อ', dept: 'ซ่อมบำรุง / ทั่วไป', file: 'FM-MR10-MR-01.html', category: 'maintenance', icon: 'shield-alert', desc: '33 คอลัมน์ · 20 จุดวาง x 31 วัน · บันทึก R ปกติ / S ผิดปกติ + ตาราง Action Log' },
-    { code: 'FM-PD01-PD-02', title: 'แบบฟอร์มการมอบหมาย ส่งต่องาน เครื่องจักรขัดข้อง และการเปลี่ยนกะงาน', dept: 'ฝ่ายผลิต/ลูกหีบ', file: 'FM-PD01-PD-02.html', category: 'prod', icon: 'users', desc: 'บันทึกส่งมอบงาน 2 กะ (เช้า-เย็น) · สรุป Downtime 7 หมวดเครื่องจักร · พิมพ์ชุด 2 หน้า 260 DPI' },
-    { code: 'FM-ML01-ML-12', title: 'แบบบันทึกเครื่องจักรและอุปกรณ์ ในฝ่ายหีบอ้อยกะทำงาน (DCS)', dept: 'ลูกหีบ', file: 'FM-ML01-ML-12.html', category: 'milling', icon: 'cpu', desc: 'บันทึกพารามิเตอร์ 24 ชม. ทุก 2 ชม. (12 ช่วงเวลา) · ตรวจสอบเกณฑ์อัตโนมัติ · พิมพ์ A3 Portrait 260 DPI' },
-    { code: 'FM-PD02-PD-02', title: 'บันทึกการตรวจสอบวัสดุที่สามารถแตกหักได้ แผนกลูกหีบ', dept: 'ฝ่ายผลิต/ลูกหีบ', file: 'FM-PD02-PD-02.html', category: 'prod', icon: 'alert-octagon', desc: 'สารบัญอุปกรณ์ 357 รายการ (17 หน้า) · หลอดไฟ/สปอตไลต์/เกจวัด · ตรวจเช็คประจำวัน 1-31 วัน' }
+    { code: 'FM-ML01-ML-09', title: 'แบบบันทึกเครื่องจักรดั๊มพ์ยกรถอ้อย (ดั๊มพ์ 1, 2, 3)', dept: 'ลูกหีบ', file: 'FM-ML01-ML-09.html', category: 'milling', icon: 'truck', desc: 'ตรวจความสะอาด อุณหภูมิ และแรงดัน ดั๊มพ์ 1, 2, 3' },
+    { code: 'FM-ML01-ML-10', title: 'แบบบันทึกเครื่องจักรสะพานดั๊มพ์และสะพานเมน', dept: 'ลูกหีบ', file: 'FM-ML01-ML-10.html', category: 'milling', icon: 'conveyor', desc: 'ตรวจระบบขับเคลื่อนสะพานดั๊มพ์และสะพานเมน' },
+    { code: 'FM-ML01-ML-02', title: 'รายงานสภาพการทำงานของเครื่องเทอร์ไบน์ ชุดลูกหีบ', dept: 'ลูกหีบ', file: 'FM-ML01-ML-02.html', category: 'milling', icon: 'turbine', desc: 'ตรวจแรงดันไอน้ำ อุณหภูมิ และรอบเทอร์ไบน์ลูกหีบ' },
+    { code: 'FM-ML01-ML-11', title: 'แบบบันทึกเครื่องจักร High speed belt และสะพานข้ามชุดลูกหีบ', dept: 'ลูกหีบ', file: 'FM-ML01-ML-11.html', category: 'milling', icon: 'conveyor', desc: 'ตรวจมอเตอร์ ลูกปืน และสายพาน High Speed Belt' },
+    { code: 'FM-ML01-ML-05', title: 'แบบบันทึกการลดรอบลูกหีบ', dept: 'ลูกหีบ', file: 'FM-ML01-ML-05.html', category: 'milling', icon: 'gauge', desc: 'บันทึกรอบลูกหีบ ปริมาณน้ำอ้อย และน้ำพรม' },
+    { code: 'FM-ML01-ML-06', title: 'แบบบันทึกการหยุดหีบ (ฝ่ายวิศวกรรม)', dept: 'ลูกหีบ', file: 'FM-ML01-ML-06.html', category: 'milling', icon: 'clock', desc: 'บันทึกเวลาหยุดหีบและแผนกที่เกี่ยวข้อง' },
+    { code: 'FM-PD01-PD-01', title: 'บันทึกรายงานการหยุดหีบ (ฝ่ายผลิต)', dept: 'ฝ่ายผลิต', file: 'FM-PD01-PD-01.html', category: 'prod', icon: 'factory', desc: 'บันทึกเวลาหยุดหีบและปริมาณอ้อยของฝ่ายผลิต' },
+    { code: 'FM-ML01-ML-13', title: 'แบบบันทึกการเก็บน้ำหนักเหล็กรางเท', dept: 'ลูกหีบ', file: 'FM-ML01-ML-13.html', category: 'milling', icon: 'scale', desc: 'บันทึกเวลาและน้ำหนักเหล็กรางเท' },
+    { code: 'FM-ML01-ML-18', title: 'แบบบันทึกการตรวจสอบรถบรรทุกอ้อย', dept: 'ลูกหีบ', file: 'FM-ML01-ML-18.html', category: 'milling', icon: 'check-square', desc: 'ตรวจความปลอดภัยรถบรรทุกอ้อยและการแก้ไข' },
+    { code: 'FM-MR10-MR-01', title: 'แบบฟอร์มการตรวจสอบสัตว์พาหะนำเชื้อ', dept: 'ซ่อมบำรุง / ทั่วไป', file: 'FM-MR10-MR-01.html', category: 'maintenance', icon: 'shield-alert', desc: 'ตรวจจุดวางกับดักสัตว์พาหะและบันทึกความผิดปกติ' },
+    { code: 'FM-PD01-PD-02', title: 'แบบฟอร์มการมอบหมาย ส่งต่องาน เครื่องจักรขัดข้อง และการเปลี่ยนกะงาน', dept: 'ฝ่ายผลิต/ลูกหีบ', file: 'FM-PD01-PD-02.html', category: 'prod', icon: 'users', desc: 'ส่งมอบงานระหว่างกะและบันทึกเครื่องจักรขัดข้อง' },
+    { code: 'FM-ML01-ML-12', title: 'แบบบันทึกเครื่องจักรและอุปกรณ์ ในฝ่ายหีบอ้อยกะทำงาน (DCS)', dept: 'ลูกหีบ', file: 'FM-ML01-ML-12.html', category: 'milling', icon: 'cpu', desc: 'บันทึกค่าการทำงานเครื่องจักรจาก DCS ทุก 2 ชั่วโมง' },
+    { code: 'FM-PD02-PD-02', title: 'บันทึกการตรวจสอบวัสดุที่สามารถแตกหักได้ แผนกลูกหีบ', dept: 'ฝ่ายผลิต/ลูกหีบ', file: 'FM-PD02-PD-02.html', category: 'prod', icon: 'alert-octagon', desc: 'ตรวจหลอดไฟ เกจวัด และวัสดุที่แตกหักได้' }
   ];
 
   const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -32,35 +32,43 @@
     const style = document.createElement('style');
     style.id = 'esc-forms-hub-styles';
     style.textContent = `
-      .esc-fh,.esc-fh-modal{font-family:inherit;color:#e8f5ee;box-sizing:border-box}
+      .esc-fh,.esc-fh-modal{--surface:#fff;--canvas:#f1f5f3;--ink:#172c23;--muted:#52665b;--line:#bdcec4;--soft:#eaf4ee;font-family:inherit;color:var(--ink);box-sizing:border-box;color-scheme:light}
+      .dark-theme .esc-fh,.dark-theme .esc-fh-modal{--surface:#142b21;--canvas:#0c1915;--ink:#edf8f1;--muted:#b6ccbe;--line:#496b56;--soft:#203e2e;color-scheme:dark}
       .esc-fh *,.esc-fh-modal *{box-sizing:border-box}
-      .esc-fh{background:#0c1915;padding:clamp(16px,3vw,32px);border-radius:24px}
-      .esc-fh-banner{padding:24px;border:1px solid #2d5946;border-radius:18px;background:linear-gradient(125deg,#164c36,#10261e)}
-      .esc-fh-eyebrow{color:#a3e4bf;font-size:12px;letter-spacing:.14em;font-weight:700}
-      .esc-fh h2{font-size:clamp(23px,3vw,32px);margin:10px 0}.esc-fh p{line-height:1.7}
-      .esc-fh-muted{color:#afc7ba}.esc-fh-search{display:block;width:100%;margin-top:20px;padding:13px 16px;background:#0b2017;color:#fff;border:1px solid #498164;border-radius:12px;font:inherit}
+      .esc-fh{background:var(--canvas);padding:clamp(16px,3vw,32px);border-radius:24px}
+      .esc-fh-banner{padding:24px;border:1px solid #498164;border-radius:20px;background:linear-gradient(125deg,#164c36,#102f23);color:#fff}
+      .esc-fh-eyebrow{color:#c1ecd2;font-size:12px;letter-spacing:.08em;font-weight:700}
+      .esc-fh h2{font-size:clamp(22px,3vw,30px);margin:12px 0;line-height:1.5;overflow-wrap:anywhere}
+      .esc-fh p{line-height:1.65}.esc-fh-muted{color:var(--muted)}
+      .esc-fh-context{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}.esc-fh-context span{padding:9px 12px;border:1px solid #628b72;border-radius:12px;background:#ffffff12;font-size:14px}
+      .esc-fh-tip{margin:16px 0 0;color:#e3f6e9;font-size:15px}
+      .esc-fh-search{display:block;width:100%;height:48px;margin-top:20px;padding:0 16px;background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:12px;font:inherit;font-size:16px}.esc-fh-search::placeholder{color:var(--muted);opacity:1}
       .esc-fh-filters{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
-      .esc-fh button,.esc-fh-modal button,.esc-fh a,.esc-fh-modal a{font:inherit;cursor:pointer}
-      .esc-fh-filter,.esc-fh-secondary,.esc-fh-modal button,.esc-fh-modal a{border:1px solid #416250;border-radius:10px;background:#1a3026;color:#e8f5ee;padding:10px 14px;text-decoration:none}
-      .esc-fh-filter[aria-pressed=true]{background:#238452;border-color:#80e4ac;color:white}
-      .esc-fh-filter.esc-fh-mine{border:2px solid #f6ce62;color:#ffe5a0;box-shadow:0 0 18px #f6ce621a;font-weight:700}
-      .esc-fh-filter.esc-fh-mine[aria-pressed=true]{background:#ffe099;color:#30230b}
-      .esc-fh-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:18px}
-      .esc-fh-card{display:flex;flex-direction:column;gap:12px;background:#14271e;border:1px solid #304e3e;padding:22px;border-radius:16px;transition:border-color .2s,transform .2s}
-      .esc-fh-card:hover{border-color:#78bb92;transform:translateY(-2px)}.esc-fh-card.is-assigned{border-color:#edca63}
-      .esc-fh-card h3{margin:0;font-size:18px;line-height:1.6}.esc-fh-card p{margin:0;font-size:14px}
-      .esc-fh-code{font-size:13px;font-weight:700;letter-spacing:.05em;color:#93e2b1}.esc-fh-card-head{display:flex;align-items:center;gap:12px}
-      .esc-fh-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#244d36;font-size:22px;flex-shrink:0}.esc-fh-icon svg{width:22px;height:22px}
-      .esc-fh-badge{align-self:flex-start;background:#ffe08a;color:#392805;font-size:12px;font-weight:800;padding:7px 10px;border-radius:8px}
-      .esc-fh-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:12px}.esc-fh-primary{background:#86e0a9;color:#0c2e1b;border:0;border-radius:10px;padding:11px 14px;font-weight:700!important}
-      .esc-fh-external{color:#b7e8ca;font-size:13px;text-underline-offset:4px}.esc-fh-count{margin:0 0 16px;font-size:13px}.esc-fh-empty{padding:32px;text-align:center;border:1px dashed #54715f;border-radius:16px;grid-column:1/-1}
-      .esc-fh :focus-visible,.esc-fh-modal :focus-visible{outline:3px solid #ffe08a;outline-offset:3px}
-      .esc-fh-modal{position:fixed;inset:0;z-index:10000;background:#000b;padding:20px;display:flex;align-items:center;justify-content:center}
-      .esc-fh-dialog{display:flex;flex-direction:column;width:100%;height:100%;max-width:1600px;background:#10271c;border:1px solid #476f56;border-radius:16px;overflow:hidden;box-shadow:0 24px 80px #0009}
-      .esc-fh-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px}.esc-fh-toolbar h2{flex:1;min-width:150px;margin:0;font-size:17px}.esc-fh-modal iframe{flex:1;min-height:0;width:100%;border:0;background:white}
-      .esc-fh-status{margin:0;padding:8px 18px;font-size:13px;color:#ffe099}.esc-fh-status:empty{display:none}
-      @media(max-width:640px){.esc-fh-banner{padding:18px}.esc-fh-modal{padding:0}.esc-fh-dialog{border-radius:0}.esc-fh-toolbar{padding:12px}.esc-fh-toolbar h2{flex-basis:100%}}
-      @media(prefers-reduced-motion:reduce){.esc-fh-card{transition:none}.esc-fh-card:hover{transform:none}}
+      .esc-fh button,.esc-fh-modal button,.esc-fh a,.esc-fh-modal a{font-family:inherit;cursor:pointer;touch-action:manipulation}
+      .esc-fh-filter,.esc-fh-secondary,.esc-fh-modal button,.esc-fh-modal a{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:12px 16px;text-decoration:none;font-size:14px;font-weight:700;line-height:1.5;text-align:center}
+      .esc-fh-filter{font-size:15px}.esc-fh-filter[aria-pressed=true]{background:#185d36;border-color:#185d36;color:#fff}
+      .esc-fh-filter.esc-fh-mine{border:2px solid #bb850e}.esc-fh-filter.esc-fh-mine[aria-pressed=true]{background:#ffe099;color:#30230b}
+      .esc-fh-filter-count{padding:2px 8px;border-radius:20px;background:var(--soft);color:var(--ink);font-size:13px}
+      .esc-fh-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:20px}
+      .esc-fh-card{display:flex;min-width:0;flex-direction:column;gap:12px;background:var(--surface);border:2px solid var(--line);padding:24px;border-radius:18px;box-shadow:0 4px 16px #102f2308}
+      .esc-fh-card.is-assigned{border-color:#b78412;box-shadow:inset 0 4px 0 #288344,0 4px 16px #102f2308}
+      .esc-fh-card h3{margin:0;font-size:19px;font-weight:800;line-height:1.6}.esc-fh-card p{margin:0;font-size:15px}
+      .esc-fh-code{font-family:ui-monospace,Consolas,monospace;font-size:17px;font-weight:800;overflow-wrap:anywhere}.esc-fh-card-head{display:flex;align-items:center;gap:12px}
+      .esc-fh-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:12px;background:var(--soft);font-size:24px;flex-shrink:0}.esc-fh-icon svg{width:26px;height:26px}
+      .esc-fh-badge{align-self:flex-start;background:#ffe08a;color:#392805;font-size:14px;font-weight:800;padding:8px 12px;border-radius:10px}
+      .esc-fh-category{align-self:flex-start;background:var(--soft);color:var(--ink);padding:6px 10px;border-radius:8px;font-size:13px;font-weight:700}
+      .esc-fh-actions{display:grid;gap:10px;margin-top:auto;padding-top:12px}
+      .esc-fh .esc-fh-primary,.esc-fh-modal .esc-fh-print{min-height:52px;background:linear-gradient(110deg,#1f760e,#3da118);color:#fff;border:1px solid #1f760e;border-radius:12px;padding:12px 16px;font-size:15px;font-weight:800;line-height:1.5;text-shadow:0 1px 2px #154a0a;box-shadow:0 3px 0 #165309}
+      .esc-fh-primary:hover,.esc-fh-print:hover{filter:brightness(.94)}.esc-fh button:active,.esc-fh-modal button:active{transform:translateY(2px);box-shadow:none}
+      .esc-fh-count{margin:0 0 16px;font-size:14px}.esc-fh-empty{padding:32px;text-align:center;border:2px dashed var(--line);border-radius:16px;grid-column:1/-1}.esc-fh-empty button{margin-top:16px}
+      .esc-fh :focus-visible,.esc-fh-modal :focus-visible{outline:3px solid #bc8200;outline-offset:4px}
+      .esc-fh-modal{position:fixed;inset:0;z-index:10000;background:#000b;padding:16px;display:flex;align-items:center;justify-content:center}
+      .esc-fh-dialog{display:flex;flex-direction:column;width:100%;height:92vh;height:92dvh;max-width:1800px;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 24px 80px #0009}
+      .esc-fh-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:18px;border-bottom:1px solid var(--line);max-height:45%;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.esc-fh-toolbar h2{flex:1;min-width:180px;margin:0;font-size:19px;line-height:1.5;overflow-wrap:anywhere}.esc-fh-viewer-code{display:block;font:700 15px ui-monospace,Consolas,monospace;color:var(--muted);margin-bottom:6px}
+      .esc-fh-modal .esc-fh-close{background:#b42318;border-color:#b42318;color:#fff;min-height:52px}.esc-fh-modal iframe{flex:1;min-height:0;width:100%;border:0;background:white;touch-action:auto}
+      .esc-fh-status{margin:0;padding:10px 18px;font-size:14px;color:var(--ink)}.esc-fh-status:empty{display:none}
+      @media(max-width:640px){.esc-fh-banner{padding:18px}.esc-fh-card{padding:20px}.esc-fh-filter{flex:1 1 145px}.esc-fh-modal{padding:0}.esc-fh-dialog{height:100vh;height:100dvh;border-radius:0}.esc-fh-toolbar{padding:12px;gap:8px}.esc-fh-toolbar h2{flex-basis:100%}.esc-fh-toolbar button,.esc-fh-toolbar a{flex:1 1 140px}.esc-fh-toolbar .esc-fh-close{flex-basis:100%}}
+      @media(prefers-reduced-motion:reduce){.esc-fh button:active,.esc-fh-modal button:active{transform:none}}
     `;
     document.head.appendChild(style);
   }
@@ -77,6 +85,9 @@
       try { values = JSON.parse(values); } catch (_) { values = values.split(/[,;\n]/); }
     }
     if (!Array.isArray(values)) values = [values];
+    if (values.length === 0 && (user?.role === 'inspector' || String(user?.position || '').includes('ช่าง'))) {
+      values = ['FM-ML01-ML-09', 'FM-ML01-ML-10', 'FM-ML01-ML-02', 'FM-ML01-ML-11', 'FM-ML01-ML-12'];
+    }
     return new Set(values.map(value => {
       const id = typeof value === 'object' && value ? value.code || value.form_code || value.file || value.id : value;
       return String(id ?? '').trim().replace(/\.html$/i, '');
@@ -90,12 +101,17 @@
     const user = getUser();
     const assigned = assignedCodes(user);
     const showMine = assigned.size > 0 || ['technician', 'inspector'].includes(user?.role);
+    const assignedCount = ESC_BUILTIN_FORMS.filter(form => assigned.has(form.code)).length;
+    const appState = typeof state !== 'undefined' ? state : window.state;
+    const department = appState?.data?.departments?.find(item => String(item.id) === String(user?.department_id));
+    const departmentLabel = [user?.department_name || department?.name, user?.department_code || department?.code || user?.dept_code].filter(Boolean).join(' / ') || 'ยังไม่ระบุแผนก';
     let filter = showMine ? 'mine' : 'all';
-    const filters = [['all', 'All'], ...(showMine ? [['mine', '⭐ แบบฟอร์มของฉัน']] : []), ['milling', 'Milling'], ['prod', 'Production'], ['maintenance', 'Maintenance']];
+    const filters = [['mine', '⭐ แบบฟอร์มของฉัน', assignedCount], ['all', '📋 แบบฟอร์มทั้งหมด', ESC_BUILTIN_FORMS.length], ['milling', '⚙ ลูกหีบ (ML)', 9], ['prod', '🏭 ฝ่ายผลิต (PD)', 3], ['maintenance', '🛠 ซ่อมบำรุง / ทั่วไป (MR)', 1]];
     const root = document.createElement('section');
     root.className = 'esc-fh';
     root.setAttribute('aria-label', 'ศูนย์แบบฟอร์มตรวจเครื่องจักร');
-    root.innerHTML = `<header class="esc-fh-banner"><span class="esc-fh-eyebrow">ESC · MACHINE INSPECTION SYSTEM</span><h2>ศูนย์แบบฟอร์มตรวจเครื่องจักร</h2><p class="esc-fh-muted">แบบฟอร์มมาตรฐาน ${ESC_BUILTIN_FORMS.length} รายการ · เลือกกรอก ตรวจสอบ และพิมพ์เอกสาร</p><input class="esc-fh-search" type="search" aria-label="ค้นหาแบบฟอร์ม" placeholder="ค้นหารหัสแบบฟอร์ม ชื่อ หรือแผนก…"></header><nav class="esc-fh-filters" aria-label="หมวดแบบฟอร์ม">${filters.map(([key, label]) => `<button type="button" class="esc-fh-filter ${key === 'mine' ? 'esc-fh-mine' : ''}" data-filter="${key}" aria-pressed="${key === filter}">${label}</button>`).join('')}</nav><p class="esc-fh-count esc-fh-muted" role="status" aria-live="polite"></p><div class="esc-fh-grid"></div>`;
+    root.lang = 'th';
+    root.innerHTML = `<header class="esc-fh-banner"><span class="esc-fh-eyebrow">EASTERN SUGAR AND CANE · ESC</span><h2>👋 สวัสดี คุณ${escapeHtml(user?.full_name || 'ช่างเทคนิค')} (${escapeHtml(user?.emp_code || 'ไม่ระบุรหัส')}) · ${escapeHtml(user?.position || 'ช่างเทคนิคตรวจเช็ค')}</h2><div class="esc-fh-context"><span>👷 กลุ่มงาน: <strong>${escapeHtml(user?.work_group || 'ทีมช่างตรวจเช็คเครื่องจักร')}</strong></span><span>🏢 แผนก: <strong>${escapeHtml(departmentLabel)}</strong></span><span>⭐ แบบฟอร์มที่ได้รับมอบหมาย: <strong>${assignedCount} รายการ</strong></span></div><p class="esc-fh-tip">เลือกแบบฟอร์มของฉัน แล้วกด “เริ่มกรอกแบบฟอร์ม” เพื่อบันทึกผลตรวจเครื่องจักร เมื่อต้องการเอกสาร ให้กด “พิมพ์ / PDF” และกลับมาหน้านี้ได้ด้วยปุ่มสีแดง</p></header><input class="esc-fh-search" type="search" aria-label="ค้นหาแบบฟอร์ม" placeholder="ค้นหารหัส ชื่อเครื่องจักร หรือแผนก เช่น ML-09, ดั๊มพ์..."><nav class="esc-fh-filters" aria-label="หมวดแบบฟอร์ม">${filters.map(([key, label, count]) => `<button type="button" class="esc-fh-filter ${key === 'mine' ? 'esc-fh-mine' : ''}" data-filter="${key}" aria-pressed="${key === filter}">${label} <span class="esc-fh-filter-count">${count}</span></button>`).join('')}</nav><p class="esc-fh-count esc-fh-muted" role="status" aria-live="polite"></p><div class="esc-fh-grid"></div>`;
     container.replaceChildren(root);
     const search = root.querySelector('input');
     const grid = root.querySelector('.esc-fh-grid');
@@ -105,7 +121,7 @@
       const forms = ESC_BUILTIN_FORMS.filter(form => (filter === 'all' || (filter === 'mine' ? assigned.has(form.code) : form.category === filter)) && [form.code, form.title, form.dept, form.desc].join(' ').toLocaleLowerCase('th').includes(query));
       root.querySelectorAll('[data-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.filter === filter)));
       root.querySelector('.esc-fh-count').textContent = `แสดง ${forms.length} จาก ${ESC_BUILTIN_FORMS.length} แบบฟอร์ม`;
-      grid.innerHTML = forms.map(form => `<article class="esc-fh-card ${assigned.has(form.code) ? 'is-assigned' : ''}"><div class="esc-fh-card-head"><span class="esc-fh-icon" aria-hidden="true" data-icon="${form.icon}">${iconFallbacks[form.icon]}</span><span class="esc-fh-code">${form.code}</span></div>${assigned.has(form.code) ? '<span class="esc-fh-badge">⭐ แบบฟอร์มที่ได้รับมอบหมาย</span>' : ''}<h3>${escapeHtml(form.title)}</h3><p class="esc-fh-muted">แผนก: ${escapeHtml(form.dept)}</p><p class="esc-fh-muted">${escapeHtml(form.desc)}</p><div class="esc-fh-actions"><button type="button" class="esc-fh-primary" data-open="${form.code}">เปิดกรอกฟอร์ม</button><button type="button" class="esc-fh-secondary" data-print="${form.code}">พิมพ์ PDF</button></div><a class="esc-fh-external" href="${escapeHtml(getFormUrl(form.file))}" target="_blank" rel="noopener noreferrer">เปิดในหน้าต่างใหม่ ↗</a></article>`).join('') || `<div class="esc-fh-empty">${filter === 'mine' && !assigned.size ? 'ยังไม่มีแบบฟอร์มที่ได้รับมอบหมาย เลือก All เพื่อดูแบบฟอร์มทั้งหมด' : 'ไม่พบแบบฟอร์มที่ตรงกับการค้นหา'}</div>`;
+      grid.innerHTML = forms.map(form => `<article class="esc-fh-card ${assigned.has(form.code) ? 'is-assigned' : ''}"><div class="esc-fh-card-head"><span class="esc-fh-icon" aria-hidden="true" data-icon="${form.icon}">${iconFallbacks[form.icon]}</span><span class="esc-fh-code">${form.code}</span></div>${assigned.has(form.code) ? '<span class="esc-fh-badge">⭐ แบบฟอร์มที่ได้รับมอบหมาย</span>' : ''}<span class="esc-fh-category">${escapeHtml(form.dept)}</span><h3>${escapeHtml(form.title)}</h3><p class="esc-fh-muted">${escapeHtml(form.desc)}</p><div class="esc-fh-actions"><button type="button" class="esc-fh-primary" data-open="${form.code}">📝 เริ่มกรอกแบบฟอร์ม (ตรวจเครื่องจักร)</button><button type="button" class="esc-fh-secondary" data-print="${form.code}">🖨 พิมพ์เอกสาร / PDF</button><a class="esc-fh-secondary" href="${escapeHtml(getFormUrl(form.file))}" target="_blank" rel="noopener noreferrer">↗ เปิดในหน้าต่างใหม่</a></div></article>`).join('') || `<div class="esc-fh-empty">${filter === 'mine' && !assignedCount ? 'ยังไม่มีแบบฟอร์มที่ได้รับมอบหมาย กรุณาติดต่อหัวหน้างาน หรือเลือกดูแบบฟอร์มทั้งหมด' : 'ไม่พบแบบฟอร์ม ลองเปลี่ยนคำค้นหรือเลือกหมวดอื่น'}<br><button type="button" class="esc-fh-secondary" data-reset>ดูแบบฟอร์มทั้งหมด</button></div>`;
       // Keep a visible fallback for custom icons absent from the installed Lucide version.
       if (window.lucide?.icons && window.lucide.createIcons) {
         grid.querySelectorAll('[data-icon]').forEach(element => {
@@ -120,11 +136,11 @@
     root.addEventListener('click', event => {
       const button = event.target.closest('button');
       if (!button || !root.contains(button)) return;
+      if (button.hasAttribute('data-reset')) { filter = 'all'; search.value = ''; update(); return; }
       if (button.dataset.filter) { filter = button.dataset.filter; update(); return; }
       const form = ESC_BUILTIN_FORMS.find(item => item.code === (button.dataset.open || button.dataset.print));
       if (form) {
-        openEmbeddedForm(getFormUrl(form.file), `${form.code} · ${form.title}`);
-        if (button.dataset.print) viewer.frame.addEventListener('load', printEmbeddedForm, { once: true });
+        openEmbeddedForm(getFormUrl(form.file), `${form.code} · ${form.title}`, { printOnLoad: Boolean(button.dataset.print) });
       }
     });
     update();
@@ -144,20 +160,29 @@
     }
   }
 
-  function openEmbeddedForm(url, title) {
+  function openEmbeddedForm(url, title, options = {}) {
     const resolved = new URL(url, window.location.href);
     if (!['http:', 'https:', 'file:'].includes(resolved.protocol) || resolved.origin !== window.location.origin) throw new TypeError('The embedded form must use a same-origin URL.');
     closeEmbeddedForm();
     ensureStyles();
     returnFocus = document.activeElement;
     previousOverflow = document.body.style.overflow;
+    const parts = String(title || 'แบบฟอร์มตรวจเครื่องจักร').split(' · ');
+    const heading = parts.length > 1 ? `<span class="esc-fh-viewer-code">${escapeHtml(parts.shift())}</span>${escapeHtml(parts.join(' · '))}` : escapeHtml(parts[0]);
     const overlay = document.createElement('div');
     overlay.className = 'esc-fh-modal';
-    overlay.innerHTML = `<section class="esc-fh-dialog" role="dialog" aria-modal="true" aria-label="${escapeHtml(title || 'แบบฟอร์มตรวจเครื่องจักร')}"><header class="esc-fh-toolbar"><h2>${escapeHtml(title || 'แบบฟอร์มตรวจเครื่องจักร')}</h2><button type="button" data-viewer-print>พิมพ์ PDF</button><a href="${escapeHtml(resolved.href)}" target="_blank" rel="noopener noreferrer">เปิดในหน้าต่างใหม่ ↗</a><button type="button" data-viewer-close aria-label="ปิดแบบฟอร์ม">ปิด ✕</button></header><p class="esc-fh-status" role="status" aria-live="polite">กำลังโหลดแบบฟอร์ม…</p><iframe title="${escapeHtml(title || 'แบบฟอร์มตรวจเครื่องจักร')}"></iframe></section>`;
+    overlay.innerHTML = `<section class="esc-fh-dialog" role="dialog" aria-modal="true" aria-label="${escapeHtml(title || 'แบบฟอร์มตรวจเครื่องจักร')}"><header class="esc-fh-toolbar"><h2>${heading}</h2><button type="button" class="esc-fh-print" data-viewer-print disabled>🖨 พิมพ์เอกสาร / บันทึก PDF</button><a href="${escapeHtml(resolved.href)}" target="_blank" rel="noopener noreferrer">เปิดในหน้าต่างใหม่ ↗</a><button type="button" class="esc-fh-close" data-viewer-close aria-label="ปิดแบบฟอร์มและกลับหน้ารายการ">✕ ปิดและกลับหน้ารายการ</button></header><p class="esc-fh-status" role="status" aria-live="polite">กำลังโหลดแบบฟอร์ม…</p><iframe title="${escapeHtml(title || 'แบบฟอร์มตรวจเครื่องจักร')}"></iframe></section>`;
     const frame = overlay.querySelector('iframe');
     const status = overlay.querySelector('.esc-fh-status');
     viewer = { overlay, frame, status };
-    frame.addEventListener('load', () => { status.textContent = ''; });
+    const printControl = overlay.querySelector('[data-viewer-print]');
+    frame.addEventListener('load', () => {
+      if (viewer?.frame !== frame) return;
+      status.textContent = '';
+      printControl.disabled = false;
+      try { frame.contentWindow.addEventListener('keydown', event => { if (event.key === 'Escape') closeEmbeddedForm(); }); } catch (_) { /* Header controls remain available. */ }
+      if (options.printOnLoad) { options.printOnLoad = false; printEmbeddedForm(); }
+    });
     frame.addEventListener('error', () => { status.textContent = 'โหลดแบบฟอร์มไม่สำเร็จ กรุณาเปิดในหน้าต่างใหม่'; });
     overlay.querySelector('[data-viewer-close]').addEventListener('click', closeEmbeddedForm);
     overlay.querySelector('[data-viewer-print]').addEventListener('click', printEmbeddedForm);

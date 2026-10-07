@@ -1114,8 +1114,18 @@ function enrichRawData(raw) {
 
   const users = raw.users.map(u => {
     const d = deptMap[u.department_id] || {};
+    let assignedForms = u.assigned_forms;
+    if (typeof assignedForms === 'string') {
+      try { assignedForms = JSON.parse(assignedForms); } catch (_) { assignedForms = []; }
+    }
+    if ((!Array.isArray(assignedForms) || assignedForms.length === 0) && (u.role === 'inspector' || String(u.position || '').includes('ช่าง'))) {
+      assignedForms = ['FM-ML01-ML-09', 'FM-ML01-ML-10', 'FM-ML01-ML-02', 'FM-ML01-ML-11', 'FM-ML01-ML-12'];
+    }
+    const workGroup = u.work_group || ((u.role === 'inspector' || String(u.position || '').includes('ช่าง')) ? 'ทีมช่างตรวจเช็ค กะ 1 (กลางวัน)' : '');
     return {
       ...u,
+      work_group: workGroup,
+      assigned_forms: Array.isArray(assignedForms) ? assignedForms : [],
       division_name: d.plant_name || 'ฝ่ายปฏิบัติการ',
       department_name: d.name || '-',
       department_code: d.code || '-',
@@ -1702,8 +1712,9 @@ async function loadBootstrap() {
 
 function updateStateData(newData) {
   if (newData?.dataRevision !== undefined && state.data.dataRevision !== undefined && newData.dataRevision < state.data.dataRevision) return;
-  state.data = newData;
-  if (newData.currentUser) state.activeUser = newData.users.find(u => u.id === newData.currentUser.id) || newData.currentUser;
+  const enriched = enrichRawData(newData);
+  state.data = enriched;
+  if (enriched.currentUser) state.activeUser = enriched.users.find(u => u.id === enriched.currentUser.id) || enriched.currentUser;
   if (!state.activeUser && state.data.users.length > 0) {
     state.activeUser = state.data.users[0];
   } else if (state.activeUser) {
