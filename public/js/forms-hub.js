@@ -305,13 +305,103 @@
             field.dispatchEvent(new Event('input', { bubbles: true }));
             field.dispatchEvent(new Event('change', { bubbles: true }));
           };
-          setField('machine', `${options.machine.name} (${options.machine.machine_code})`);
+          const mLabel = options.machine.id === 'all'
+            ? `ชุดสถานี ${options.machine.name} (${options.machine.machine_code})`
+            : `${options.machine.name} (${options.machine.machine_code})`;
+          setField('machine', mLabel);
           setField('department', options.machine.division_name || 'ฝ่ายวิศวกรรม', true);
           setField('section', options.machine.department_name || 'แผนกซ่อมบำรุง', true);
           const today = new Date();
           const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
           setField('date', localDate, true);
           frame.contentWindow.refreshPrintTemplate?.().catch?.(() => {});
+        }
+
+        // ====================================================
+        // AUTO-SAVE PDF WHEN ALL SIGNATURES ARE COMPLETE
+        // ====================================================
+        let autoPdfTriggered = false;
+        const checkAndTriggerAutoPdf = () => {
+          if (autoPdfTriggered) return;
+          try {
+            const frameWin = frame.contentWindow;
+            const frameDoc = frame.contentDocument;
+            if (!frameWin || !frameDoc) return;
+
+            let isComplete = false;
+            // Case 1: isLocked() function (Type A: FM-ML01-02, 05, 06, 09, 10, 11, PD-01)
+            if (typeof frameWin.isLocked === 'function') {
+              isComplete = Boolean(frameWin.isLocked());
+            }
+            // Case 2: roles & signatureData check
+            else if (frameWin.roles && frameWin.signatureData) {
+              const roleKeys = Object.keys(frameWin.roles);
+              isComplete = roleKeys.length > 0 && roleKeys.every(id => Boolean(frameWin.signatureData[id]));
+            }
+            // Case 3: sigCanvases check (Type B: FM-ML01-12, 13, 18, MR-01, PD-02)
+            else if (frameWin.sigCanvases) {
+              const keys = Object.keys(frameWin.sigCanvases);
+              if (keys.length > 0) {
+                isComplete = keys.every(id => {
+                  const cv = frameWin.sigCanvases[id];
+                  if (!cv) return false;
+                  const ctx = cv.getContext('2d');
+                  const imgData = ctx.getImageData(0, 0, cv.width, cv.height).data;
+                  for (let i = 3; i < imgData.length; i += 4) {
+                    if (imgData[i] > 30) return true;
+                  }
+                  return false;
+                });
+              }
+            }
+
+            if (isComplete) {
+              autoPdfTriggered = true;
+              status.innerHTML = '<span style="color:#15803d;font-weight:bold;background:#ecfdf5;padding:6px 14px;border-radius:10px;border:1px solid #a7f3d0;display:inline-block;">✅ เซ็นชื่อครบทุกคนแล้ว! กำลังบันทึกเอกสารเป็น PDF อัตโนมัติ...</span>';
+              setTimeout(() => {
+                try {
+                  const pdfBtn = frameDoc.getElementById('savePDF');
+                  if (pdfBtn) {
+                    pdfBtn.click();
+                    status.innerHTML = '<span style="color:#15803d;font-weight:bold;">✅ บันทึกไฟล์ PDF อัตโนมัติเรียบร้อยแล้ว</span>';
+                    return;
+                  }
+                  const printBtn = frameDoc.getElementById('print');
+                  if (printBtn) {
+                    printBtn.click();
+                    status.innerHTML = '<span style="color:#15803d;font-weight:bold;">✅ เปิดหน้าต่างพิมพ์/บันทึก PDF เรียบร้อยแล้ว</span>';
+                    return;
+                  }
+                  if (typeof frameWin.printDoc === 'function') {
+                    frameWin.renderCanvasPrint?.();
+                    frameWin.printDoc();
+                    return;
+                  }
+                  frameWin.print();
+                } catch (err) {
+                  console.warn('Auto PDF trigger error:', err);
+                  status.textContent = 'กรุณากดปุ่ม พิมพ์เอกสาร / บันทึก PDF ด้านบน';
+                }
+              }, 600);
+            }
+          } catch (_) {}
+        };
+
+        const frameWin = frame.contentWindow;
+        const frameDoc = frame.contentDocument;
+        if (frameWin && frameDoc) {
+          if (typeof frameWin.updateLock === 'function') {
+            const origLock = frameWin.updateLock;
+            frameWin.updateLock = function() {
+              const res = origLock.apply(this, arguments);
+              setTimeout(checkAndTriggerAutoPdf, 250);
+              return res;
+            };
+          }
+          frameDoc.addEventListener('mouseup', () => setTimeout(checkAndTriggerAutoPdf, 400));
+          frameDoc.addEventListener('click', () => setTimeout(checkAndTriggerAutoPdf, 400));
+          frameDoc.addEventListener('touchend', () => setTimeout(checkAndTriggerAutoPdf, 400));
+          setTimeout(checkAndTriggerAutoPdf, 1200);
         }
       } catch (_) { /* Some legacy forms may not expose same-origin fields. */ }
       if (options.printOnLoad) { options.printOnLoad = false; printEmbeddedForm(); }
