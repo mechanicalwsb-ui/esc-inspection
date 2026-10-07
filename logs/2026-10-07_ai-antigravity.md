@@ -21,3 +21,14 @@ Role: Tech Lead & Lead Orchestrator
 ## 10:53 - Git Commit & Lock Release
 - Committed fix to Git repository and pushed to `origin/main`.
 - Released lock in `_lock/current.md` to `## FREE`.
+
+## 11:10 - Supabase Cloud Database Integration (Option 3)
+- User configured Supabase project `https://vspxrlosnkocophbdubp.supabase.co`.
+- Table `esc_store` created in Supabase with RLS policies for public anon and authenticated access.
+- Seeded official factory database from `data/comis.db` (41 machines, 10 departments, 24 users, 5 form templates) into Supabase `esc_store`.
+- Built `public/js/supabase-sync.js` engine:
+  - Fetches remote database on load and syncs with local IndexedDB.
+  - Automatically saves all user mutations (inspections, defects, machines) to Supabase Cloud in real time.
+  - Auto-polls remote changes every 15s to sync across all devices (PC, iPad, smartphones).
+  - Displays live status: "🟢 ฐานข้อมูลกลางออนไลน์ (Cloud Live · Supabase)".
+- Verified with Playwright Edge Headless: loaded all 41 machines live from Supabase, 0 errors.

@@ -1317,6 +1317,9 @@ function saveLocalDb(raw) {
     }
     if (log.undo_payload?.snapshot_before && !log.undo_payload.changes) log.can_undo = false;
   }
+  if (window.SupabaseSync) {
+    SupabaseSync.saveRemote(raw);
+  }
   if (window.ComisStore) return ComisStore.save(raw);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(raw));
 }
@@ -1674,6 +1677,16 @@ async function apiRequest(url, method = 'GET', body = null) {
 }
 
 async function loadBootstrap() {
+  if (window.SupabaseSync && (ComisDomain.isStandalone?.() || location.protocol === 'file:')) {
+    const remote = await SupabaseSync.fetchRemote();
+    if (remote?.data) {
+      if (window.ComisStore) await ComisStore.save(remote.data);
+      updateStateData(remote.data);
+      SupabaseSync.updateCloudBanner(true);
+      SupabaseSync.startAutoSync();
+      return;
+    }
+  }
   const res = await apiRequest('/api/bootstrap');
   updateStateData(res.data);
 }
